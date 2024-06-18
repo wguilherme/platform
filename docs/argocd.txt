@@ -1,0 +1,38 @@
+kubectl create namespace argocd
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+
+// check deployments status
+
+kubectl get deployments -n argocd
+
+
+// get argocd default admin password secret
+argocd admin initial-password -n argocd
+ou 
+kubectl get secrets -n argocd
+kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.password}" | base64 --decode
+
+
+argocd login argocd-server.argocd.svc.cluster.local:80
+v3DtRinIo4ngC8co
+
+kubectl cluster-info
+
+// get contexts
+kubectl config get-contexts -o name
+argocd cluster add orbstack
+
+
+
+
+auto login getting secret
+
+argocd login localhost:8080 \
+  --insecure \
+  --username admin \
+  --password $(kubectl get secret \
+  -n argocd \
+  argocd-initial-admin-secret \
+  -o jsonpath="{.data.password}" |
+  base64 -d)

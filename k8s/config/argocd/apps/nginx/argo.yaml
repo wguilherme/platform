@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: https://github.com/wguilherme/platform.git
     targetRevision: HEAD
-    path: deploy
+    path: k8s/config/argocd/apps/nginx
   destination:
     server: https://kubernetes.default.svc
     namespace: core

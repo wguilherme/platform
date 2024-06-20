@@ -1,0 +1,2 @@
+helm upgrade --install nginx-helm ./deploy -n helm-t1
+helm list -n helm-t1

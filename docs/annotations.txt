@@ -1,2 +1,6 @@
 helm upgrade --install nginx-helm ./deploy -n helm-t1
 helm list -n helm-t1
+
+
+//
+kubectl -n manager port-forward svc/kubernetes-dashboard-kong-proxy 8443:443

@@ -1,0 +1,5 @@
+kubectl -n manager create token admin-user
+
+ou (caso tenha a secret criada)
+
+kubectl get secret admin-user -n manager -o jsonpath={".data.token"} | base64 -d

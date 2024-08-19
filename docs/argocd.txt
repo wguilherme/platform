@@ -16,6 +16,7 @@ kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.pas
 
 argocd login argocd-server.argocd.svc.cluster.local:80
 v3DtRinIo4ngC8co
+JvvW6CCcg45H6zkw
 
 kubectl cluster-info
 

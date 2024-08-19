@@ -2,29 +2,29 @@
 apiVersion: v1
 kind: Secret
 metadata:
-  name: my-public-repo
+  name: platform
   namespace: argocd
   labels:
     argocd.argoproj.io/secret-type: repository
 stringData:
   type: git
-  url: https://github.com/seu-usuario/seu-repositorio-publico.git
+  url: https://github.com/wguilherme/platform.git
 
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: minha-aplicacao
+  name: platform
   namespace: argocd
 spec:
   project: default
   source:
-    repoURL: https://github.com/seu-usuario/seu-repositorio-publico.git
+    repoURL: https://github.com/wguilherme/platform.git
     targetRevision: HEAD
     path: caminho/para/seus/manifestos
   destination:
     server: https://kubernetes.default.svc
-    namespace: meu-namespace-de-destino
+    namespace: rpi
   syncPolicy:
     automated:
       prune: true

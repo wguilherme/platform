@@ -1,0 +1,19 @@
+ ~/actions-runner/run.sh
+
+ run for start gh job runner and see log journal
+
+
+
+
+permissions solution
+
+descobrir usuario que está executando o runner
+
+ps aux | grep actions-runner
+
+aplicar configs de permissao e kubeconfig no usuario em questao
+
+sudo -u wguilherme mkdir -p /home/wguilherme/.kube
+sudo cp /etc/rancher/k3s/k3s.yaml /home/wguilherme/.kube/config
+sudo chown wguilherme:wguilherme /home/wguilherme/.kube/config
+sudo chmod 600 /home/wguilherme/.kube/config

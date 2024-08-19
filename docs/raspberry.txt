@@ -17,6 +17,10 @@ Created tunnel rb-tunnel with id 1b9415f2-0e69-4494-b1fe-84f97bd29f97
  cat /root/.cloudflared/config.yml
 
 
+arquivo correto para apontar IP local
+de um svc do tipo cluster IP
+
+
  ### ngrok
  sudo tar xvzf ngrok-v3-stable-linux-arm64.tgz -C /usr/local/bin
 

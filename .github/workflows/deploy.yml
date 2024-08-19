@@ -1,0 +1,56 @@
+name: Deploy to K3s
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Get current date
+        id: date
+        run: echo "::set-output name=date::$(date +'%Y-%m-%d %H:%M:%S')"
+
+      - name: Deploy to K3s
+        run: |
+          DEPLOY_MESSAGE="Hello World! Deployed on ${{ steps.date.outputs.date }} (Commit: ${{ github.sha }})"
+
+          # Create namespace 'cd' if it doesn't exist
+          kubectl create namespace cd --dry-run=client -o yaml | kubectl apply -f -
+
+          cat <<EOF | kubectl apply -n cd -f -
+          apiVersion: v1
+          kind: Pod
+          metadata:
+            name: hello-world
+            labels:
+              app: hello-world
+          spec:
+            containers:
+            - name: hello-world
+              image: busybox
+              command: ["/bin/sh", "-c", "echo \"$DEPLOY_MESSAGE\" > /app/index.html && httpd -f -p 8080 -h /app"]
+          ---
+          apiVersion: v1
+          kind: Service
+          metadata:
+            name: hello-world
+          spec:
+            type: NodePort
+            selector:
+              app: hello-world
+            ports:
+            - port: 80
+              targetPort: 8080
+              nodePort: 30080
+          EOF
+
+          kubectl wait --for=condition=Ready pod/hello-world -n cd --timeout=60s
+
+          echo "Service exposed on NodePort 30080 in namespace cd"
+          echo "Access URL: http://$(hostname -I | awk '{print $1}'):30080"
+          echo "To view resources, use: kubectl get all -n cd"

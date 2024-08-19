@@ -1,0 +1,29 @@
+Apoós aplicar com
+
+kubectl apply -f <setup>.yaml
+
+verificar com
+
+kubectl get application <metadata.name> -n argocd
+
+ex.: 
+kubectl get application platform -n argocd
+kubectl describe application platform -n argocd
+
+kubectl port-forward svc/argocd-server -n argocd 8080:443
+
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+
+## Autenticacao
+
+kubectl port-forward svc/argocd-server -n argocd 8080:443
+
+argocd login localhost:8080
+
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+
+argocd app list
+
+Alternativamente, você pode usar o comando kubectl para listar as aplicações diretamente do cluster:
+
+kubectl get applications.argoproj.io -n argocd

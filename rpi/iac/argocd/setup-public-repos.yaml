@@ -21,7 +21,7 @@ spec:
   source:
     repoURL: https://github.com/wguilherme/platform.git
     targetRevision: HEAD
-    path: caminho/para/seus/manifestos
+    path: rpi/deployments/nginx-hello
   destination:
     server: https://kubernetes.default.svc
     namespace: rpi

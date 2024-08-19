@@ -33,6 +33,12 @@ jobs:
           docker build -t $DOCKER_USERNAME/go-hello-argocd:${{ github.sha }} .
           docker push $DOCKER_USERNAME/go-hello-argocd:${{ github.sha }}
 
+      - name: Debug Git status
+        run: |
+          git status
+          git remote -v
+          git branch
+
       - name: Update deployment file
         run: |
           sed -i 's|image: .*go-hello-argocd:.*|image: wguilherme/go-hello-argocd:${{ github.sha }}|' rpi/deployments/nginx-hello/deployment.yaml

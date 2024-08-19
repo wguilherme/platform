@@ -27,3 +27,19 @@ argocd app list
 Alternativamente, você pode usar o comando kubectl para listar as aplicações diretamente do cluster:
 
 kubectl get applications.argoproj.io -n argocd
+
+argocd repo get <repo-url>
+
+
+Se der problemas em repo públicos:
+
+argocd repo rm <repo-url>
+argocd repo add <repo-url> --insecure-skip-server-verification
+argocd app sync <app-name>
+
+Após deploy:
+
+kubectl get pods -n rpi
+kubectl get svc -n rpi
+argocd app get platform
+kubectl logs -n rpi deploy/platform-hello-world

@@ -1,0 +1,37 @@
+O nome de usuário e senha padrão para o Grafana, quando instalado via Helm chart kube-prometheus-stack, são:
+
+Usuário: admin
+Senha: prom-operator
+No entanto, é importante notar que:
+
+É altamente recomendável mudar esta senha após o primeiro login por motivos de segurança.
+Em algumas versões ou configurações personalizadas, a senha pode ser gerada aleatoriamente durante a instalação.
+Se a senha padrão não funcionar, você pode tentar os seguintes passos para recuperá-la ou redefini-la:
+
+Verifique se a senha foi armazenada em um Secret do Kubernetes:
+bash
+
+Copy
+kubectl get secret --namespace monitoring prometheus-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+Se você precisar redefinir a senha, pode editar o Secret diretamente:
+bash
+
+Copy
+kubectl edit secret --namespace monitoring prometheus-grafana
+Encontre a linha admin-password: e substitua o valor codificado em base64 por uma nova senha codificada em base64.
+
+Alternativamente, você pode usar o CLI do Grafana para redefinir a senha. Primeiro, faça um port-forward para o pod do Grafana:
+bash
+
+Copy
+kubectl port-forward --namespace monitoring svc/prometheus-grafana 3000:80
+Então, em outro terminal, execute:
+
+bash
+
+Copy
+kubectl exec --namespace monitoring -it prometheus-grafana-0 -- grafana-cli admin reset-admin-password novaSenha
+Substitua "novaSenha" pela senha que você deseja definir.
+
+Se nada disso funcionar, você pode considerar reinstalar o Grafana com uma senha personalizada definida nos valores do Helm.
+Lembre-se de sempre mudar as senhas padrão em ambientes de produção e implementar práticas de segurança adequadas, como autenticação de dois fatores, quando possível.

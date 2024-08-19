@@ -12,22 +12,22 @@ kubectl run nginx-hello-world --image=nginx:latest --port=80 --namespace=t1
 
 Created tunnel rb-tunnel with id 1b9415f2-0e69-4494-b1fe-84f97bd29f97
 
- nano /root/.cloudflared/config.yml
+nano /root/.cloudflared/config.yml
 
- cat /root/.cloudflared/config.yml
+cat /root/.cloudflared/config.yml
 
 
 arquivo correto para apontar IP local
 de um svc do tipo cluster IP
 
 
- ### ngrok
- sudo tar xvzf ngrok-v3-stable-linux-arm64.tgz -C /usr/local/bin
+### ngrok
+sudo tar xvzf ngrok-v3-stable-linux-arm64.tgz -C /usr/local/bin
 
 
- working
+working
 
-
+nano /etc/cloudflared/config.yml
 
 sudo systemctl restart cloudflared
 sudo systemctl status cloudflared
@@ -35,4 +35,13 @@ sudo systemctl status cloudflared
 testar acesso direto com netshot
 kubectl run tmp-shell --rm -i --tty --image nicolaka/netshoot -n t1 -- curl http://nginx-hello-world.t1.svc.cluster.local:80
 
- 
+Prometheus com helm no k3s
+problema de localhost: 
+kubectl config view --raw > ~/.kube/config
+
+
+sudo helm install prometheus prometheus-community/kube-prometheus-stack --namespace monitoring
+
+após instalar
+
+kubectl port-forward -n monitoring svc/prometheus-grafana 3000:80

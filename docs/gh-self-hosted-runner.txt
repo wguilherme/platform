@@ -17,3 +17,8 @@ sudo -u wguilherme mkdir -p /home/wguilherme/.kube
 sudo cp /etc/rancher/k3s/k3s.yaml /home/wguilherme/.kube/config
 sudo chown wguilherme:wguilherme /home/wguilherme/.kube/config
 sudo chmod 600 /home/wguilherme/.kube/config
+
+
+
+sudo systemctl restart actions.runner.*
+~/actions-runner/run.sh

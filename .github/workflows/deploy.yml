@@ -54,17 +54,16 @@ jobs:
           metadata:
             name: hello-world
           spec:
-            type: NodePort
+            type: ClusterIP
             selector:
               app: hello-world
             ports:
             - port: 80
               targetPort: 80
-              nodePort: 30080
           EOF
 
           kubectl wait --for=condition=Ready pod/hello-world -n cd --timeout=60s
 
-          echo "Service exposed on NodePort 30080 in namespace cd"
-          echo "Access URL: http://$(hostname -I | awk '{print $1}'):30080"
+          echo "Service created as ClusterIP in namespace cd"
           echo "To view resources, use: kubectl get all -n cd"
+          echo "To access the service from within the cluster, use: http://hello-world.cd.svc.cluster.local"

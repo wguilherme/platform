@@ -1,20 +1,22 @@
+# Estágio de build
 FROM golang:1.22.4 as builder
 
 WORKDIR /app
 
-COPY go.mod .
-COPY main.go .
+COPY go.mod ./
 
 RUN go mod download
 
-RUN go build -o main .
+COPY *.go ./
 
-FROM alpine:latest
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
 
-RUN apk --no-cache add ca-certificates
+FROM gcr.io/distroless/static-debian12
 
-WORKDIR /root/
+WORKDIR /
 
 COPY --from=builder /app/main .
 
-CMD ["./main"]
+USER nonroot:nonroot
+
+CMD ["/main"]

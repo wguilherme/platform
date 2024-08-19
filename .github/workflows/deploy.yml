@@ -27,8 +27,8 @@ jobs:
         run: |
           DEPLOY_MESSAGE="Hello World! Deployed on ${{ steps.date.outputs.date }} (Commit: ${{ github.sha }})"
 
-          # Create namespace 'cd' if it doesn't exist
-          kubectl create namespace cd --dry-run=client -o yaml | kubectl apply -f -
+          # Delete existing pod if it exists
+          kubectl delete pod hello-world -n cd --ignore-not-found
 
           cat <<EOF | kubectl apply -n cd -f -
           apiVersion: v1
@@ -40,8 +40,14 @@ jobs:
           spec:
             containers:
             - name: hello-world
-              image: busybox
-              command: ["/bin/sh", "-c", "echo \"$DEPLOY_MESSAGE\" > /app/index.html && httpd -f -p 8080 -h /app"]
+              image: nginx:alpine
+              ports:
+              - containerPort: 80
+              command: ["/bin/sh", "-c"]
+              args:
+              - |
+                echo "$DEPLOY_MESSAGE" > /usr/share/nginx/html/index.html
+                nginx -g 'daemon off;'
           ---
           apiVersion: v1
           kind: Service
@@ -53,7 +59,7 @@ jobs:
               app: hello-world
             ports:
             - port: 80
-              targetPort: 8080
+              targetPort: 80
               nodePort: 30080
           EOF
 

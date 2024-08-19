@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: go-hello-world
-          image: your-docker-registry/go-hello-world:latest
+          image: wguilherme/go-hello-argocd:5e650133cc48b4e0f841f240729d632154792761
           ports:
             - containerPort: 8080
           resources:

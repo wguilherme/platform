@@ -23,7 +23,7 @@ jobs:
 
       - name: Build and push Docker image
         env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_USERNAME: wguilherme
         run: |
           cd rpi/deployments/nginx-hello/
           if [ ! -f Dockerfile ]; then
@@ -35,12 +35,12 @@ jobs:
 
       - name: Update deployment file
         run: |
-          sed -i 's|image: .*go-hello-argocd:.*|image: wguilherme/go-hello-argocd:${{ github.sha }}|' deployment.yaml
+          sed -i 's|image: .*go-hello-argocd:.*|image: wguilherme/go-hello-argocd:${{ github.sha }}|' rpi/deployments/nginx-hello/deployment.yaml
 
       - name: Commit and push changes
         run: |
           git config --global user.name 'GitHub Actions'
           git config --global user.email 'github-actions@github.com'
-          git add deployment.yaml
+          git add rpi/deployments/nginx-hello/deployment.yaml
           git commit -m "Update image tag to ${{ github.sha }}"
           git push

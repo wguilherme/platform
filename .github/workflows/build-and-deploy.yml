@@ -16,10 +16,20 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
+      - name: List directory contents
+        run: |
+          ls -la
+          ls -la rpi/deployments/nginx-hello/
+
       - name: Build and push Docker image
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         run: |
+          cd rpi/deployments/nginx-hello/
+          if [ ! -f Dockerfile ]; then
+            echo "Dockerfile not found!"
+            exit 1
+          fi
           docker build -t $DOCKER_USERNAME/go-hello-argocd:${{ github.sha }} .
           docker push $DOCKER_USERNAME/go-hello-argocd:${{ github.sha }}
 
@@ -34,5 +44,3 @@ jobs:
           git add deployment.yaml
           git commit -m "Update image tag to ${{ github.sha }}"
           git push
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,12 +1,11 @@
-FROM golang:1.22.4
+FROM arm64v8/golang:1.24
 
 WORKDIR /usr/src/app
 
 COPY go.mod ./
-COPY go.sum ./
 RUN go mod download && go mod verify
 
 COPY . .
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -v -o /usr/local/bin/app ./...
+RUN go build -v -o /usr/local/bin/app ./...
 
 CMD ["app"]

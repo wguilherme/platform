@@ -13,6 +13,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
@@ -25,16 +31,13 @@ jobs:
           ls -la rpi/deployments/nginx-hello/
 
       - name: Build and push Docker image
-        env:
-          DOCKER_USERNAME: wguilherme
-        run: |
-          cd rpi/deployments/nginx-hello/
-          if [ ! -f Dockerfile ]; then
-            echo "Dockerfile not found!"
-            exit 1
-          fi
-          docker build -t $DOCKER_USERNAME/go-hello-argocd:${{ github.sha }} .
-          docker push $DOCKER_USERNAME/go-hello-argocd:${{ github.sha }}
+        uses: docker/build-push-action@v4
+        with:
+          context: ./rpi/deployments/nginx-hello
+          file: ./rpi/deployments/nginx-hello/Dockerfile
+          platforms: linux/arm64
+          push: true
+          tags: wguilherme/go-hello-argocd:${{ github.sha }}
 
       - name: Debug Git status
         run: |

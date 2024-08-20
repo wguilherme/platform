@@ -1,22 +1,11 @@
-# Estágio de build
-FROM golang:1.22.4 as builder
+FROM arm64v8/golang:1.23
 
-WORKDIR /app
+WORKDIR /usr/src/app
 
 COPY go.mod ./
+RUN go mod download && go mod verify
 
-RUN go mod download
+COPY . .
+RUN go build -v -o /usr/local/bin/app ./...
 
-COPY *.go ./
-
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
-
-FROM gcr.io/distroless/static-debian12
-
-WORKDIR /
-
-COPY --from=builder /app/main .
-
-USER nonroot:nonroot
-
-CMD ["/main"]
+CMD ["app"]

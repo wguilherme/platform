@@ -4,6 +4,29 @@ on:
     branches: [main]
 
 jobs:
+  check-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      should_run: ${{ steps.check.outputs.should_run }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+
+      - name: Check for changes in specific folder
+        id: check
+        run: |
+          git diff --name-only HEAD^ HEAD > changes.txt
+          if grep -q "^rpi/projects/phantom-blog/" changes.txt; then
+            echo "Changes detected in rpi/projects/phantom-blog/"
+            echo "should_run=true" >> $GITHUB_OUTPUT
+          else
+            echo "No changes in rpi/projects/phantom-blog/"
+            echo "should_run=false" >> $GITHUB_OUTPUT
+          fi
+
+  # Only run if changes in rpi/projects/phantom-blog
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:

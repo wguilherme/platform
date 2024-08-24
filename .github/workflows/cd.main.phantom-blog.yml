@@ -22,7 +22,7 @@ jobs:
             echo "Changes detected in rpi/projects/phantom-blog/"
             echo "should_run=true" >> $GITHUB_OUTPUT
           else
-            echo "No changes in rpi/projects/phantom-blog/"
+            echo "No changes in rpi/projects/phantom-blog/ detected, skipping build and deploy steps"
             echo "should_run=false" >> $GITHUB_OUTPUT
           fi
 

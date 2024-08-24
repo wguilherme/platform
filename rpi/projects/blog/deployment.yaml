@@ -1,34 +1,39 @@
-apiVersion: v1
-kind: Namespace
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: jekyll
+  name: phantom-blog
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: phantom-blog
+  template:
+    metadata:
+      labels:
+        app: phantom-blog
+    spec:
+      containers:
+        - name: phantom-blog
+          image: wguilherme/phantom-blog
+          ports:
+            - containerPort: 4000
+          resources:
+            limits:
+              cpu: "0.5"
+              memory: "512Mi"
+            requests:
+              cpu: "0.1"
+              memory: "128mi"
 ---
 apiVersion: v1
-kind: PersistentVolume
+kind: Service
 metadata:
-  name: jekyll-pv
-  namespace: jekyll
-  labels:
-    type: local
+  name: phantom-blog-svc
 spec:
-  storageClassName: hostpath
-  capacity:
-    storage: 256Mi
-  accessModes:
-    - ReadWriteMany
-  hostPath:
-    path: /Users/johndoe/myblog
-  persistentVolumeReclaimPolicy: Retain
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: jekyll-pvc
-  namespace: jekyll
-spec:
-  storageClassName: hostpath
-  accessModes:
-    - ReadWriteMany
-  resources:
-    requests:
-      storage: 256Mi
+  selector:
+    app: phantom-blog
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 4000
+  type: ClusterIP

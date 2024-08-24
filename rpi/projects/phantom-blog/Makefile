@@ -14,11 +14,11 @@ up:
 
 .PHONY: build
 build:
-	@docker buildx build --platform linux/arm64 -t phantom-blog:d1349bd752998c63542255368246e663f113bb8f --load .
+	@docker buildx build --platform linux/amd64,linux/arm64 -t phantom-blog:latest --load .
 
 .PHONY: push
 push:
-	@docker push wguilherme/phantom-blog:d1349bd752998c63542255368246e663f113bb8f
+	@docker push wguilherme/phantom-blog:latest
 
 .PHONY: ci
 ci: build push

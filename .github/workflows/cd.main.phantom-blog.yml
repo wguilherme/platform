@@ -29,6 +29,8 @@ jobs:
   # Only run if changes in rpi/projects/phantom-blog
   build-and-deploy:
     runs-on: ubuntu-latest
+    needs: check-changes
+    if: ${{ needs.check-changes.outputs.should_run == 'true' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -53,3 +55,23 @@ jobs:
           platforms: linux/arm64, linux/amd64
           push: true
           tags: wguilherme/phantom-blog:latest, wguilherme/phantom-blog:${{ github.sha }}
+
+      - name: Debug Git status
+        run: |
+          git status
+          git remote -v
+          git branch
+
+      - name: Update deployment file
+        run: |
+          sed -i 's|image: .*phantom-blog:.*|image: wguilherme/phantom-blog:${{ github.sha }}|' rpi/projects/phantom-blog/deployment.yaml
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'github-actions@github.com'
+          git add rpi/deployments/nginx-hello/deployment.yaml
+          git commit -m "Update image tag to ${{ github.sha }}"
+          git push
+        env:
+          PAT: ${{ secrets.PAT }}

@@ -3,6 +3,7 @@ name: Build and Deploy Hello Go to Container Registry
 on:
   push:
     branches: [main]
+    paths: ["rpi/deployments/nginx-hello/**"]
 
 permissions:
   contents: write

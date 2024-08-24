@@ -3,6 +3,7 @@ name: Build and Push Image to Container Registry
 on:
   push:
     branches: [main]
+    paths: ["rpi/projects/phantom-blog/**"]
 
 jobs:
   check-changes:

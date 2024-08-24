@@ -23,7 +23,6 @@ entries:
 
   - title: rss
     url: feed.xml
-
   # - title: another list
   #   entries:
   #     - title: with subitems

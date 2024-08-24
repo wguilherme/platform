@@ -1,0 +1,19 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: platform
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/wguilherme/platform.git
+    targetRevision: HEAD
+    path: rpi/projects/phantom-blog
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: rpi
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

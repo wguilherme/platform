@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: phantom-blog
+  labels:
+    app: phantom-blog
 spec:
   replicas: 1
   selector:
@@ -14,7 +16,7 @@ spec:
     spec:
       containers:
         - name: phantom-blog
-          image: wguilherme/phantom-blog
+          image: wguilherme/phantom-blog:latest
           ports:
             - containerPort: 4000
           resources:
@@ -22,7 +24,7 @@ spec:
               cpu: "0.5"
               memory: "512Mi"
             requests:
-              cpu: "0.1"
+              cpu: "0.25"
               memory: "128mi"
 ---
 apiVersion: v1
@@ -36,4 +38,3 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 4000
-  type: ClusterIP

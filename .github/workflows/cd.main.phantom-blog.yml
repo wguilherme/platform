@@ -1,4 +1,5 @@
 name: Build and Push Image to Container Registry
+
 on:
   push:
     branches: [main]
@@ -26,7 +27,6 @@ jobs:
             echo "should_run=false" >> $GITHUB_OUTPUT
           fi
 
-  # Only run if changes in rpi/projects/phantom-blog
   build-and-deploy:
     runs-on: ubuntu-latest
     needs: check-changes

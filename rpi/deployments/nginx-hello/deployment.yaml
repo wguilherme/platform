@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: go-hello-world
-          image: wguilherme/go-hello-argocd:d4acc2bdf49cd4b03748decf95f54f5a6f73214e
+          image: wguilherme/go-hello-argocd:9f4fc629008093e6358eeeab36d1028eb5034957
           ports:
             - containerPort: 8080
           resources:

@@ -2,7 +2,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: platform
+  name: phantom-blog
   namespace: argocd
 spec:
   project: default

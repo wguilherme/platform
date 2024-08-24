@@ -9,13 +9,16 @@ setup:
 
 .PHONYN: up
 up:
-	@docker-compose up
+	@docker-compose up --build
 
 
 .PHONY: build
 build:
-	@docker buildx build --platform linux/arm64 -t phantom-blog:d1349bd752998c63542255368246e663f113bb8e --load .
+	@docker buildx build --platform linux/arm64 -t phantom-blog:d1349bd752998c63542255368246e663f113bb8f --load .
 
 .PHONY: push
 push:
-	@docker push wguilherme/phantom-blog:d1349bd752998c63542255368246e663f113bb8e
+	@docker push wguilherme/phantom-blog:d1349bd752998c63542255368246e663f113bb8f
+
+.PHONY: ci
+ci: build push

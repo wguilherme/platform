@@ -11,7 +11,7 @@ COPY *.go ./
 
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
 
-FROM gcr.io/distroless/static-debian12
+FROM gcr.io/distroless/base-debian12
 
 WORKDIR /
 

@@ -71,7 +71,7 @@ jobs:
         run: |
           git config --global user.name 'GitHub Actions'
           git config --global user.email 'github-actions@github.com'
-          git add rpi/deployments/nginx-hello/deployment.yaml
+          git add rpi/projects/phantom-blog/deployment.yaml
           git commit -m "Update image tag to ${{ github.sha }}"
           git push
         env:

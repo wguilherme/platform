@@ -21,7 +21,7 @@
 title: Welcome to my blog :D
 email: hello@phantombyte.uk
 description: >- # this means to ignore newlines until "baseurl:"
-  This is my personal blog, where I write about my projects, and experiments.
+  This is my personal blog, where I write about my studies, projects, and experiments.
 baseurl: "/"
 url: "https://blog.phantombyte.uk" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: phantombyte

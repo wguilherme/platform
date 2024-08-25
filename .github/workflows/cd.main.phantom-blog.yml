@@ -1,4 +1,4 @@
-name: Build and Push Image to Container Registry
+name: Build and Push Phantom Blog to Container Registry
 
 on:
   push:

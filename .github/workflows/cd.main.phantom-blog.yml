@@ -5,6 +5,9 @@ on:
     branches: [main]
     paths: ["rpi/projects/phantom-blog/**"]
 
+permissions:
+  contents: write
+
 jobs:
   check-changes:
     runs-on: ubuntu-latest

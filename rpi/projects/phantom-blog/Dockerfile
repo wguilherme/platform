@@ -4,8 +4,6 @@ WORKDIR /srv/jekyll
 
 COPY . .
 
-COPY imported/* /_posts/
-
 # Instalar dependências necessárias
 RUN apt-get update && apt-get install -y \
   build-essential \

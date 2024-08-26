@@ -48,9 +48,12 @@ jobs:
 
       - name: Copy a.PUBLIC folder
         run: |
-          mkdir -p ./rpi/projects/phantom-blog/imported
-          cp -R ./obsidian-repo/a.PUBLIC/* ./rpi/projects/phantom-blog/imported/
-          ls -la ./rpi/projects/phantom-blog/imported | wc -l
+          echo "Trying to copy files: "
+          ls -la  obsidian-repo/a.PUBLIC | wc -l
+          cp -R obsidian-repo/a.PUBLIC/* rpi/projects/phantom-blog/_posts
+          echo "Files copied successfully: "
+          ls -la rpi/projects/phantom-blog/imported | wc -l
+          echo "Files copied successfully"
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2

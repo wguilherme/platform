@@ -1,8 +1,5 @@
 ---
 layout: post
-title: "Página de Estilos CSS"
-date: 2024-08-23 12:37:27 -0300
-categories: css estilos
 ---
 
 # Elementos de Texto

@@ -1,10 +1,35 @@
+# For documentation on this file, see:
+# https://github.com/wguilherme/jekyll-minimal-synthwave#customize-the-menu
+
 entries:
   - title: info
     entries:
       - title: This is my personal blog, where I write about my studies, projects, and experiments.
       - title: minimal-synthwave-theme
         url: https://github.com/wguilherme/jekyll-minimal-synthwave.git
-  - title: posts
-    post_list: true
+  - title: latest posts
+    post_list:
+      limit: 10
+      show_more: true
+      show_more_text: See all posts...
+      show_more_url: archive.html
+
+  # - title: posts by tag
+  #   post_list:
+  #     category: example2
+  #     show_more: true
+  #     show_more_text: See more posts...
+  #     show_more_url: example2-archive.html
+
   - title: rss
     url: feed.xml
+  # - title: another list
+  #   entries:
+  #     - title: with subitems
+  #       entries:
+  #         - title: with subsubitems
+  #         - title: example page
+  #           url: about
+  # - title: PRO TIP
+  #   entries:
+  #     - title: to edit this menu, edit _data/menu.yml file

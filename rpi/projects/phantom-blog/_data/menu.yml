@@ -7,7 +7,7 @@ entries:
       - title: This is my personal blog, where I write about my studies, projects, and experiments.
       - title: minimal-synthwave-theme
         url: https://github.com/wguilherme/jekyll-minimal-synthwave.git
-  - title: latest posts
+  - title: posts
     post_list:
       limit: 10
       show_more: true

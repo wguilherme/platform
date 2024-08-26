@@ -39,6 +39,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Clone Obsidian repository
+        uses: actions/checkout@v3
+        with:
+          repository: wguilherme/obsidian
+          path: obsidian-repo
+          token: ${{ secrets.PAT }}
+
+      - name: Copy a.PUBLIC folder
+        run: |
+          mkdir -p ./rpi/projects/phantom-blog/imported
+          cp -R ./obsidian-repo/a.PUBLIC/* ./rpi/projects/phantom-blog/imported/
+          ls -la ./rpi/projects/phantom-blog/imported | wc -l
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
 

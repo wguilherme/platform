@@ -55,7 +55,7 @@ jobs:
           ls -la rpi/projects/phantom-blog/imported | wc -l
           echo "Files copied successfully"
           echo "Trying to apply header layout in all md files: "
-          find ./folder -name "*.md" -exec sed -i '1i---\nlayout: post\n---\n' {} +
+          find  rpi/projects/phantom-blog/_posts rpi/projects/phantom-blog/_posts -name "*.md" -exec sed -i '1i---\nlayout: post\n---\n' {} +
           echo "Header applied successfully"
 
       - name: Set up QEMU

@@ -1,7 +1,8 @@
 ---
 layout: post
-title:  "Welcome"
 ---
+
+
 # lorem ipsum
 ## lorem ipsum 2
 ### lorem ipsum 3

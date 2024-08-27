@@ -52,7 +52,7 @@ jobs:
           ls -la  obsidian-repo/a.PUBLIC | wc -l
           cp -R obsidian-repo/a.PUBLIC/* rpi/projects/phantom-blog/_posts
           echo "Files copied successfully: "
-          ls -la rpi/projects/phantom-blog/imported | wc -l
+          ls -la rpi/projects/phantom-blog/_posts | wc -l
           echo "Files copied successfully"
           echo "Trying to apply header layout in all md files: "
           find  rpi/projects/phantom-blog/_posts rpi/projects/phantom-blog/_posts -name "*.md" -exec sed -i '1i---\nlayout: post\n---\n' {} +

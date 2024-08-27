@@ -1,0 +1,42 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: resources
+---
+apiVersion: stackgres.io/v1
+kind: SGInstanceProfile
+metadata:
+  name: size-small
+  namespace: resources
+spec:
+  cpu: "250m"
+  memory: "512Mi"
+---
+apiVersion: stackgres.io/v1
+kind: SGPoolingConfig
+metadata:
+  name: pooling-config
+  namespace: resources
+spec:
+  pgBouncer:
+    poolMode: transaction
+    parameters:
+      max_client_conn: "100"
+---
+apiVersion: stackgres.io/v1
+kind: SGCluster
+metadata:
+  name: pg1
+  namespace: resources
+spec:
+  instances: 3
+  postgres:
+    version: "13"
+  configurations:
+    sgInstanceProfile: size-small
+    sgPoolingConfig: pooling-config
+    sgBackupConfig: backup-config
+  pods:
+    persistentVolume:
+      size: 10Gi

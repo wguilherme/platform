@@ -4,7 +4,7 @@
 entries:
   - title: info
     entries:
-      - title: This is my personal blog, where I write about my studies, projects, and experiments.
+      - title: Welcome to my digital playground. Here I write about my studies, projects and experiments with code and concepts. Join me on the journey of learning, one byte at a time.
       - title: minimal-synthwave-theme
         url: https://github.com/wguilherme/jekyll-minimal-synthwave.git
   - title: latest posts
@@ -21,8 +21,8 @@ entries:
   #     show_more_text: See more posts...
   #     show_more_url: example2-archive.html
 
-  - title: rss
-    url: feed.xml
+  # - title: rss
+  #   url: feed.xml
   # - title: another list
   #   entries:
   #     - title: with subitems

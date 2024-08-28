@@ -18,10 +18,11 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 
-title: Welcome to my blog :D
+title: root@phantombyte:~$ echo "Access granted, you're in my hackspace now"
 email: hello@phantombyte.uk
 description: >- # this means to ignore newlines until "baseurl:"
-  This is my personal blog, where I write about my studies, projects, and experiments.
+  Welcome to my digital playground. Here I write about my studies and experiments with code and concepts.
+  Join me on the journey of learning, one byte at a time.
 baseurl: "/"
 url: "https://blog.phantombyte.uk" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: phantombyte

@@ -28,6 +28,11 @@ url: "https://blog.phantombyte.uk" # the base hostname & protocol for your site,
 twitter_username: phantombyte
 github_username: wguilherme
 
+# theme config
+
+theme_config:
+  style: hacker
+
 # Build settings
 # theme: minima
 remote_theme: wguilherme/jekyll-minimal-synthwave

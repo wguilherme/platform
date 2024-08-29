@@ -7,13 +7,13 @@ metadata:
     kubernetes.io/ingress.class: traefik
 spec:
   rules:
-  - host: go-ingress.phantombyte.uk  # Substitua pelo seu domínio real
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: phantom-blog-svc
-            port: 
-              number: 80
+    - host: go-ingress.phantombyte.uk
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: phantom-blog-svc
+                port:
+                  number: 80

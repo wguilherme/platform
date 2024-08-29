@@ -31,7 +31,8 @@ github_username: wguilherme
 # theme config
 
 theme_config:
-  style: hacker
+  style: hacker # or "synthwave"
+  back_home_text: ".." # customize text for homepage link in post layout
 
 # Build settings
 # theme: minima

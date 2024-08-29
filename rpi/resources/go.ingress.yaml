@@ -1,13 +1,13 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: go-ingress
+  name: blog-ingress
   namespace: rpi
   annotations:
     kubernetes.io/ingress.class: traefik
 spec:
   rules:
-    - host: go-ingress.phantombyte.uk
+    - host: blog-ingress.phantombyte.uk
       http:
         paths:
           - path: /

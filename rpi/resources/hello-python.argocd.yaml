@@ -1,0 +1,21 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: hello-python
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/wguilherme/platform.git
+    targetRevision: HEAD
+    path: rpi/deployments/hello-python
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: rpi
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

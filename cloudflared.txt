@@ -1,0 +1,31 @@
+tunnel: eef2befe-d8f3-4de8-8dba-779934154caa
+credentials-file: /root/.cloudflared/eef2befe-d8f3-4de8-8dba-779934154caa.json
+
+ingress:
+  - hostname: stackgres.phantombyte.uk
+    service: http://10.43.1.84:8433
+  - hostname: argocd.phantombyte.uk
+    service: http://10.43.105.78:80
+  - hostname: blog.phantombyte.uk
+    service: http://10.43.205.228:80
+  - hostname: go.phantombyte.uk
+    service: http://10.43.233.169:80
+  - hostname: hello.phantombyte.uk
+    service: http://10.43.196.201:80
+  - hostname: phantombyte.uk
+    service: http://10.43.196.201:80
+  - hostname: rb.phantombyte.uk
+    service: http://10.43.105.78:80
+  - hostname: monitoring.phantombyte.uk
+    service: http://10.43.63.131:80
+  - hostname: argocd.phantombyte.uk
+    service: http://10.43.105.78:80
+  - service: http_status:404
+
+# Configurações opcionais para melhorar a segurança e o desempenho
+originRequest:
+  noTLSVerify: true
+  connectTimeout: 30s
+  keepAliveConnections: 100
+  keepAliveTimeout: 1m30s
+  noHappyEyeballs: true

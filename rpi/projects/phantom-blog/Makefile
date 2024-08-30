@@ -1,6 +1,6 @@
 .PHONY: up
 dev: setup
-	@bundle _2.2.34_; bundle; bundle exec jekyll serve;
+	@sudo bundle _2.2.34_; bundle; bundle exec jekyll serve;
 
 .PHONY: setup
 setup:
@@ -22,3 +22,8 @@ push:
 
 .PHONY: ci
 ci: build push
+
+
+.PHONY: troubleshoot
+troubleshoot: 
+	@rm -rf ~/.asdf/shims

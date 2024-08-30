@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: hello-python
-          image: wguilherme/hello-python:latest
+          image: wguilherme/hello-python:a7296e8748f67ada6fc07c005f055c466d5fa026
           ports:
             - containerPort: 80
           resources:

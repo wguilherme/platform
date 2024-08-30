@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: phantom-blog
-          image: wguilherme/phantom-blog:0a2a12aeb744a6e66345387be931ec0dce0d2204
+          image: wguilherme/phantom-blog:ff688e99a90d7a83f040325b4b78224fbc30b787
           ports:
             - containerPort: 4000
           resources:

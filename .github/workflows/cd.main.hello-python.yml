@@ -1,4 +1,4 @@
-name: Build and Deploy Hello Go to Container Registry
+name: Build and Deploy Python to Container Registry
 
 on:
   push:

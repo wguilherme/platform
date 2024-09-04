@@ -27,3 +27,13 @@ spec:
                 name: hello-python
                 port:
                   number: 80
+    - host: joker.phantombyte.uk
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: hello-joker
+                port:
+                  number: 80

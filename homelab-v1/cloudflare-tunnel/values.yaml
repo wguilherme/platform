@@ -1,0 +1,17 @@
+cloudflare:
+  tunnelName: "rancherv2"
+  tunnelId: "839f777c-f3cf-4a1b-80cc-bc01b0ca842a"
+  secretName: "tunnel-credentials"
+  ingress:
+    - hostname: "*.phantombyte.uk"
+      service: http://traefik.kube-system.svc.cluster.local:80
+      originRequest:
+        noTLSVerify: true
+replicaCount: 1
+resources:
+  limits:
+    cpu: "100m"
+    memory: "128Mi"
+  requests:
+    cpu: "100m"
+    memory: "128Mi"

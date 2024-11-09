@@ -1,0 +1,6 @@
+key.json
+.env
+secret.yaml
+home/**
+!docker-compose.yml
+*.log

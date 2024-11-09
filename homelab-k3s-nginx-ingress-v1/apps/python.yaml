@@ -66,16 +66,6 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: joker.phantombyte.uk
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: hello-python
-                port:
-                  number: 80
     - host: python.phantombyte.uk
       http:
         paths:

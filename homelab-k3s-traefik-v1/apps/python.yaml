@@ -63,25 +63,9 @@ kind: Ingress
 metadata:
   name: hello-python-ingress
   namespace: brainy
-  # annotations:
-  #   traefik.ingress.kubernetes.io/router.tls: "true"
-  #   traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
 spec:
   ingressClassName: traefik
-  # tls:
-  #   - hosts:
-  #       - joker.phantombyte.uk
   rules:
-    - host: joker.phantombyte.uk
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: hello-python
-                port:
-                  number: 80
     - host: python.phantombyte.uk
       http:
         paths:

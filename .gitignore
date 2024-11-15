@@ -4,3 +4,5 @@ secret.yaml
 *.log
 /home/**
 !home/media/docker-compose.yml
+*.key
+*.crt

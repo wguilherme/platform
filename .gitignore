@@ -6,3 +6,4 @@ secret.yaml
 !home/media/docker-compose.yml
 *.key
 *.crt
+*.bkp

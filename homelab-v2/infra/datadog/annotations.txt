@@ -1,0 +1,8 @@
+para remover o operator do cluster
+
+kubectl delete datadogagent datadog
+helm delete datadog-operator
+
+
+Para maiores informações, consultar documentação oficial:
+https://docs.datadoghq.com/containers/kubernetes/installation/?tab=datadogoperator#installation

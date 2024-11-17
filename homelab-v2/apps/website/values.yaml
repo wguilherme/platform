@@ -1,0 +1,38 @@
+persistence:
+  enabled: true
+  size: 10Gi
+
+resources:
+  requests:
+    memory: "256Mi"
+    cpu: "250m"
+  limits:
+    memory: "512Mi"
+    cpu: "500m"
+
+mariadb:
+  primary:
+    persistence:
+      enabled: true
+      size: 8Gi
+    resources:
+      requests:
+        memory: "256Mi"
+        cpu: "250m"
+      limits:
+        memory: "512Mi"
+        cpu: "500m"
+
+ingress:
+  enabled: true
+  hostname: blog.agenziamkt.com.br
+  annotations:
+    kubernetes.io/ingress.class: nginx
+  path: /
+
+php:
+  ini:
+    upload_max_filesize: "128M"
+    post_max_size: "128M"
+    memory_limit: "256M"
+    max_execution_time: "300"

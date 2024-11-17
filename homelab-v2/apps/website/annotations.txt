@@ -1,0 +1,9 @@
+kubectl create namespace wordpress
+helm install agenzia-website bitnami/wordpress -f values.yaml -n wordpress
+
+
+echo Username: user
+kubectl get secret --namespace wordpress agenzia-website-wordpress -o jsonpath="{.data.wordpress-password}" | base64 -d
+
+
+helm upgrade agenzia-website bitnami/wordpress -f values.yaml -n wordpress

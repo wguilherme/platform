@@ -7,7 +7,7 @@ kubectl create secret generic tunnel-credentials \
 ## Helm install
 
 helm install cloudflared cloudflare/cloudflare-tunnel \
--f values.yaml \
+-f values.ingress-nginx.yaml \
 -n cloudflare \
 --create-namespace
 

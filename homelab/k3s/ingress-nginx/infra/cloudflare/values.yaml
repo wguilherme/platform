@@ -4,14 +4,14 @@ cloudflare:
   secretName: "tunnel-credentials"
   ingress:
     - hostname: "*.phantombyte.uk"
-      service: http://traefik.kube-system.svc.cluster.local:80
+      service: http://ingress-nginx-controller.ingress-nginx.svc.cluster.local:80
       originRequest:
         noTLSVerify: true
 replicaCount: 1
 resources:
   limits:
-    cpu: "100m"
-    memory: "128Mi"
+    cpu: "256m"
+    memory: "256Mi"
   requests:
     cpu: "100m"
     memory: "128Mi"

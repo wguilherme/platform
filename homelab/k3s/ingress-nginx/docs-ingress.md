@@ -12,7 +12,7 @@ sudo reboot
 
 ## Instala o K3S como server sem traefik habilitado
 ```bash
-curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.26.15+k3s1 sh -s - server --disable=traefik
+curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.25.13+k3s1 sh -s - server --disable=traefik
 ```
 
 ## Instala o ingress-nginx

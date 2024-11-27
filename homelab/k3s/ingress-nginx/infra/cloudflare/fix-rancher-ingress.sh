@@ -3,7 +3,7 @@ kubectl patch ingress rancher -n cattle-system --type=merge -p '
   "spec": {
     "rules": [
       {
-        "host": "rancherv2.phantombyte.uk",
+        "host": "rancher.phantombyte.uk",
         "http": {
           "paths": [
             {

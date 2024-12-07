@@ -40,3 +40,6 @@ helm install rancher rancher-stable/rancher \
 ```bash
 kubectl get pods -n cattle-system
 ``` 
+
+ubuntu@ip-172-31-21-69:~$ sudo ip addr add 10.3.152.31/32 dev eth0
+ubuntu@ip-172-31-21-69:~$ sudo socat TCP-LISTEN:6443,bind=10.3.152.31,fork TCP:rancher.phantombyte.uk:443

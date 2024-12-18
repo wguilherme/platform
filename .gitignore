@@ -7,3 +7,4 @@ secret.yaml
 *.key
 *.crt
 *.bkp
+node_modules

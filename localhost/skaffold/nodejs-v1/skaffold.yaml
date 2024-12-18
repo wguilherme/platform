@@ -1,0 +1,26 @@
+apiVersion: skaffold/v4beta7
+kind: Config
+metadata:
+  name: node-app
+build:
+  local:
+    push: false
+  artifacts:
+    - image: docker.io/library/node-app
+      context: .
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        infer:
+          - 'src/**/*'
+manifests:
+  rawYaml:
+    - k8s/*.yaml
+deploy:
+  kubectl: {}
+portForward:
+  - resourceType: service
+    resourceName: node-app
+    namespace: nodejs-v1
+    port: 80
+    localPort: 15001

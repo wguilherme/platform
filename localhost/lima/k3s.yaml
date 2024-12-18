@@ -1,0 +1,19 @@
+images:
+  - location: "https://cloud-images.ubuntu.com/releases/22.04/release/ubuntu-22.04-server-cloudimg-arm64.img"
+    arch: "aarch64"
+
+memory: "2GiB"
+cpus: 2
+disk: "15GiB"
+
+mounts:
+  - location: "~"
+    writable: true
+
+provision:
+  - mode: system
+    script: |
+      #!/bin/bash
+      curl -sfL https://get.k3s.io | sh -
+      mkdir -p /etc/rancher/k3s
+      echo "write-kubeconfig-mode: 644" > /etc/rancher/k3s/config.yaml

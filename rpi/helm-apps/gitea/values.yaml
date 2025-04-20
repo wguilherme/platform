@@ -1,0 +1,46 @@
+gitea:
+  config:
+    APP_NAME: "Gitea Source Code Management"
+    repository:
+      ENABLE_PUSH_CREATE_USER: true
+      DEFAULT_PUSH_CREATE_PRIVATE: false
+      ENABLE_PUSH_CREATE_ORG: true
+    server:
+      DOMAIN: git.phantombyte.uk
+      ROOT_URL: https://git.phantombyte.uk/
+      OFFLINE_MODE: false
+      LFS_START_SERVER: true
+      LFS_MAX_FILE_SIZE: 0
+    lfs:
+      ENABLED: true
+      PATH: /data/lfs
+
+  persistence:
+    enabled: true
+    size: 5Gi
+
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1024Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+
+postgresql:
+  persistence:
+    enabled: true
+    size: 2Gi
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 50m
+      memory: 128Mi
+
+service:
+  http:
+    type: ClusterIP
+  ssh:
+    type: ClusterIP

@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: registry-nginx
+  namespace: registry
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: registry-nginx
+  template:
+    metadata:
+      labels:
+        app: registry-nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:alpine
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: nginx-config
+          mountPath: /etc/nginx/conf.d
+        - name: htpasswd
+          mountPath: /etc/nginx/auth
+      volumes:
+      - name: nginx-config
+        configMap:
+          name: registry-nginx-config
+      - name: htpasswd
+        secret:
+          secretName: registry-htpasswd
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: registry-nginx
+  namespace: registry
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP
+      name: http
+  selector:
+    app: registry-nginx

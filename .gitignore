@@ -8,3 +8,4 @@ secret.yaml
 *.crt
 *.bkp
 node_modules
+htpasswd

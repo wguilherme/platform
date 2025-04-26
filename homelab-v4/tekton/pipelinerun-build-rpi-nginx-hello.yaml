@@ -1,0 +1,14 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: build-and-push-rpi-nginx-hello-run
+spec:
+  pipelineRef:
+    name: build-and-push-rpi-nginx-hello
+  params:
+    - name: IMAGE
+      value: registry.phantombyte.uk/rpi-nginx-hello:latest
+  workspaces:
+    - name: source
+      persistentVolumeClaim:
+        claimName: tekton-workspace-pvc

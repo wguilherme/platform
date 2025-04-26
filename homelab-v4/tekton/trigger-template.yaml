@@ -1,0 +1,24 @@
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerTemplate
+metadata:
+  name: build-push-trigger-template
+spec:
+  params:
+    - name: gitrevision
+    - name: gitrepositoryurl
+    - name: IMAGE
+  resourcetemplates:
+    - apiVersion: tekton.dev/v1beta1
+      kind: PipelineRun
+      metadata:
+        generateName: build-and-push-run-
+      spec:
+        pipelineRef:
+          name: build-and-push-pipeline
+        params:
+          - name: IMAGE
+            value: $(tt.params.IMAGE)
+        workspaces:
+          - name: source
+            persistentVolumeClaim:
+              claimName: tekton-workspace-pvc

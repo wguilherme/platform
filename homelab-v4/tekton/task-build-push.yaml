@@ -1,0 +1,21 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: build-and-push-rpi-nginx-hello
+spec:
+  params:
+    - name: IMAGE
+      type: string
+  workspaces:
+    - name: source
+  steps:
+    - name: build-and-push
+      image: gcr.io/kaniko-project/executor:latest
+      env:
+        - name: DOCKER_CONFIG
+          value: /tekton/home/.docker/
+      script: |
+        /kaniko/executor \
+          --dockerfile=$(workspaces.source.path)/applications/rpi-nginx-hello/Dockerfile \
+          --context=$(workspaces.source.path)/applications/rpi-nginx-hello \
+          --destination=$(params.IMAGE)

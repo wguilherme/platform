@@ -1,3 +1,5 @@
 {
-  "example": "replace with your Cloudflare tunnel key info"
+  "AccountTag": "",
+  "TunnelID": "",
+  "TunnelSecret": ""
 }

@@ -1,0 +1,6 @@
+# Manifesto de instalação rápida do Tekton Pipelines
+# Fonte: https://tekton.dev/docs/getting-started/
+---
+# Execute: kubectl apply --filename https://storage.googleapis.com/tekton-releases/pipeline/latest/release.yaml
+# Ou copie o conteúdo do link acima neste arquivo para instalação offline.
+# kubectl get pods --namespace tekton-pipelines --watch

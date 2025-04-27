@@ -4,9 +4,7 @@
 #include "driver/gpio.h"
 #include "driver/ledc.h"
 
-// Lista de GPIOs comuns para LEDs onboard
-const int gpios[] = {2, 5, 16, 13, 21, 22};
-const int num_gpios = sizeof(gpios) / sizeof(gpios[0]);
+#define LED_GPIO 25  // Usando apenas GPIO 25 para teste
 
 // Configuração do PWM
 #define LEDC_TIMER              LEDC_TIMER_0
@@ -18,7 +16,7 @@ const int num_gpios = sizeof(gpios) / sizeof(gpios[0]);
 
 void app_main(void)
 {
-    printf("Iniciando aplicação...\n");
+    printf("Iniciando aplicação com PWM na GPIO %d...\n", LED_GPIO);
     
     // Configurar timer PWM
     ledc_timer_config_t ledc_timer = {
@@ -30,44 +28,35 @@ void app_main(void)
     };
     ledc_timer_config(&ledc_timer);
     
-    int current_gpio = 0;
+    // Configurar canal PWM
+    ledc_channel_config_t ledc_channel = {
+        .speed_mode = LEDC_MODE,
+        .channel = LEDC_CHANNEL,
+        .timer_sel = LEDC_TIMER,
+        .intr_type = LEDC_INTR_DISABLE,
+        .gpio_num = LED_GPIO,
+        .duty = 0,
+        .hpoint = 0
+    };
+    ledc_channel_config(&ledc_channel);
     
     while (1) {
-        printf("\nTestando GPIO %d\n", gpios[current_gpio]);
-        
-        // Configurar canal PWM para a GPIO atual
-        ledc_channel_config_t ledc_channel = {
-            .speed_mode = LEDC_MODE,
-            .channel = LEDC_CHANNEL,
-            .timer_sel = LEDC_TIMER,
-            .intr_type = LEDC_INTR_DISABLE,
-            .gpio_num = gpios[current_gpio],
-            .duty = 0,
-            .hpoint = 0
-        };
-        ledc_channel_config(&ledc_channel);
-        
-        // Piscar 4 vezes com diferentes intensidades
-        for (int i = 0; i < 4; i++) {
-            // Aumentar intensidade gradualmente
-            for (int duty = 0; duty <= LEDC_DUTY_MAX; duty += 5) {
-                ledc_set_duty(LEDC_MODE, LEDC_CHANNEL, duty);
-                ledc_update_duty(LEDC_MODE, LEDC_CHANNEL);
-                vTaskDelay(10 / portTICK_PERIOD_MS);
-            }
-            
-            // Diminuir intensidade gradualmente
-            for (int duty = LEDC_DUTY_MAX; duty >= 0; duty -= 5) {
-                ledc_set_duty(LEDC_MODE, LEDC_CHANNEL, duty);
-                ledc_update_duty(LEDC_MODE, LEDC_CHANNEL);
-                vTaskDelay(10 / portTICK_PERIOD_MS);
-            }
+        printf("Aumentando intensidade...\n");
+        // Aumentar intensidade gradualmente
+        for (int duty = 0; duty <= LEDC_DUTY_MAX; duty += 5) {
+            ledc_set_duty(LEDC_MODE, LEDC_CHANNEL, duty);
+            ledc_update_duty(LEDC_MODE, LEDC_CHANNEL);
+            vTaskDelay(50 / portTICK_PERIOD_MS);
         }
         
-        // Mudar para próxima GPIO
-        current_gpio = (current_gpio + 1) % num_gpios;
+        printf("Diminuindo intensidade...\n");
+        // Diminuir intensidade gradualmente
+        for (int duty = LEDC_DUTY_MAX; duty >= 0; duty -= 5) {
+            ledc_set_duty(LEDC_MODE, LEDC_CHANNEL, duty);
+            ledc_update_duty(LEDC_MODE, LEDC_CHANNEL);
+            vTaskDelay(50 / portTICK_PERIOD_MS);
+        }
         
-        // Pequena pausa entre GPIOs
-        vTaskDelay(2000 / portTICK_PERIOD_MS);
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
 }

@@ -1,12 +1,19 @@
-#define LED_BUILTIN 2
+#include <stdio.h>
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "driver/gpio.h"
 
-void setup() {
-  pinMode(LED_BUILTIN, OUTPUT);
-}
+#define BLINK_GPIO 2
 
-void loop() {
-  digitalWrite(LED_BUILTIN, HIGH);
-  delay(500);
-  digitalWrite(LED_BUILTIN, LOW);
-  delay(500);
+void app_main(void)
+{
+    gpio_set_direction(BLINK_GPIO, GPIO_MODE_OUTPUT);
+    
+    while (1) {
+        gpio_set_level(BLINK_GPIO, 1);
+        vTaskDelay(500 / portTICK_PERIOD_MS);
+        
+        gpio_set_level(BLINK_GPIO, 0);
+        vTaskDelay(500 / portTICK_PERIOD_MS);
+    }
 }

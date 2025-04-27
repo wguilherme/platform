@@ -171,3 +171,8 @@ groups
 ```bash
 cd ~/esp/hello_esp32
 idf.py -p /dev/ttyUSB0 flash monitor
+
+
+
+sudo apt update
+sudo apt install cmake

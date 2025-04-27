@@ -12,8 +12,8 @@ Este projeto é um exemplo simples para piscar o LED conectado à GPIO2 do ESP32
 
 1. **Clone o repositório** (se ainda não tiver feito):
    ```sh
-   git clone <URL_DO_REPOSITÓRIO>
-   cd homelab/k3s/esp32/esp32-blink
+   git clone https://github.com/wguilherme/platform.git
+   cd platform/homelab/k3s/esp32/esp32-blink
    ```
 
 2. **Exporte o ambiente do ESP-IDF**:

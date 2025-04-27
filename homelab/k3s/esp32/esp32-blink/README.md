@@ -91,3 +91,6 @@ Para facilitar o processo de build e gravação do firmware no ESP32, você pode
 
 - [ESP-IDF Documentation](https://docs.espressif.com/projects/esp-idf/en/latest/)
 - [ESP32 GPIO Reference](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/gpio.html) 
+
+
+ <!-- ESP32-D0WDQ6. -->

@@ -60,6 +60,33 @@ Este projeto é um exemplo simples para piscar o LED conectado à GPIO2 do ESP32
   sudo reboot
   ```
 
+## Automação do Build e Flash (script flash_esp32.sh)
+
+Para facilitar o processo de build e gravação do firmware no ESP32, você pode usar o script `flash_esp32.sh` que já está na pasta deste projeto.
+
+### Passos para usar a automação
+
+1. **Dê permissão de execução ao script:**
+   ```sh
+   chmod +x flash_esp32.sh
+   ```
+
+2. **Execute o script:**
+   ```sh
+   ./flash_esp32.sh [porta_serial] [arquivo.c]
+   ```
+   - Se não informar argumentos, o script usará `/dev/ttyUSB0` e `blink.c` por padrão.
+   - Exemplo customizado:
+     ```sh
+     ./flash_esp32.sh /dev/ttyACM0 meu_codigo.c
+     ```
+
+3. **O script irá:**
+   - Exportar o ambiente do ESP-IDF.
+   - Gerar o `sdkconfig` se não existir.
+   - Buildar o projeto.
+   - Gravar o firmware e abrir o monitor serial.
+
 ## Referências
 
 - [ESP-IDF Documentation](https://docs.espressif.com/projects/esp-idf/en/latest/)

@@ -1,0 +1,11 @@
+resources:
+  - task-build-push.yaml
+  - pipeline-build-rpi-nginx-hello.yaml
+  - trigger-template.yaml
+  - github-binding.yaml
+  - event-listener.yaml
+  - ingress-eventlistener.yaml
+  - tekton-triggers-sa.yaml
+  - tekton-triggers-clusterrolebinding.yaml
+  - tekton-workspace-pvc.yaml
+  - tekton-triggers-controller-rbac.yaml

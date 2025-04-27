@@ -9,4 +9,4 @@ spec:
     - name: gitrepositoryurl
       value: $(body.repository.clone_url)
     - name: IMAGE
-      value: "harbor.mycompany.com/rpi-nginx-hello:$(body.head_commit.id)"
+      value: "registry.phantombyte.uk/rpi-nginx-hello:latest"

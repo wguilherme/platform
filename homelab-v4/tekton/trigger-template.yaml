@@ -11,10 +11,10 @@ spec:
     - apiVersion: tekton.dev/v1beta1
       kind: PipelineRun
       metadata:
-        generateName: build-and-push-run-
+        generateName: build-and-push-rpi-nginx-hello-run-
       spec:
         pipelineRef:
-          name: build-and-push-pipeline
+          name: build-and-push-rpi-nginx-hello
         params:
           - name: IMAGE
             value: $(tt.params.IMAGE)

@@ -6,6 +6,12 @@ spec:
   serviceAccountName: tekton-triggers-sa
   triggers:
     - name: github-push
+      interceptors:
+        - ref:
+            name: cel
+          params:
+            - name: filter
+              value: "header.match('X-GitHub-Event', 'push')"
       bindings:
         - ref: github-binding
       template:

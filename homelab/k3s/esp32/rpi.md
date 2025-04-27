@@ -69,6 +69,9 @@ usbserial              61440  2 cp210x,ch341
 
 
 
+ESP8266: geralmente usa CH340/CH341 (ch34)
+ESP32: geralmente usa CP210x (cp210) ou, em alguns casos, FTDI (ftdi)
+
 
 ps: foi necessário dar load module
 
@@ -76,6 +79,71 @@ esp32:
 lsmod | grep -E "usbserial|ch341|cp210x"
 
 
+## Troubleshooting USB Serial (ESP32/ESP8266 no Raspberry Pi)
+
+### 1. Verificar módulos/drivers carregados
+
+Execute os comandos abaixo para checar se os principais módulos estão instalados e carregados:
+
+```sh
+lsmod | grep ch34    # Para CH340/CH341
+lsmod | grep cp210   # Para CP210x
+lsmod | grep ftdi    # Para FTDI
+```
+
+Se não aparecer nada, tente carregar manualmente:
+
+```sh
+sudo modprobe ch341
+sudo modprobe cp210x
+sudo modprobe ftdi_sio
+```
+
+Para garantir que os módulos estão instalados:
+
+```sh
+sudo apt install dkms
+```
+
+### 2. Verificar se o dispositivo foi reconhecido
+
+Após conectar o ESP, rode:
+
+```sh
+dmesg | tail -30
+```
+
+```sh
+lsusb
+```
+
+Procure por linhas relacionadas ao chip USB-Serial (ex: "QinHeng Electronics CH340", "Silicon Labs CP210x", "FTDI", etc).
+
+### 3. Verificação específica
+
+#### Para ESP32
+
+- Normalmente aparece como `/dev/ttyUSB0` ou `/dev/ttyACM0`.
+- No `lsusb`, procure por "Silicon Labs" (CP210x) ou "FTDI".
+
+#### Para ESP8266
+
+- Normalmente aparece como `/dev/ttyUSB0`.
+- No `lsusb`, procure por "QinHeng Electronics" (CH340/CH341).
+
+#### Comando para listar dispositivos seriais:
+
+```sh
+ls /dev/ttyUSB* /dev/ttyACM*
+```
+
+#### Permissões
+
+Adicione seu usuário ao grupo `dialout` se necessário:
+
+```sh
+sudo usermod -aG dialout $USER
+```
 
 ### Teste de Comunicação
 

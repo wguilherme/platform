@@ -1,0 +1,1 @@
+cmake_minimum_required(VERSION 3.5)\ninclude($ENV{IDF_PATH}/tools/cmake/project.cmake)\nproject(blink)\n 

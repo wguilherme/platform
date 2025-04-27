@@ -1,0 +1,19 @@
+FROM ubuntu:22.04
+
+# Instala dependências mínimas
+RUN apt-get update && apt-get install -y \
+  python3 \
+  python3-pip \
+  git \
+  cmake \
+  && rm -rf /var/lib/apt/lists/*
+
+# Instala ESP-IDF tools (apenas ferramentas de flash)
+RUN pip3 install esptool
+
+# Script para download e flash
+COPY flash_only.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/flash_only.sh
+
+# Ponto de entrada
+ENTRYPOINT ["/usr/local/bin/flash_only.sh"] 

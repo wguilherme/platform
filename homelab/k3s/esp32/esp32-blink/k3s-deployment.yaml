@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: esp32-flasher
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: esp32-flasher
+  template:
+    metadata:
+      labels:
+        app: esp32-flasher
+    spec:
+      containers:
+        - name: flasher
+          image: seu-registry/esp32-flasher:latest
+          args:
+            - "https://github.com/seu-repo/releases/latest/download/firmware.bin"
+            - "/dev/ttyUSB0"
+          securityContext:
+            privileged: true # Necessário para acesso ao USB
+          volumeMounts:
+            - name: usb-device
+              mountPath: /dev/ttyUSB0
+              subPath: ttyUSB0
+      volumes:
+        - name: usb-device
+          hostPath:
+            path: /dev/ttyUSB0
+            type: CharDevice

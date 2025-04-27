@@ -16,8 +16,6 @@
 
 void app_main(void)
 {
-    printf("Iniciando aplicação com PWM na GPIO %d...\n", LED_GPIO);
-    
     // Configurar timer PWM
     ledc_timer_config_t ledc_timer = {
         .speed_mode = LEDC_MODE,
@@ -35,28 +33,13 @@ void app_main(void)
         .timer_sel = LEDC_TIMER,
         .intr_type = LEDC_INTR_DISABLE,
         .gpio_num = LED_GPIO,
-        .duty = 0,
+        .duty = LEDC_DUTY_MAX,  // Intensidade máxima
         .hpoint = 0
     };
     ledc_channel_config(&ledc_channel);
     
+    // Manter o LED ligado indefinidamente
     while (1) {
-        printf("Aumentando intensidade...\n");
-        // Aumentar intensidade gradualmente
-        for (int duty = 0; duty <= LEDC_DUTY_MAX; duty += 5) {
-            ledc_set_duty(LEDC_MODE, LEDC_CHANNEL, duty);
-            ledc_update_duty(LEDC_MODE, LEDC_CHANNEL);
-            vTaskDelay(50 / portTICK_PERIOD_MS);
-        }
-        
-        printf("Diminuindo intensidade...\n");
-        // Diminuir intensidade gradualmente
-        for (int duty = LEDC_DUTY_MAX; duty >= 0; duty -= 5) {
-            ledc_set_duty(LEDC_MODE, LEDC_CHANNEL, duty);
-            ledc_update_duty(LEDC_MODE, LEDC_CHANNEL);
-            vTaskDelay(50 / portTICK_PERIOD_MS);
-        }
-        
         vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
 }

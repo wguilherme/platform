@@ -9,3 +9,4 @@ secret.yaml
 *.bkp
 node_modules
 htpasswd
+.pio

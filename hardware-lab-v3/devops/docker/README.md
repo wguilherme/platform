@@ -6,7 +6,7 @@ Esta configuração Docker permite executar o Home Assistant para consumir e ger
 
 ```
 devops/docker/
-├── docker-compose.yml           # Configuração principal do Docker Compose
+├── docker-compose.yml          # Configuração principal do Docker Compose
 ├── .env                        # Variáveis de ambiente
 ├── start.sh                    # Script de inicialização
 ├── README.md                   # Esta documentação

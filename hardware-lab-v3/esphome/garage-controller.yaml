@@ -1,0 +1,168 @@
+# ESPHome Configuration for ESP32 Garage Door Controller
+# Device: ESP32-WROOM-32
+# Purpose: Smart garage door controller with HomeKit integration
+
+esphome:
+  name: garagem-esp32
+  friendly_name: "ESP32 Controle Garagem"
+  project:
+    name: "withney.garage-controller"
+    version: "1.0.0"
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+# WiFi Configuration
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  
+  # Enable fallback hotspot (captive portal) in case WiFi connection fails
+  ap:
+    ssid: "Garagem-ESP32-Fallback"
+    password: !secret ap_password
+
+# Captive portal for WiFi configuration
+captive_portal:
+
+# Enable logging
+logger:
+  level: INFO
+  baud_rate: 115200
+
+# Enable Home Assistant API
+api:
+  password: !secret api_password
+  reboot_timeout: 15min
+
+# Enable OTA updates
+ota:
+  - platform: esphome
+    password: !secret ota_password
+
+# Web server for local interface
+web_server:
+  port: 80
+  version: 2
+
+# Status LED (built-in)
+status_led:
+  pin:
+    number: GPIO2
+    inverted: false
+
+# Physical relay for garage door control
+switch:
+  - platform: gpio
+    id: relay_garagem
+    name: "Relé Garagem"
+    pin:
+      number: GPIO21  # Changed from GPIO2 to avoid conflict with status LED
+      inverted: false
+    restore_mode: ALWAYS_OFF
+    on_turn_on:
+    - delay: 1s
+    - switch.turn_off: relay_garagem
+
+# Template switch for pulse control
+  - platform: template
+    name: "Pulso Garagem"
+    id: garage_pulse
+    icon: "mdi:garage"
+    turn_on_action:
+      - switch.turn_on: relay_garagem
+      - delay: 1s
+      - switch.turn_off: relay_garagem
+
+# Optional: Binary sensor for door position (if you have a reed switch/sensor)
+binary_sensor:
+  # Uncomment and configure if you have a door position sensor
+  # - platform: gpio
+  #   pin:
+  #     number: GPIO12
+  #     mode: INPUT_PULLUP
+  #     inverted: true
+  #   name: "Sensor Portão"
+  #   id: door_sensor
+  #   device_class: garage_door
+  #   filters:
+  #     - delayed_on: 50ms
+  #     - delayed_off: 50ms
+
+  # WiFi status sensor
+  - platform: status
+    name: "Status WiFi"
+
+# Cover entity for garage door (HomeKit compatible)
+cover:
+  - platform: template
+    device_class: garage
+    name: "Portão Garagem"
+    id: garage_door
+    icon: "mdi:garage"
+    # If you have a position sensor, uncomment these lines:
+    # lambda: |-
+    #   if (id(door_sensor).state) {
+    #     return COVER_OPEN;
+    #   } else {
+    #     return COVER_CLOSED;
+    #   }
+    open_action:
+      - switch.turn_on: relay_garagem
+      - delay: 1s
+      - switch.turn_off: relay_garagem
+    close_action:
+      - switch.turn_on: relay_garagem
+      - delay: 1s
+      - switch.turn_off: relay_garagem
+    stop_action:
+      - switch.turn_on: relay_garagem
+      - delay: 1s
+      - switch.turn_off: relay_garagem
+
+# Sensors for system monitoring
+sensor:
+  - platform: wifi_signal
+    name: "Sinal WiFi"
+    update_interval: 60s
+
+  - platform: uptime
+    name: "Tempo Ligado"
+    id: uptime_sensor
+    update_interval: 60s
+
+# Text sensors
+text_sensor:
+  - platform: wifi_info
+    ip_address:
+      name: "IP Address"
+    ssid:
+      name: "Connected SSID"
+    mac_address:
+      name: "MAC Address"
+
+  - platform: template
+    name: "Sistema Info"
+    lambda: |-
+      return {"Device: ESP32 Garage Controller v1.0"};
+    update_interval: 60s
+
+# Time component (useful for automations)
+time:
+  - platform: homeassistant
+    id: homeassistant_time
+
+# Optional: Add buttons for manual control
+button:
+  - platform: restart
+    name: "Reiniciar ESP32"
+  
+  - platform: template
+    name: "Acionar Portão"
+    icon: "mdi:garage-open"
+    on_press:
+      - switch.turn_on: relay_garagem
+      - delay: 1s
+      - switch.turn_off: relay_garagem

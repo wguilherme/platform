@@ -18,7 +18,7 @@ esp32:
 wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_password
-  
+
   # Enable fallback hotspot (captive portal) in case WiFi connection fails
   ap:
     ssid: "Garagem-ESP32-Fallback"
@@ -47,34 +47,24 @@ web_server:
   port: 80
   version: 2
 
-# Status LED (built-in)
-status_led:
-  pin:
-    number: GPIO2
-    inverted: false
+# Status LED disabled (GPIO2 used by relay)
+# status_led:
+#   pin:
+#     number: GPIO2
+#     inverted: false
 
-# Physical relay for garage door control
+# Physical relay for garage door control (basic switch - always starts OFF)
 switch:
   - platform: gpio
     id: relay_garagem
     name: "Relé Garagem"
     pin:
-      number: GPIO21  # Changed from GPIO2 to avoid conflict with status LED
-      inverted: false
+      number: GPIO2  # Back to GPIO2 like working version
+      inverted: true  # RELAY_ON_STATE = LOW like original
     restore_mode: ALWAYS_OFF
-    on_turn_on:
-    - delay: 1s
-    - switch.turn_off: relay_garagem
+    internal: true # Hide from web interface to avoid confusion
 
-# Template switch for pulse control
-  - platform: template
-    name: "Pulso Garagem"
-    id: garage_pulse
-    icon: "mdi:garage"
-    turn_on_action:
-      - switch.turn_on: relay_garagem
-      - delay: 1s
-      - switch.turn_off: relay_garagem
+  # No template switches to avoid conflicts - using buttons instead
 
 # Optional: Binary sensor for door position (if you have a reed switch/sensor)
 binary_sensor:
@@ -111,15 +101,15 @@ cover:
     #   }
     open_action:
       - switch.turn_on: relay_garagem
-      - delay: 1s
+      - delay: 500ms
       - switch.turn_off: relay_garagem
     close_action:
       - switch.turn_on: relay_garagem
-      - delay: 1s
+      - delay: 500ms
       - switch.turn_off: relay_garagem
     stop_action:
       - switch.turn_on: relay_garagem
-      - delay: 1s
+      - delay: 500ms
       - switch.turn_off: relay_garagem
 
 # Sensors for system monitoring
@@ -158,11 +148,19 @@ time:
 button:
   - platform: restart
     name: "Reiniciar ESP32"
-  
+
+  - platform: template
+    name: "Pulso Garagem"
+    icon: "mdi:garage-alert"
+    on_press:
+      - switch.turn_on: relay_garagem
+      - delay: 500ms
+      - switch.turn_off: relay_garagem
+
   - platform: template
     name: "Acionar Portão"
     icon: "mdi:garage-open"
     on_press:
       - switch.turn_on: relay_garagem
-      - delay: 1s
+      - delay: 500ms
       - switch.turn_off: relay_garagem

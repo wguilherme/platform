@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  homeassistant:
+    image: ghcr.io/home-assistant/home-assistant:stable
+    container_name: homeassistant-garagem
+    restart: unless-stopped
+    privileged: true
+    network_mode: host
+    environment:
+      - TZ=America/Sao_Paulo
+    volumes:
+      - ./homeassistant:/config
+      - /etc/localtime:/etc/localtime:ro
+      - /run/dbus:/run/dbus:ro
+    ports:
+      - "8123:8123"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8123"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.homeassistant.rule=Host(`homeassistant.local`)"
+      - "traefik.http.routers.homeassistant.entrypoints=web"
+      - "traefik.http.services.homeassistant.loadbalancer.server.port=8123"
+
+  # Optional: ESPHome Dashboard para gerenciar dispositivos
+  esphome:
+    image: ghcr.io/esphome/esphome:latest
+    container_name: esphome-dashboard
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      - USERNAME=esphome
+      - PASSWORD=esphome123
+      - ESPHOME_DASHBOARD_USE_PING=true
+    volumes:
+      - ../../esphome:/config
+      - /etc/localtime:/etc/localtime:ro
+      - esphome_data:/data
+    ports:
+      - "6052:6052"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.esphome.rule=Host(`esphome.local`)"
+      - "traefik.http.routers.esphome.entrypoints=web"
+      - "traefik.http.services.esphome.loadbalancer.server.port=6052"
+
+volumes:
+  esphome_data:
+    driver: local

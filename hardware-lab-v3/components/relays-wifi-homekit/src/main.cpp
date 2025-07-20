@@ -4,8 +4,8 @@
 #include <ESPmDNS.h>
 
 // configs/vars
-const char* WIFI_SSID = "Withney";
-const char* WIFI_PASSWORD = "230399wg";
+const char* WIFI_SSID = "";
+const char* WIFI_PASSWORD = "";
 
 const int RELAY_GPIO = 2;
 const int RELAY_ON_STATE = LOW;

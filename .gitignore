@@ -10,3 +10,5 @@ secret.yaml
 node_modules
 htpasswd
 .pio
+
+*.DS_Store

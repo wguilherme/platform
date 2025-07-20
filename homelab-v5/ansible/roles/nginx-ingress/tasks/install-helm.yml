@@ -25,8 +25,12 @@
         path: /tmp/get_helm.sh
         state: absent
 
+- name: Add Helm repository
+  command: helm repo add {{ nginx_ingress_helm_repo_name }} {{ nginx_ingress_helm_repo_url }}
+  register: helm_repo_add
+  changed_when: "'has been added' in helm_repo_add.stdout"
+  failed_when: helm_repo_add.rc != 0 and "already exists" not in helm_repo_add.stderr
+
 - name: Update Helm repository cache
-  kubernetes.core.helm_repository:
-    name: "{{ nginx_ingress_helm_repo_name }}"
-    repo_url: "{{ nginx_ingress_helm_repo_url }}"
-    state: present
+  command: helm repo update
+  changed_when: false

@@ -1,10 +1,9 @@
 ---
 - name: Create nginx-ingress namespace
-  kubernetes.core.k8s:
-    name: "{{ nginx_ingress_namespace }}"
-    api_version: v1
-    kind: Namespace
-    state: present
+  command: kubectl create namespace {{ nginx_ingress_namespace }}
+  register: create_namespace
+  failed_when: create_namespace.rc != 0 and "already exists" not in create_namespace.stderr
+  changed_when: create_namespace.rc == 0
 
 - name: Generate Helm values
   template:
@@ -13,17 +12,18 @@
     mode: '0644'
 
 - name: Deploy Nginx Ingress Controller using Helm
-  kubernetes.core.helm:
-    name: "{{ nginx_ingress_helm_release_name }}"
-    chart_ref: "{{ nginx_ingress_helm_repo_name }}/{{ nginx_ingress_helm_chart }}"
-    chart_version: "{{ nginx_ingress_version }}"
-    release_namespace: "{{ nginx_ingress_namespace }}"
-    create_namespace: true
-    values_files:
-      - /tmp/nginx-ingress-values.yaml
-    wait: true
-    wait_timeout: "{{ nginx_ingress_wait_timeout }}s"
-    state: present
+  shell: |
+    export KUBECONFIG={{ ansible_env.HOME }}/.kube/config
+    helm upgrade --install {{ nginx_ingress_helm_release_name }} \
+      {{ nginx_ingress_helm_repo_name }}/{{ nginx_ingress_helm_chart }} \
+      --version {{ nginx_ingress_version }} \
+      --namespace {{ nginx_ingress_namespace }} \
+      --create-namespace \
+      --values /tmp/nginx-ingress-values.yaml \
+      --wait \
+      --timeout {{ nginx_ingress_wait_timeout }}s
+  register: helm_deploy
+  changed_when: "'has been upgraded' in helm_deploy.stdout or 'has been installed' in helm_deploy.stdout"
 
 - name: Clean up temporary values file
   file:

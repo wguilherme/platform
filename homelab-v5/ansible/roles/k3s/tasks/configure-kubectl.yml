@@ -4,7 +4,17 @@
     path: "{{ ansible_env.HOME }}/.kube"
     state: directory
     mode: '0755'
-    owner: "{{ ansible_user }}"
+    owner: "{{ ansible_env.USER | default(ansible_user_id) }}"
+    group: "{{ ansible_env.USER | default(ansible_user_id) }}"
+
+- name: Create kubectl config directory for root
+  become: true
+  file:
+    path: "/root/.kube"
+    state: directory
+    mode: '0755'
+    owner: root
+    group: root
 
 - name: Copy kubeconfig to user home
   become: true
@@ -12,22 +22,57 @@
     src: "{{ k3s_kubeconfig_path }}"
     dest: "{{ ansible_env.HOME }}/.kube/config"
     remote_src: true
-    owner: "{{ ansible_user }}"
+    owner: "{{ ansible_env.USER | default(ansible_user_id) }}"
+    group: "{{ ansible_env.USER | default(ansible_user_id) }}"
     mode: '0600'
 
-- name: Update kubeconfig server address
+- name: Copy kubeconfig to root home
+  become: true
+  copy:
+    src: "{{ k3s_kubeconfig_path }}"
+    dest: "/root/.kube/config"
+    remote_src: true
+    owner: root
+    group: root
+    mode: '0600'
+
+- name: Update kubeconfig server address (use hostname for Orbstack)
   replace:
     path: "{{ ansible_env.HOME }}/.kube/config"
-    regexp: 'https://127.0.0.1:6443'
-    replace: "https://{{ ansible_default_ipv4.address }}:6443"
-  when: ansible_default_ipv4.address is defined
+    regexp: 'https://.*:6443'
+    replace: "{% if 'orbstack' in group_names or 'orb' in inventory_hostname %}https://rancher.orb.local:6443{% else %}https://{{ orbstack_ip | default(ansible_default_ipv4.address) }}:6443{% endif %}"
+
+- name: Also update root kubeconfig (use hostname for Orbstack)
+  become: true
+  replace:
+    path: "/root/.kube/config"
+    regexp: 'https://.*:6443'
+    replace: "{% if 'orbstack' in group_names or 'orb' in inventory_hostname %}https://rancher.orb.local:6443{% else %}https://{{ orbstack_ip | default(ansible_default_ipv4.address) }}:6443{% endif %}"
+
+- name: Add insecure-skip-tls-verify for Orbstack
+  lineinfile:
+    path: "{{ ansible_env.HOME }}/.kube/config"
+    regexp: '    certificate-authority-data:'
+    line: '    insecure-skip-tls-verify: true'
+  when: "'orbstack' in group_names or 'orb' in inventory_hostname"
+
+- name: Add insecure-skip-tls-verify for root kubeconfig on Orbstack
+  become: true
+  lineinfile:
+    path: "/root/.kube/config" 
+    regexp: '    certificate-authority-data:'
+    line: '    insecure-skip-tls-verify: true'
+  when: "'orbstack' in group_names or 'orb' in inventory_hostname"
 
 - name: Fetch kubeconfig to local machine
   fetch:
     src: "{{ ansible_env.HOME }}/.kube/config"
     dest: "{{ k3s_local_kubeconfig_path }}"
     flat: true
-  when: k3s_fetch_kubeconfig
+  when: 
+    - k3s_fetch_kubeconfig 
+    - k3s_local_kubeconfig_path is defined 
+    - k3s_local_kubeconfig_path != ""
 
 - name: Install kubectl completion
   shell: |

@@ -7,6 +7,12 @@
   when: k3s_disable_swap
   changed_when: false
 
+- name: Check if cmdline.txt exists (Raspberry Pi)
+  stat:
+    path: /boot/cmdline.txt
+  register: cmdline_file
+  when: k3s_enable_cgroups
+
 - name: Enable cgroups for Raspberry Pi
   become: true
   lineinfile:
@@ -16,6 +22,7 @@
     backrefs: yes
   when: 
     - k3s_enable_cgroups
+    - cmdline_file.stat.exists | default(false)
     - ansible_architecture == "aarch64" or ansible_architecture == "armv7l"
   notify: reboot raspberry pi
 

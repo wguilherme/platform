@@ -1,43 +1,33 @@
 ---
 - name: Wait for Nginx Ingress Controller deployment
-  kubernetes.core.k8s_info:
-    api_version: apps/v1
-    kind: Deployment
-    name: "{{ nginx_ingress_helm_release_name }}-controller"
-    namespace: "{{ nginx_ingress_namespace }}"
-    wait: true
-    wait_sleep: 10
-    wait_timeout: "{{ nginx_ingress_wait_timeout }}"
-    wait_condition:
-      type: Progressing
-      status: "True"
-      reason: NewReplicaSetAvailable
+  shell: |
+    kubectl wait --for=condition=available --timeout={{ nginx_ingress_wait_timeout }}s \
+      deployment/{{ nginx_ingress_helm_release_name }}-controller \
+      -n {{ nginx_ingress_namespace }}
+  register: wait_result
+  changed_when: false
 
 - name: Get Nginx Ingress Controller pods
-  kubernetes.core.k8s_info:
-    api_version: v1
-    kind: Pod
-    namespace: "{{ nginx_ingress_namespace }}"
-    label_selectors:
-      - app.kubernetes.io/name=ingress-nginx
+  command: kubectl get pods -n {{ nginx_ingress_namespace }} -l app.kubernetes.io/name=ingress-nginx --no-headers
   register: nginx_pods
+  changed_when: false
+
+- name: Count pods
+  set_fact:
+    pod_count: "{{ nginx_pods.stdout_lines | length }}"
 
 - name: Display Nginx Ingress Controller status
   debug:
     msg: 
       - "Nginx Ingress Controller deployed successfully!"
-      - "Pods running: {{ nginx_pods.resources | length }}"
+      - "Pods running: {{ pod_count }}"
       - "Service type: {{ nginx_ingress_service_type }}"
 
 - name: Get Nginx Ingress service information
-  kubernetes.core.k8s_info:
-    api_version: v1
-    kind: Service
-    name: "{{ nginx_ingress_helm_release_name }}-controller"
-    namespace: "{{ nginx_ingress_namespace }}"
+  command: kubectl get svc {{ nginx_ingress_helm_release_name }}-controller -n {{ nginx_ingress_namespace }} -o wide
   register: nginx_service
+  changed_when: false
 
-- name: Display service endpoints
+- name: Display service information
   debug:
-    msg: "{{ nginx_service.resources[0].status | default({}) }}"
-  when: nginx_service.resources | length > 0
+    msg: "{{ nginx_service.stdout_lines }}"

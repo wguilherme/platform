@@ -64,6 +64,19 @@ cd homelab-v5/ansible
 ansible-playbook site.yml
 ```
 
+### Deploy no Orbstack (desenvolvimento local)
+```bash
+# Criar máquina no Orbstack
+orb create ubuntu:22.04 rancher
+
+# Deploy usando inventário específico do Orbstack
+ansible-playbook -i inventory/orbstack.ini site.yml
+
+# Deploy com kubeconfig customizado
+ansible-playbook -i inventory/orbstack.ini site.yml \
+  -e "k3s_local_kubeconfig_path=$HOME/.kube/config-homelab"
+```
+
 ### Deploy apenas K3s
 ```bash
 ansible-playbook playbooks/setup-k3s-cluster.yml
@@ -138,8 +151,15 @@ ansible k3s_cluster -m systemd -a "name=k3s state=restarted" --become
 ansible k3s_cluster -m shell -a "sudo cat /var/lib/rancher/k3s/server/node-token" --become
 ```
 
-### Remover K3s (cleanup)
+### Remover K3s (cleanup completo)
 ```bash
+# Cleanup completo - remove tudo
+ansible-playbook -i inventory/orbstack.ini cleanup.yml
+
+# Ou para Raspberry Pi
+ansible-playbook -i inventory/raspberry.ini cleanup.yml
+
+# Cleanup rápido (apenas desinstalar K3s)
 ansible k3s_cluster -m shell -a "/usr/local/bin/k3s-uninstall.sh" --become
 ```
 

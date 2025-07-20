@@ -1,0 +1,31 @@
+---
+- name: Create nginx-ingress namespace
+  kubernetes.core.k8s:
+    name: "{{ nginx_ingress_namespace }}"
+    api_version: v1
+    kind: Namespace
+    state: present
+
+- name: Generate Helm values
+  template:
+    src: helm-values.yaml.j2
+    dest: /tmp/nginx-ingress-values.yaml
+    mode: '0644'
+
+- name: Deploy Nginx Ingress Controller using Helm
+  kubernetes.core.helm:
+    name: "{{ nginx_ingress_helm_release_name }}"
+    chart_ref: "{{ nginx_ingress_helm_repo_name }}/{{ nginx_ingress_helm_chart }}"
+    chart_version: "{{ nginx_ingress_version }}"
+    release_namespace: "{{ nginx_ingress_namespace }}"
+    create_namespace: true
+    values_files:
+      - /tmp/nginx-ingress-values.yaml
+    wait: true
+    wait_timeout: "{{ nginx_ingress_wait_timeout }}s"
+    state: present
+
+- name: Clean up temporary values file
+  file:
+    path: /tmp/nginx-ingress-values.yaml
+    state: absent

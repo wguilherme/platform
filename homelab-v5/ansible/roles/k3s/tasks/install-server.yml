@@ -1,0 +1,45 @@
+---
+- name: Check if K3s is already installed
+  stat:
+    path: /usr/local/bin/k3s
+  register: k3s_binary
+
+- name: Build K3s install command
+  set_fact:
+    k3s_install_cmd: >-
+      curl -sfL https://get.k3s.io | 
+      {{ 'INSTALL_K3S_VERSION=' + k3s_version + ' ' if k3s_version else '' }}
+      INSTALL_K3S_EXEC="{{ k3s_install_options | join(' ') }}"
+      sh -
+
+- name: Install K3s server
+  become: true
+  shell: "{{ k3s_install_cmd }}"
+  when: not k3s_binary.stat.exists
+  register: k3s_install_result
+
+- name: Wait for K3s service to start
+  become: true
+  systemd:
+    name: k3s
+    state: started
+    enabled: true
+
+- name: Wait for node to be ready
+  become: true
+  shell: |
+    kubectl get nodes {{ ansible_hostname }} --no-headers | awk '{print $2}'
+  register: node_status
+  until: node_status.stdout == "Ready"
+  retries: 30
+  delay: 10
+  when: k3s_wait_for_ready
+
+- name: Display K3s installation result
+  debug:
+    msg: "K3s server installed and running successfully"
+  when: k3s_install_result is changed
+
+- name: Get server node-token path
+  debug:
+    msg: "Node token is available at: /var/lib/rancher/k3s/server/node-token"

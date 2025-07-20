@@ -1,0 +1,57 @@
+FROM ubuntu:22.04
+
+# Evita interações durante a instalação
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Instala dependências
+RUN apt-get update && apt-get install -y \
+  git \
+  wget \
+  flex \
+  bison \
+  gperf \
+  python3 \
+  python3-pip \
+  python3-setuptools \
+  cmake \
+  ninja-build \
+  ccache \
+  libffi-dev \
+  libssl-dev \
+  dfu-util \
+  linux-modules-extra-raspi \
+  usbutils \
+  usb-serial-ch341-dkms \
+  build-essential \
+  dkms \
+  linux-headers-$(uname -r) \
+  && rm -rf /var/lib/apt/lists/*
+
+# Carrega módulos necessários
+RUN modprobe usbserial && \
+  modprobe ch341 && \
+  modprobe cp210x
+
+# Adiciona usuário ao grupo dialout
+RUN usermod -aG dialout root
+
+# Instala ESP-IDF
+WORKDIR /esp
+RUN git clone --recursive https://github.com/espressif/esp-idf.git && \
+  cd esp-idf && \
+  ./install.sh all && \
+  . ./export.sh
+
+# Define variáveis de ambiente
+ENV IDF_PATH=/esp/esp-idf
+ENV PATH="/esp/esp-idf/tools:$PATH"
+
+# Diretório de trabalho
+WORKDIR /build
+
+# Script de build
+COPY build.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/build.sh
+
+# Ponto de entrada
+ENTRYPOINT ["/usr/local/bin/build.sh"] 

@@ -1,0 +1,13 @@
+---
+- name: reboot raspberry pi
+  become: true
+  reboot:
+    msg: "Rebooting Raspberry Pi to apply cgroup changes"
+    reboot_timeout: 300
+  when: ansible_architecture == "aarch64" or ansible_architecture == "armv7l"
+
+- name: restart k3s
+  become: true
+  systemd:
+    name: k3s
+    state: restarted

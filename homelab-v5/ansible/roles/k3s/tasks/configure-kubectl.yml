@@ -1,0 +1,37 @@
+---
+- name: Create kubectl config directory for user
+  file:
+    path: "{{ ansible_env.HOME }}/.kube"
+    state: directory
+    mode: '0755'
+    owner: "{{ ansible_user }}"
+
+- name: Copy kubeconfig to user home
+  become: true
+  copy:
+    src: "{{ k3s_kubeconfig_path }}"
+    dest: "{{ ansible_env.HOME }}/.kube/config"
+    remote_src: true
+    owner: "{{ ansible_user }}"
+    mode: '0600'
+
+- name: Update kubeconfig server address
+  replace:
+    path: "{{ ansible_env.HOME }}/.kube/config"
+    regexp: 'https://127.0.0.1:6443'
+    replace: "https://{{ ansible_default_ipv4.address }}:6443"
+  when: ansible_default_ipv4.address is defined
+
+- name: Fetch kubeconfig to local machine
+  fetch:
+    src: "{{ ansible_env.HOME }}/.kube/config"
+    dest: "{{ k3s_local_kubeconfig_path }}"
+    flat: true
+  when: k3s_fetch_kubeconfig
+
+- name: Install kubectl completion
+  shell: |
+    kubectl completion bash > /tmp/kubectl_completion
+    sudo mv /tmp/kubectl_completion /etc/bash_completion.d/kubectl
+  changed_when: false
+  failed_when: false

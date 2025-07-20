@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automação Garagem</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 450px;
+            width: 100%;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .header {
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #333;
+            font-size: 2.2em;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .header .subtitle {
+            color: #666;
+            font-size: 1.1em;
+            font-weight: 300;
+        }
+        
+        .status-card {
+            background: #fff;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 25px 0;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .status-card.on {
+            border-color: #4CAF50;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+        }
+        
+        .status-card.off {
+            border-color: #f44336;
+            background: linear-gradient(135deg, #f44336, #da190b);
+            color: white;
+        }
+        
+        .status-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+        
+        .status-text {
+            font-size: 1.4em;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .status-detail {
+            font-size: 1em;
+            opacity: 0.9;
+        }
+        
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 30px 0;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 18px 25px;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-toggle {
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+        }
+        
+        .btn-pulse {
+            background: linear-gradient(135deg, #FF9800, #F57C00);
+        }
+        
+        .info-panel {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .info-panel h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+        
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            font-size: 0.9em;
+        }
+        
+        .info-item:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .info-value {
+            color: #333;
+            font-weight: 600;
+            font-family: monospace;
+        }
+        
+        .footer {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            color: #666;
+            font-size: 0.85em;
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 25px;
+                margin: 10px;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .controls {
+                gap: 12px;
+            }
+            
+            .btn {
+                padding: 15px 20px;
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏠 Automação Garagem</h1>
+            <p class="subtitle">Controle Inteligente ESP32</p>
+        </div>
+        
+        <div id="status" class="status-card off">
+            <div class="status-icon">🔴</div>
+            <div class="status-text">Relé Desligado</div>
+            <div class="status-detail">Sistema inativo</div>
+        </div>
+        
+        <div class="controls">
+            <button class="btn btn-toggle" onclick="toggleRelay()">
+                🔄 Alternar Relé
+            </button>
+            <button class="btn btn-pulse" onclick="pulseRelay()">
+                🚪 Abrir Portão
+            </button>
+        </div>
+        
+        <div class="info-panel">
+            <h3>📊 Informações do Sistema</h3>
+            <div id="network-info">
+                <div class="info-item">
+                    <span class="info-label">IP:</span>
+                    <span class="info-value">192.168.1.100</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Hostname:</span>
+                    <span class="info-value">esp32-garagem.local</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">MAC:</span>
+                    <span class="info-value">AA:BB:CC:DD:EE:FF</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Status:</span>
+                    <span class="info-value">Online</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Desenvolvido por <strong>Withney Guilherme</strong></p>
+            <p>ESP32 Home Automation System</p>
+        </div>
+    </div>
+
+    <script>
+        // Simulação para demonstração
+        let isOn = false;
+        
+        function updateStatus() {
+            const statusCard = document.getElementById('status');
+            
+            statusCard.className = 'status-card ' + (isOn ? 'on' : 'off');
+            statusCard.innerHTML = `
+                <div class="status-icon">${isOn ? '🟢' : '🔴'}</div>
+                <div class="status-text">Relé ${isOn ? 'Ligado' : 'Desligado'}</div>
+                <div class="status-detail">${isOn ? 'Sistema ativo' : 'Sistema inativo'}</div>
+            `;
+        }
+
+        function toggleRelay() {
+            const btn = document.querySelector('.btn-toggle');
+            btn.classList.add('pulse');
+            
+            // Simula toggle
+            isOn = !isOn;
+            updateStatus();
+            
+            setTimeout(() => btn.classList.remove('pulse'), 1000);
+        }
+
+        function pulseRelay() {
+            const btn = document.querySelector('.btn-pulse');
+            btn.classList.add('pulse');
+            
+            // Simula pulse
+            isOn = true;
+            updateStatus();
+            
+            setTimeout(() => {
+                isOn = false;
+                updateStatus();
+                btn.classList.remove('pulse');
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

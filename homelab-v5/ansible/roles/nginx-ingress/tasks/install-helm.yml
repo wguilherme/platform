@@ -1,0 +1,32 @@
+---
+- name: Check if Helm is installed
+  command: which helm
+  register: helm_check
+  changed_when: false
+  failed_when: false
+
+- name: Install Helm
+  when: helm_check.rc != 0
+  block:
+    - name: Download Helm installation script
+      get_url:
+        url: https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+        dest: /tmp/get_helm.sh
+        mode: '0755'
+
+    - name: Install Helm
+      become: true
+      command: /tmp/get_helm.sh
+      args:
+        creates: /usr/local/bin/helm
+
+    - name: Remove Helm installation script
+      file:
+        path: /tmp/get_helm.sh
+        state: absent
+
+- name: Update Helm repository cache
+  kubernetes.core.helm_repository:
+    name: "{{ nginx_ingress_helm_repo_name }}"
+    repo_url: "{{ nginx_ingress_helm_repo_url }}"
+    state: present

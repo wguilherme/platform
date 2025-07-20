@@ -1,0 +1,17 @@
+---
+- name: Include OS-specific variables
+  include_vars: "{{ ansible_os_family }}.yml"
+  failed_when: false
+
+- name: System preparation
+  include_tasks: prepare.yml
+
+- name: Install K3s server
+  include_tasks: install-server.yml
+
+- name: Configure kubectl
+  include_tasks: configure-kubectl.yml
+
+- name: Verify installation
+  include_tasks: verify.yml
+  when: k3s_wait_for_ready

@@ -1,0 +1,72 @@
+---
+- name: Disable swap
+  become: true
+  shell: |
+    swapoff -a
+    sed -i '/swap/d' /etc/fstab
+  when: k3s_disable_swap
+  changed_when: false
+
+- name: Enable cgroups for Raspberry Pi
+  become: true
+  lineinfile:
+    path: /boot/cmdline.txt
+    regexp: '^(.*?)(\s*cgroup_enable=cpuset\s*cgroup_memory=1\s*cgroup_enable=memory)?$'
+    line: '\1 cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory'
+    backrefs: yes
+  when: 
+    - k3s_enable_cgroups
+    - ansible_architecture == "aarch64" or ansible_architecture == "armv7l"
+  notify: reboot raspberry pi
+
+- name: Install required packages
+  become: true
+  package:
+    name:
+      - curl
+      - ca-certificates
+      - gnupg
+      - lsb-release
+    state: present
+
+- name: Set system limits
+  become: true
+  copy:
+    content: |
+      * soft nofile 65536
+      * hard nofile 65536
+      * soft nproc 65536
+      * hard nproc 65536
+    dest: /etc/security/limits.d/k3s.conf
+    mode: '0644'
+
+- name: Load kernel modules
+  become: true
+  modprobe:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - br_netfilter
+    - overlay
+  
+- name: Persist kernel modules
+  become: true
+  copy:
+    content: |
+      br_netfilter
+      overlay
+    dest: /etc/modules-load.d/k3s.conf
+    mode: '0644'
+
+- name: Set sysctl parameters
+  become: true
+  sysctl:
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
+    sysctl_set: true
+    state: present
+    reload: true
+  loop:
+    - { key: 'net.bridge.bridge-nf-call-iptables', value: '1' }
+    - { key: 'net.bridge.bridge-nf-call-ip6tables', value: '1' }
+    - { key: 'net.ipv4.ip_forward', value: '1' }

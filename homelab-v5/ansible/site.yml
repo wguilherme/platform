@@ -1,0 +1,64 @@
+---
+- name: Deploy K3s single-node cluster with Nginx Ingress Controller
+  hosts: k3s_cluster
+  gather_facts: true
+  any_errors_fatal: true
+  
+  pre_tasks:
+    - name: Display deployment information
+      debug:
+        msg:
+          - "Deploying K3s to: {{ inventory_hostname }}"
+          - "IP Address: {{ ansible_host }}"
+          - "Architecture: {{ ansible_architecture }}"
+      tags: always
+
+  roles:
+    - role: k3s
+      tags: k3s
+    - role: nginx-ingress
+      tags: nginx
+
+  post_tasks:
+    - name: Wait for cluster to stabilize
+      pause:
+        seconds: 10
+      tags: always
+
+    - name: Display cluster information
+      shell: |
+        echo "=== K3s Cluster Status ==="
+        kubectl get nodes -o wide
+        echo -e "\n=== Nginx Ingress Controller ==="
+        kubectl get pods -n ingress-nginx
+        echo -e "\n=== Services ==="
+        kubectl get svc -n ingress-nginx
+      register: cluster_info
+      changed_when: false
+      tags: info
+
+    - name: Show cluster status
+      debug:
+        msg: "{{ cluster_info.stdout_lines }}"
+      tags: info
+
+    - name: Get node token for Rancher
+      become: true
+      slurp:
+        src: /var/lib/rancher/k3s/server/node-token
+      register: node_token
+      tags: info
+
+    - name: Display access information
+      debug:
+        msg:
+          - "K3s single-node cluster deployed successfully!"
+          - "Kubeconfig saved to: {{ k3s_local_kubeconfig_path }}"
+          - "Server URL: https://{{ ansible_host }}:6443"
+          - "Node token saved at: /var/lib/rancher/k3s/server/node-token"
+          - ""
+          - "To use kubectl from your local machine:"
+          - "export KUBECONFIG={{ playbook_dir }}/kubeconfig"
+          - ""
+          - "To add workers via Rancher, use the node token from the server"
+      tags: info

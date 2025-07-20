@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: esp32-controller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: esp32-controller
+  template:
+    metadata:
+      labels:
+        app: esp32-controller
+    spec:
+      containers:
+        - name: controller
+          image: esp32-controller:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: ESP32_PORT
+              value: /dev/ttyUSB0
+          securityContext:
+            privileged: true
+          volumeMounts:
+            - name: device
+              mountPath: /dev/ttyUSB0
+            - name: esp32-code
+              mountPath: /app/esp32_project/src
+      volumes:
+        - name: device
+          hostPath:
+            path: /dev/ttyUSB0
+        - name: esp32-code
+          configMap:
+            name: esp32-code
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: esp32-api
+spec:
+  selector:
+    app: esp32-controller
+  ports:
+    - port: 8080
+      targetPort: 8080
+  type: ClusterIP

@@ -1,0 +1,91 @@
+#include <Arduino.h>
+#include <WiFi.h>
+#include <ESPmDNS.h>
+#include "config.h"
+
+void setup() {
+    Serial.begin(115200);
+    delay(2000);
+    
+    Serial.println("\n=== ESP32 DEBUG - TESTE DE CONEXÃO ===");
+    Serial.println("Versão: Debug WiFi");
+    Serial.println("======================================");
+    
+    // Mostra configurações
+    Serial.printf("SSID: %s\n", WIFI_SSID);
+    Serial.printf("Hostname: %s\n", DEVICE_HOSTNAME);
+    Serial.printf("Porta Web: %d\n", WEB_SERVER_PORT);
+    
+    // Tenta conectar WiFi com timeout
+    Serial.println("\nIniciando conexão WiFi com timeout...");
+    WiFi.mode(WIFI_STA);
+    WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+    
+    int attempts = 0;
+    const int maxAttempts = 60; // 60 tentativas * 500ms = 30 segundos
+    while (WiFi.status() != WL_CONNECTED && attempts < maxAttempts) {
+        delay(500);
+        attempts++;
+        if (attempts % 10 == 0) {
+            Serial.printf("Tentativa %d/%d - Status: %d\n", attempts, maxAttempts, WiFi.status());
+        }
+    }
+    
+    if (WiFi.status() == WL_CONNECTED) {
+        Serial.println("\n✅ WiFi CONECTADO!");
+        Serial.printf("IP: %s\n", WiFi.localIP().toString().c_str());
+        Serial.printf("Gateway: %s\n", WiFi.gatewayIP().toString().c_str());
+        Serial.printf("DNS: %s\n", WiFi.dnsIP().toString().c_str());
+        Serial.printf("MAC: %s\n", WiFi.macAddress().c_str());
+        Serial.printf("RSSI: %d dBm\n", WiFi.RSSI());
+        
+        // Tenta configurar mDNS
+        if (MDNS.begin(DEVICE_HOSTNAME)) {
+            Serial.printf("✅ mDNS iniciado: %s.local\n", DEVICE_HOSTNAME);
+        } else {
+            Serial.println("❌ Erro ao iniciar mDNS");
+        }
+        
+        Serial.println("\n=== ENDEREÇOS PARA TESTE ===");
+        Serial.printf("http://%s:8080\n", WiFi.localIP().toString().c_str());
+        Serial.printf("http://%s.local:8080\n", DEVICE_HOSTNAME);
+        Serial.println("============================");
+        
+    } else {
+        Serial.println("\n❌ FALHA NA CONEXÃO WiFi APÓS 30 SEGUNDOS!");
+        Serial.printf("Status final: %d\n", WiFi.status());
+        Serial.println("Códigos de status:");
+        Serial.println("0 = WL_IDLE_STATUS");
+        Serial.println("1 = WL_NO_SSID_AVAIL");
+        Serial.println("2 = WL_SCAN_COMPLETED");
+        Serial.println("3 = WL_CONNECTED");
+        Serial.println("4 = WL_CONNECT_FAILED");
+        Serial.println("5 = WL_CONNECTION_LOST");
+        Serial.println("6 = WL_DISCONNECTED");
+        
+        Serial.println("\n🔄 Reiniciando ESP32 em 5 segundos...");
+        delay(5000);
+        ESP.restart();
+    }
+}
+
+void loop() {
+    static unsigned long lastCheck = 0;
+    
+    if (millis() - lastCheck > 5000) {
+        lastCheck = millis();
+        
+        if (WiFi.status() == WL_CONNECTED) {
+            Serial.printf("[%lu] WiFi OK - IP: %s - RSSI: %d dBm\n", 
+                         millis()/1000, 
+                         WiFi.localIP().toString().c_str(), 
+                         WiFi.RSSI());
+        } else {
+            Serial.printf("[%lu] WiFi DESCONECTADO - Status: %d\n", 
+                         millis()/1000, 
+                         WiFi.status());
+        }
+    }
+    
+    delay(100);
+}

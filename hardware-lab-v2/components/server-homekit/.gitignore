@@ -1,0 +1,18 @@
+# Build files
+.pio
+.pioenvs
+.piolibdeps
+.vscode
+.pio/
+
+# Configuration files with sensitive data
+src/config.h
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+*.code-workspace
+.clang_complete
+.gcc-flags.json

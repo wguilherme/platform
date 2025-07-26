@@ -13,18 +13,81 @@
   register: cmdline_file
   when: k3s_enable_cgroups
 
+- name: Check if firmware cmdline.txt exists (Raspberry Pi alternative path)
+  stat:
+    path: /boot/firmware/cmdline.txt
+  register: firmware_cmdline_file
+  when: 
+    - k3s_enable_cgroups
+    - not (cmdline_file.stat.exists | default(false))
+
 - name: Enable cgroups for Raspberry Pi
   become: true
   lineinfile:
-    path: /boot/cmdline.txt
+    path: "{{ cmdline_path }}"
     regexp: '^(.*?)(\s*cgroup_enable=cpuset\s*cgroup_memory=1\s*cgroup_enable=memory)?$'
     line: '\1 cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory'
     backrefs: yes
+  vars:
+    cmdline_path: "{{ '/boot/cmdline.txt' if cmdline_file.stat.exists | default(false) else '/boot/firmware/cmdline.txt' }}"
   when: 
     - k3s_enable_cgroups
-    - cmdline_file.stat.exists | default(false)
+    - (cmdline_file.stat.exists | default(false)) or (firmware_cmdline_file.stat.exists | default(false))
     - ansible_architecture == "aarch64" or ansible_architecture == "armv7l"
-  notify: reboot raspberry pi
+  notify: reboot system
+
+- name: Check if grub configuration exists (x86_64 systems)
+  stat:
+    path: /etc/default/grub
+  register: grub_file
+  when: 
+    - k3s_enable_cgroups
+    - ansible_architecture == "x86_64"
+
+- name: Enable cgroups for x86_64 systems via GRUB
+  become: true
+  lineinfile:
+    path: /etc/default/grub
+    regexp: '^GRUB_CMDLINE_LINUX="(.*)"$'
+    line: 'GRUB_CMDLINE_LINUX="\1 cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory"'
+    backrefs: yes
+  when:
+    - k3s_enable_cgroups
+    - grub_file.stat.exists | default(false)
+    - ansible_architecture == "x86_64"
+  notify: 
+    - update grub
+    - reboot system
+
+- name: Check if systemd-boot exists (modern systems)
+  stat:
+    path: /boot/loader/entries
+  register: systemd_boot_dir
+  when:
+    - k3s_enable_cgroups
+    - ansible_architecture == "x86_64"
+
+- name: Get systemd-boot entries
+  find:
+    paths: /boot/loader/entries
+    patterns: "*.conf"
+  register: boot_entries
+  when:
+    - k3s_enable_cgroups
+    - systemd_boot_dir.stat.exists | default(false)
+
+- name: Enable cgroups for systemd-boot
+  become: true
+  lineinfile:
+    path: "{{ item.path }}"
+    regexp: '^options (.*)$'
+    line: 'options \1 cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory'
+    backrefs: yes
+  loop: "{{ boot_entries.files | default([]) }}"
+  when:
+    - k3s_enable_cgroups
+    - systemd_boot_dir.stat.exists | default(false)
+  notify: reboot system
 
 - name: Install required packages
   become: true
@@ -77,3 +140,23 @@
     - { key: 'net.bridge.bridge-nf-call-iptables', value: '1' }
     - { key: 'net.bridge.bridge-nf-call-ip6tables', value: '1' }
     - { key: 'net.ipv4.ip_forward', value: '1' }
+
+- name: Verify cgroups are enabled
+  shell: |
+    if grep -q "cgroup_memory=1" /proc/cmdline && grep -q "cgroup_enable=memory" /proc/cmdline; then
+      echo "Cgroups enabled"
+    else
+      echo "Cgroups not enabled - reboot required"
+      exit 1
+    fi
+  register: cgroup_check
+  changed_when: false
+  failed_when: false
+  when: k3s_enable_cgroups
+
+- name: Display cgroup status
+  debug:
+    msg: "{{ cgroup_check.stdout }}"
+  when: 
+    - k3s_enable_cgroups
+    - cgroup_check is defined

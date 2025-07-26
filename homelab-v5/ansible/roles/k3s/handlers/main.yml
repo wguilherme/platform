@@ -6,6 +6,22 @@
     reboot_timeout: 300
   when: ansible_architecture == "aarch64" or ansible_architecture == "armv7l"
 
+- name: reboot system
+  become: true
+  reboot:
+    msg: "Rebooting system to apply cgroup changes"
+    reboot_timeout: 300
+
+- name: update grub
+  become: true
+  command: update-grub
+  when: ansible_os_family == "Debian"
+
+- name: update grub2
+  become: true
+  command: grub2-mkconfig -o /boot/grub2/grub.cfg
+  when: ansible_os_family == "RedHat"
+
 - name: restart k3s
   become: true
   systemd:

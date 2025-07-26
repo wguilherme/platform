@@ -309,10 +309,193 @@ O Home Assistant inclui sensores de:
 4. **Sensores de movimento**
 5. **Controle de iluminação**
 
+## API ESPHome - Integração Externa
+
+### Visão Geral das APIs
+
+O ESPHome expõe duas APIs principais para integração:
+
+1. **API Nativa** (porta 6053) - Protocolo binário usado pelo Home Assistant
+2. **Web API HTTP** (porta 80) - REST simples para integração externa
+
+### Padrão das URLs da Web API
+
+```
+http://garagem-esp32.local/{tipo_entidade}/{nome_entidade}
+http://garagem-esp32.local/{tipo_entidade}/{nome_entidade}/{ação}
+```
+
+### Entidades Disponíveis no ESP32
+
+#### 📊 **Sensores (GET apenas)**
+
+```bash
+# Sinal WiFi (-46 dBm)
+curl http://garagem-esp32.local/sensor/sinal_wifi
+
+# Tempo online (em horas)  
+curl http://garagem-esp32.local/sensor/tempo_ligado
+
+# Informações do sistema
+curl http://garagem-esp32.local/text_sensor/sistema_info
+```
+
+**Resposta típica:**
+```json
+{
+  "id": "sensor-sinal_wifi",
+  "value": -46,
+  "state": "-46 dBm"
+}
+```
+
+#### 🚪 **Cover - Controle do Portão**
+
+```bash
+# Status atual
+curl http://garagem-esp32.local/cover/portao_garagem
+
+# Abrir portão
+curl -X POST http://garagem-esp32.local/cover/portao_garagem/open
+
+# Fechar portão
+curl -X POST http://garagem-esp32.local/cover/portao_garagem/close
+
+# Parar movimento
+curl -X POST http://garagem-esp32.local/cover/portao_garagem/stop
+```
+
+#### 🔘 **Botões (POST para acionar)**
+
+```bash
+# Pulso da garagem (recomendado para portão)
+curl -X POST http://garagem-esp32.local/button/pulso_garagem/press
+
+# Reiniciar ESP32
+curl -X POST http://garagem-esp32.local/button/reiniciar_esp32/press
+```
+
+#### 🔌 **Switches - Controle do Relé**
+
+```bash
+# Status do relé
+curl http://garagem-esp32.local/switch/rele_garagem
+
+# Ligar relé
+curl -X POST http://garagem-esp32.local/switch/rele_garagem/turn_on
+
+# Desligar relé  
+curl -X POST http://garagem-esp32.local/switch/rele_garagem/turn_off
+
+# Alternar estado
+curl -X POST http://garagem-esp32.local/switch/rele_garagem/toggle
+```
+
+### Integração com N8N
+
+#### Exemplo 1: Monitoramento de Sinal WiFi
+
+```javascript
+// HTTP Request Node
+{
+  "method": "GET",
+  "url": "http://garagem-esp32.local/sensor/sinal_wifi",
+  "responseFormat": "json"
+}
+
+// Function Node - Verificar sinal fraco
+const signal = $json.value;
+if (signal < -70) {
+  return [{
+    "alert": "WiFi signal weak", 
+    "device": "garagem-esp32",
+    "signal": signal + " dBm"
+  }];
+}
+```
+
+#### Exemplo 2: Acionar Portão via Webhook
+
+```javascript
+// Webhook Trigger -> HTTP Request
+{
+  "method": "POST",
+  "url": "http://garagem-esp32.local/button/pulso_garagem/press"
+}
+```
+
+#### Exemplo 3: Automação por Horário
+
+```javascript
+// Cron Trigger (22:00) -> Verificar se portão está aberto -> Fechar
+{
+  "method": "POST", 
+  "url": "http://garagem-esp32.local/cover/portao_garagem/close"
+}
+```
+
+### Limitações e Considerações
+
+#### ⚠️ **Segurança**
+- **Sem autenticação** na API HTTP (porta 80)
+- **Use firewall** para restringir à rede local
+- **API nativa** (porta 6053) tem senha: `esp32_garagem_api`
+
+#### 📝 **Características**
+- **Sem documentação** OpenAPI/Swagger automática
+- **Sem rate limiting** implementado
+- **Protocolo simples** (não RESTful completo)
+- **Respostas JSON** para sensores, sem corpo para ações
+
+#### 🔍 **Debug e Monitoramento**
+
+```bash
+# Logs do ESP32
+docker-compose logs -f esphome
+
+# Status de todos os sensores
+curl -s http://garagem-esp32.local/sensor/sinal_wifi | jq
+curl -s http://garagem-esp32.local/sensor/tempo_ligado | jq
+
+# Teste de conectividade
+ping garagem-esp32.local
+```
+
+### Descoberta de Novas Entidades
+
+Quando adicionar novos dispositivos ESPHome, o padrão será:
+
+```
+http://garagem-esp32.local/{tipo}/{nome_configurado_no_yaml}
+```
+
+**Tipos suportados:**
+- `sensor` - Sensores numéricos
+- `text_sensor` - Sensores de texto  
+- `binary_sensor` - Sensores binários (on/off)
+- `switch` - Interruptores controláveis
+- `button` - Botões para ações pontuais
+- `cover` - Controles de cobertura (portões, cortinas)
+- `light` - Controle de iluminação
+- `climate` - Controle de temperatura
+
+### Exemplo Completo para N8N
+
+**Workflow: Monitoramento e Controle Automático**
+
+1. **Trigger Interval** (a cada 5 minutos)
+2. **HTTP Request** - Verificar sinal WiFi
+3. **IF Node** - Se sinal < -70 dBm  
+4. **HTTP Request** - Reiniciar ESP32
+5. **Webhook** - Notificar via Telegram
+
+Este padrão permite integração completa do ESPHome com qualquer sistema externo via HTTP REST simples.
+
 ## Suporte
 
 Para problemas específicos:
 
 - **Home Assistant**: https://community.home-assistant.io/
 - **ESPHome**: https://esphome.io/
+- **N8N**: https://community.n8n.io/
 - **Docker**: https://docs.docker.com/

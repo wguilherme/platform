@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   homeassistant:
+    platform: linux/amd64 
     image: ghcr.io/home-assistant/home-assistant:stable
     container_name: homeassistant-garagem
     restart: unless-stopped
@@ -27,28 +28,39 @@ services:
       - "traefik.http.routers.homeassistant.entrypoints=web"
       - "traefik.http.services.homeassistant.loadbalancer.server.port=8123"
 
-  # Optional: ESPHome Dashboard para gerenciar dispositivos
-  esphome:
-    image: ghcr.io/esphome/esphome:latest
-    container_name: esphome-dashboard
-    restart: unless-stopped
-    network_mode: host
+  waha:
+    image: devlikeapro/waha:latest
+    platform: linux/amd64
     environment:
-      - USERNAME=esphome
-      - PASSWORD=esphome123
-      - ESPHOME_DASHBOARD_USE_PING=true
+      WHATSAPP_HOOK_URL: http://host.docker.internal:5678/webhook/webhook
+      WHATSAPP_DEFAULT_ENGINE: GOWS
+      WHATSAPP_HOOK_EVENTS: message
     volumes:
-      - ../../esphome:/config
-      - /etc/localtime:/etc/localtime:ro
-      - esphome_data:/data
+      - waha_sessions:/app/.sessions
+      - waha_media:/app/.media
     ports:
-      - "6052:6052"
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.esphome.rule=Host(`esphome.local`)"
-      - "traefik.http.routers.esphome.entrypoints=web"
-      - "traefik.http.services.esphome.loadbalancer.server.port=6052"
+      - "3000:3000"
+
+  n8n:
+    image: n8nio/n8n:latest
+    platform: linux/amd64
+    environment:
+      WEBHOOK_URL: http://host.docker.internal:5678
+      N8N_HOST: host.docker.internal
+      GENERIC_TIMEZONE: America/Sao_Paulo
+      N8N_LOG_LEVEL: debug
+      N8N_COMMUNITY_PACKAGES_ALLOW_TOOL_USAGE: true
+    volumes:
+      - n8n_data:/home/node/.n8n
+    ports:
+      - "5678:5678"
 
 volumes:
   esphome_data:
+    driver: local
+  waha_sessions:
+    driver: local
+  waha_media:
+    driver: local
+  n8n_data:
     driver: local

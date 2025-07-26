@@ -150,7 +150,7 @@ button:
     name: "Reiniciar ESP32"
 
   - platform: template
-    name: "Pulso Garagem"
+    name: "Abrir Portão"
     icon: "mdi:garage-alert"
     on_press:
       - switch.turn_on: relay_garagem

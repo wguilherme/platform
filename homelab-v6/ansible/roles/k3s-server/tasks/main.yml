@@ -46,6 +46,14 @@
     owner: "{{ ansible_user_id }}"
     mode: '0600'
 
+- name: Criar diretório local para kubeconfig
+  delegate_to: localhost
+  file:
+    path: "{{ k3s_local_kubeconfig_path | dirname }}"
+    state: directory
+    mode: '0700'
+  when: k3s_fetch_kubeconfig
+
 - name: Buscar kubeconfig localmente
   fetch:
     src: "{{ ansible_env.HOME }}/.kube/config"

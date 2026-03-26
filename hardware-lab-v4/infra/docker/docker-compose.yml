@@ -1,0 +1,24 @@
+services:
+  waha:
+    image: devlikeapro/waha:latest
+    platform: linux/amd64
+    container_name: waha
+    restart: unless-stopped
+    environment:
+      WHATSAPP_HOOK_URL: http://${RPI_IP:-raspberrypi.local}:8000/webhook
+      WHATSAPP_DEFAULT_ENGINE: GOWS
+      WHATSAPP_HOOK_EVENTS: message,message.any
+      WAHA_API_KEY: ${WAHA_API_KEY}
+      WAHA_DASHBOARD_USERNAME: ${WAHA_DASHBOARD_USERNAME}
+      WAHA_DASHBOARD_PASSWORD: ${WAHA_DASHBOARD_PASSWORD}
+    volumes:
+      - waha_sessions:/app/.sessions
+      - waha_media:/app/.media
+    ports:
+      - "3000:3000"
+
+volumes:
+  waha_sessions:
+    driver: local
+  waha_media:
+    driver: local

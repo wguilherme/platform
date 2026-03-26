@@ -1,0 +1,15 @@
+---
+# PVC compartilhado entre os steps do pipeline (git-clone → kaniko)
+# Usa Longhorn como storage class (instalado no v6)
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: tekton-workspace-pvc
+  namespace: tekton-pipelines
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-path
+  resources:
+    requests:
+      storage: 5Gi

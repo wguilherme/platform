@@ -1,0 +1,36 @@
+# yaml-language-server: $schema=false
+---
+replicaCount: 1
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-cloudflare
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+  hosts:
+    - host: registry.phantombyte.uk
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: zot-tls
+      hosts:
+        - registry.phantombyte.uk
+
+persistence:
+  enabled: true
+  storageClass: local-path    # provisionador padrão do K3s
+  size: 20Gi
+
+# Autenticação htpasswd (gere com: htpasswd -nb user pass)
+# Armazene em Sealed Secret e referencie aqui
+authConfig: {}
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi

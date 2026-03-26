@@ -1,0 +1,9 @@
+[Unit]
+Description=Reboot diario as 04:00
+
+[Timer]
+OnCalendar=hourly
+Persistent=true
+
+[Install]
+WantedBy=timers.target

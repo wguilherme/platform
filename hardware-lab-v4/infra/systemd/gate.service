@@ -1,0 +1,12 @@
+[Unit]
+Description=Gate Controller API
+After=network.target
+
+[Service]
+User=wguilherme
+WorkingDirectory=/home/wguilherme/hardware-lab-v4/core
+ExecStart=/home/wguilherme/hardware-lab-v4/core/venv/bin/python gate.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,17 @@
+---
+# Kustomization que aponta para ./infrastructure no root do repo.
+# Flux reconcilia na ordem: sources → camadas com dependsOn.
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: infrastructure
+  namespace: flux-system
+spec:
+  interval: 10m
+  path: ./infrastructure
+  prune: true
+  wait: true
+  timeout: 5m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system

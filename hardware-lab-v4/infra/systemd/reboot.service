@@ -1,0 +1,6 @@
+[Unit]
+Description=Reboot diario do sistema
+
+[Service]
+Type=oneshot
+ExecStart=/sbin/reboot

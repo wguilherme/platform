@@ -1,0 +1,21 @@
+---
+k3s_disable_swap: true
+k3s_enable_cgroups: true
+
+prepare_packages:
+  - curl
+  - ca-certificates
+  - gnupg
+  - lsb-release
+  - jq
+
+kernel_modules:
+  - br_netfilter
+  - overlay
+
+sysctl_params:
+  - { key: "net.bridge.bridge-nf-call-iptables",  value: "1" }
+  - { key: "net.bridge.bridge-nf-call-ip6tables", value: "1" }
+  - { key: "net.ipv4.ip_forward",                 value: "1" }
+  - { key: "fs.inotify.max_user_watches",          value: "524288" }
+  - { key: "fs.inotify.max_user_instances",        value: "512" }

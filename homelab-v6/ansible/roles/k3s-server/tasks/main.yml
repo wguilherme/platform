@@ -1,0 +1,79 @@
+---
+- name: Verificar se K3s já está instalado
+  stat:
+    path: /usr/local/bin/k3s
+  register: k3s_binary
+
+- name: Instalar K3s server (control-plane)
+  become: true
+  shell: |
+    curl -sfL https://get.k3s.io | \
+      INSTALL_K3S_VERSION="{{ k3s_version }}" \
+      INSTALL_K3S_EXEC="{{ k3s_server_install_options | join(' ') }}" \
+      sh -
+  when: not k3s_binary.stat.exists
+  register: k3s_install
+
+- name: Aguardar K3s service ativo
+  become: true
+  systemd:
+    name: k3s
+    state: started
+    enabled: true
+
+- name: Aguardar node Ready
+  become: true
+  shell: kubectl get nodes {{ ansible_hostname }} --no-headers | awk '{print $2}'
+  register: node_status
+  until: node_status.stdout == "Ready"
+  retries: 30
+  delay: 10
+  when: k3s_wait_for_ready
+
+# ─── Kubeconfig ───────────────────────────────────────────────────────────────
+- name: Criar diretório .kube para o usuário
+  file:
+    path: "{{ ansible_env.HOME }}/.kube"
+    state: directory
+    mode: '0755'
+
+- name: Copiar kubeconfig para o usuário
+  become: true
+  copy:
+    src: "{{ k3s_kubeconfig_path }}"
+    dest: "{{ ansible_env.HOME }}/.kube/config"
+    remote_src: true
+    owner: "{{ ansible_user_id }}"
+    mode: '0600'
+
+- name: Corrigir server address no kubeconfig
+  replace:
+    path: "{{ ansible_env.HOME }}/.kube/config"
+    regexp: 'https://127\.0\.0\.1:6443'
+    replace: "https://{{ ansible_host }}:6443"
+
+- name: Buscar kubeconfig localmente
+  fetch:
+    src: "{{ ansible_env.HOME }}/.kube/config"
+    dest: "{{ k3s_local_kubeconfig_path }}"
+    flat: true
+  when: k3s_fetch_kubeconfig
+
+# ─── Token para workers ───────────────────────────────────────────────────────
+- name: Ler node-token
+  become: true
+  slurp:
+    src: /var/lib/rancher/k3s/server/node-token
+  register: k3s_token_b64
+
+- name: Salvar token como fact global
+  set_fact:
+    k3s_node_token: "{{ k3s_token_b64.content | b64decode | trim }}"
+
+- name: Exibir informações de acesso
+  debug:
+    msg:
+      - "K3s control-plane instalado!"
+      - "Server URL : https://{{ ansible_host }}:6443"
+      - "Kubeconfig : {{ k3s_local_kubeconfig_path }}"
+      - "Node token : /var/lib/rancher/k3s/server/node-token"

@@ -1,0 +1,62 @@
+---
+# ServiceAccount usado pelo Tekton Triggers para criar PipelineRuns
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: tekton-triggers-sa
+  namespace: tekton-pipelines
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: tekton-triggers-admin
+rules:
+  - apiGroups: ["triggers.tekton.dev"]
+    resources: ["*"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+  - apiGroups: ["tekton.dev"]
+    resources: ["pipelineruns", "pipelines", "taskruns", "tasks"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+  - apiGroups: [""]
+    resources: ["pods", "secrets", "serviceaccounts"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: tekton-triggers-sa-admin
+subjects:
+  - kind: ServiceAccount
+    name: tekton-triggers-sa
+    namespace: tekton-pipelines
+roleRef:
+  kind: ClusterRole
+  name: tekton-triggers-admin
+  apiGroup: rbac.authorization.k8s.io
+---
+# Necessário para o triggers-controller criar Services/Deployments do EventListener
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: tekton-triggers-controller-extra
+rules:
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: [""]
+    resources: ["services"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: tekton-triggers-controller-extra
+  namespace: tekton-pipelines
+subjects:
+  - kind: ServiceAccount
+    name: tekton-triggers-controller
+    namespace: tekton-pipelines
+roleRef:
+  kind: ClusterRole
+  name: tekton-triggers-controller-extra
+  apiGroup: rbac.authorization.k8s.io

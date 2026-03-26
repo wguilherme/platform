@@ -1,0 +1,72 @@
+{
+  "name": "WhatsApp → Portão",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "webhook",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "name": "Webhook WAHA",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.body.payload.from }}",
+              "operation": "contains",
+              "value2": "5511"
+            }
+          ]
+        }
+      },
+      "name": "Numero aprovado?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [460, 300],
+      "notes": "Edite value2 com os números aprovados (DDD+número sem +). Ex: 5511999998888"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.body.payload.body.toLowerCase() }}",
+              "operation": "regex",
+              "value2": "port[aã]o"
+            }
+          ]
+        }
+      },
+      "name": "Mensagem é portão?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [680, 200]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8000/pulse",
+        "options": {}
+      },
+      "name": "Acionar portão",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [900, 200]
+    }
+  ],
+  "connections": {
+    "Webhook WAHA": {
+      "main": [[{ "node": "Numero aprovado?", "type": "main", "index": 0 }]]
+    },
+    "Numero aprovado?": {
+      "main": [[{ "node": "Mensagem é portão?", "type": "main", "index": 0 }]]
+    },
+    "Mensagem é portão?": {
+      "main": [[{ "node": "Acionar portão", "type": "main", "index": 0 }]]
+    }
+  }
+}

@@ -1,0 +1,26 @@
+---
+cilium_version: "1.19.1"
+cilium_namespace: kube-system
+cilium_helm_release: cilium
+
+cilium_helm_values:
+  kubeProxyReplacement: "true"
+  k8sServicePort: "6443"
+  hostServices:
+    enabled: true
+  externalIPs:
+    enabled: true
+  nodePort:
+    enabled: true
+  hostPort:
+    enabled: true
+  bpf:
+    masquerade: true
+  ipam:
+    mode: kubernetes
+  # Hubble UI / observabilidade (desabilite se quiser economizar memória)
+  hubble:
+    relay:
+      enabled: true
+    ui:
+      enabled: true

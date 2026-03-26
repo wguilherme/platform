@@ -4,4 +4,5 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - install/
-  - config/
+  # config/: adicionar após Tekton CRDs instalados (Pipeline, Task, etc.)
+  # - config/

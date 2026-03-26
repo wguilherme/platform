@@ -4,7 +4,10 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - helmrelease.yaml
+namespace: ingress-nginx
+
 configMapGenerator:
   - name: nginx-ingress-values
+    namespace: ingress-nginx
     files:
       - values.yaml=values.yaml

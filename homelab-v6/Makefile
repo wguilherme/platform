@@ -146,5 +146,31 @@ cilium-status: ## Exibe status do Cilium e kube-proxy replacement
 clean-kubeconfig: ## Remove kubeconfig local gerado pelo Ansible
 	rm -f $(KUBECONFIG)
 
+# ─── Tekton ───────────────────────────────────────────────────────────────────
+TEKTON_PIPELINE_VERSION  ?= v0.65.0
+TEKTON_TRIGGERS_VERSION  ?= v0.30.0
+TEKTON_DASHBOARD_VERSION ?= v0.49.0
+
+.PHONY: tekton-install
+tekton-install: ## Instala Tekton Pipelines, Triggers e Dashboard via kubectl apply
+	$(call info,Instalando Tekton Pipelines $(TEKTON_PIPELINE_VERSION))
+	kubectl apply -f https://github.com/tektoncd/pipeline/releases/download/$(TEKTON_PIPELINE_VERSION)/release.yaml
+	$(call info,Instalando Tekton Triggers $(TEKTON_TRIGGERS_VERSION))
+	kubectl apply -f https://github.com/tektoncd/triggers/releases/download/$(TEKTON_TRIGGERS_VERSION)/release.yaml
+	kubectl apply -f https://github.com/tektoncd/triggers/releases/download/$(TEKTON_TRIGGERS_VERSION)/interceptors.yaml
+	$(call info,Instalando Tekton Dashboard $(TEKTON_DASHBOARD_VERSION))
+	kubectl apply -f https://github.com/tektoncd/dashboard/releases/download/$(TEKTON_DASHBOARD_VERSION)/release.yaml
+
+.PHONY: tekton-status
+tekton-status: ## Verifica status dos pods do Tekton
+	kubectl get pods -n tekton-pipelines
+	kubectl get pods -n tekton-pipelines-resolvers 2>/dev/null || true
+
+.PHONY: tekton-uninstall
+tekton-uninstall: ## Remove o Tekton do cluster
+	kubectl delete -f https://github.com/tektoncd/pipeline/releases/download/$(TEKTON_PIPELINE_VERSION)/release.yaml --ignore-not-found
+	kubectl delete -f https://github.com/tektoncd/triggers/releases/download/$(TEKTON_TRIGGERS_VERSION)/release.yaml --ignore-not-found
+	kubectl delete -f https://github.com/tektoncd/dashboard/releases/download/$(TEKTON_DASHBOARD_VERSION)/release.yaml --ignore-not-found
+
 # ─── Automações (hack/automations/) ───────────────────────────────────────────
 include hack/automations/sealed-secrets.mk

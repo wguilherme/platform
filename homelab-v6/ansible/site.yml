@@ -15,16 +15,8 @@
     - role: k3s-server
       tags: k3s
 
-- name: Instalar Cilium CNI
-  hosts: all
-  gather_facts: true
-  any_errors_fatal: true
-  roles:
-    - role: cilium
-      tags: cilium
-
   post_tasks:
-    - name: Aguardar node Ready após Cilium
+    - name: Aguardar node Ready
       shell: KUBECONFIG=/etc/rancher/k3s/k3s.yaml kubectl get nodes {{ ansible_hostname }} --no-headers | awk '{print $2}'
       register: node_status
       until: node_status.stdout == "Ready"

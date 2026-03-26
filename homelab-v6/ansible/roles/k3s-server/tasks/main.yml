@@ -48,6 +48,9 @@
 
 - name: Criar diretório local para kubeconfig
   delegate_to: localhost
+  become: false
+  vars:
+    ansible_become: false
   file:
     path: "{{ k3s_local_kubeconfig_path | dirname }}"
     state: directory
@@ -63,6 +66,9 @@
 
 - name: Corrigir server address no kubeconfig local (Mac)
   delegate_to: localhost
+  become: false
+  vars:
+    ansible_become: false
   replace:
     path: "{{ k3s_local_kubeconfig_path }}"
     regexp: 'https://127\.0\.0\.1:6443'

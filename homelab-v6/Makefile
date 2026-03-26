@@ -1,6 +1,6 @@
 ANSIBLE_DIR   := ansible
 INVENTORY     := $(ANSIBLE_DIR)/inventory/hosts.yml
-KUBECONFIG    := $(ANSIBLE_DIR)/../kubeconfig
+KUBECONFIG    := $(HOME)/.kube/local/platform/config.rpi
 FLUX_PATH     := flux/clusters/homelab
 GITHUB_USER   ?= wguilherme
 GITHUB_REPO   ?= platform

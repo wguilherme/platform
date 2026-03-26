@@ -7,6 +7,7 @@ resources:
   - sources/
   - sealed-secrets/
   - nginx-ingress/
-  - cloudflare-tunnel/
+  # cloudflare-tunnel: adicionar após selar as credenciais com kubeseal
+  # - cloudflare-tunnel/
   - zot/
   - tekton/

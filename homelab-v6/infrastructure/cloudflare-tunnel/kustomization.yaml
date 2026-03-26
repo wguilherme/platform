@@ -4,7 +4,10 @@ kind: Kustomization
 resources:
   - helmrelease.yaml
   - sealed-secret.yaml
+namespace: default
+
 configMapGenerator:
   - name: cloudflare-tunnel-values
+    namespace: default
     files:
       - values.yaml=values.yaml

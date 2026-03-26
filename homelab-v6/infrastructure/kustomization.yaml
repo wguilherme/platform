@@ -5,10 +5,8 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - sources/
-  - metallb/
   - sealed-secrets/
   - nginx-ingress/
   - cloudflare-tunnel/
   - zot/
   - tekton/
-  - monitoring/

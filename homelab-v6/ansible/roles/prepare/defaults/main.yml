@@ -8,6 +8,8 @@ prepare_packages:
   - gnupg
   - lsb-release
   - jq
+  - iptables
+  - ipset
 
 kernel_modules:
   - br_netfilter

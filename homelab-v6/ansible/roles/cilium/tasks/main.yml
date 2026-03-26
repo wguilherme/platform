@@ -35,7 +35,7 @@
 
 - name: Obter IP do control-plane para k8sServiceHost
   set_fact:
-    cp_ip: "{{ ansible_host }}"
+    cp_ip: "{{ ansible_default_ipv4.address }}"
 
 - name: Gerar values do Cilium
   template:
@@ -45,7 +45,7 @@
 
 - name: Instalar Cilium via Helm
   shell: |
-    export KUBECONFIG={{ ansible_env.HOME }}/.kube/config
+    export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
     helm upgrade --install {{ cilium_helm_release }} cilium/cilium \
       --version {{ cilium_version }} \
       --namespace {{ cilium_namespace }} \
@@ -56,7 +56,8 @@
   changed_when: "'has been upgraded' in cilium_deploy.stdout or 'has been installed' in cilium_deploy.stdout"
 
 - name: Aguardar Cilium DaemonSet pronto
-  command: >
+  shell: >
+    KUBECONFIG=/etc/rancher/k3s/k3s.yaml
     kubectl rollout status daemonset/cilium
     -n {{ cilium_namespace }}
     --timeout=300s
@@ -64,7 +65,7 @@
 
 - name: Verificar status do Cilium
   shell: |
-    kubectl -n {{ cilium_namespace }} exec ds/cilium -- \
+    KUBECONFIG=/etc/rancher/k3s/k3s.yaml kubectl -n {{ cilium_namespace }} exec ds/cilium -- \
       cilium-dbg status | grep KubeProxyReplacement
   register: cilium_status
   changed_when: false

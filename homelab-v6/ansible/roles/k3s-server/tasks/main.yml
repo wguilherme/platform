@@ -46,17 +46,19 @@
     owner: "{{ ansible_user_id }}"
     mode: '0600'
 
-- name: Corrigir server address no kubeconfig
-  replace:
-    path: "{{ ansible_env.HOME }}/.kube/config"
-    regexp: 'https://127\.0\.0\.1:6443'
-    replace: "https://{{ ansible_host }}:6443"
-
 - name: Buscar kubeconfig localmente
   fetch:
     src: "{{ ansible_env.HOME }}/.kube/config"
     dest: "{{ k3s_local_kubeconfig_path }}"
     flat: true
+  when: k3s_fetch_kubeconfig
+
+- name: Corrigir server address no kubeconfig local (Mac)
+  delegate_to: localhost
+  replace:
+    path: "{{ k3s_local_kubeconfig_path }}"
+    regexp: 'https://127\.0\.0\.1:6443'
+    replace: "https://{{ ansible_host }}:6443"
   when: k3s_fetch_kubeconfig
 
 # ─── Token para workers ───────────────────────────────────────────────────────

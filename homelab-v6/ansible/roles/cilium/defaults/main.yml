@@ -21,6 +21,6 @@ cilium_helm_values:
   # Hubble UI / observabilidade (desabilite se quiser economizar memória)
   hubble:
     relay:
-      enabled: true
+      enabled: false
     ui:
-      enabled: true
+      enabled: false

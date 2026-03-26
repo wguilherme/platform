@@ -12,4 +12,5 @@ htpasswd
 .pio
 
 *.DS_Store
-homeassistant
+homeassistantkubeconfig
+.tool-versions

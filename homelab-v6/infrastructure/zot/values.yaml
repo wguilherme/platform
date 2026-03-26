@@ -6,7 +6,6 @@ ingress:
   enabled: true
   className: nginx
   annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-cloudflare
     nginx.ingress.kubernetes.io/proxy-body-size: "0"
   hosts:
     - host: registry.phantombyte.uk

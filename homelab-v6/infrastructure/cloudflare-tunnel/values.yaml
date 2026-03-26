@@ -1,13 +1,12 @@
 # yaml-language-server: $schema=false
 ---
-# Mantém o mesmo tunnelId/tunnelName do homelab-v5.
 cloudflare:
-  tunnelName: "homelab-v6"
-  tunnelId: "839f777c-f3cf-4a1b-80cc-bc01b0ca842a"
+  tunnelName: "rpi"
+  tunnelId: "9cbe39d5-4db7-42be-99e4-05496ae59c46"
   secretName: "tunnel-credentials"
   ingress:
     # Roteia tudo para o Nginx Ingress Controller
-    - hostname: "*.phantombyte.uk"
+    - hostname: "*.wguilherme.com"
       service: http://ingress-nginx-controller.ingress-nginx.svc.cluster.local:80
       originRequest:
         noTLSVerify: true

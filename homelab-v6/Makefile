@@ -145,3 +145,6 @@ cilium-status: ## Exibe status do Cilium e kube-proxy replacement
 .PHONY: clean-kubeconfig
 clean-kubeconfig: ## Remove kubeconfig local gerado pelo Ansible
 	rm -f $(KUBECONFIG)
+
+# ─── Automações (hack/automations/) ───────────────────────────────────────────
+include hack/automations/sealed-secrets.mk

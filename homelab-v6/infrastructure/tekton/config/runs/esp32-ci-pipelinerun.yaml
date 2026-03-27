@@ -7,10 +7,12 @@ metadata:
   generateName: esp32-ci-
   namespace: tekton-pipelines
 spec:
-  timeout: 60m
-  podTemplate:
-    nodeSelector:
-      kubernetes.io/hostname: raspberry
+  timeouts:
+    pipeline: 1h0m0s
+  taskRunTemplate:
+    podTemplate:
+      nodeSelector:
+        kubernetes.io/hostname: raspberry
   pipelineRef:
     name: esp32-ci
   workspaces:

@@ -46,13 +46,13 @@ spec:
       script: |
         #!/bin/sh
         set -e
-        git clone $(params.repo-url) .
-        git checkout $(params.revision)
-        echo "Clonado: $(git log -1 --oneline)"
+        git clone $(params.repo-url) repo
+        cd repo && git checkout $(params.revision)
+        echo "Clonado: $(git -C repo log -1 --oneline)"
 
     - name: build
       image: python:3.11-slim
-      workingDir: $(workspaces.source.path)/$(params.firmware-dir)
+      workingDir: $(workspaces.source.path)/repo/$(params.firmware-dir)
       script: |
         #!/bin/sh
         set -e
@@ -64,7 +64,7 @@ spec:
 
     - name: flash
       image: python:3.11-slim
-      workingDir: $(workspaces.source.path)/$(params.firmware-dir)
+      workingDir: $(workspaces.source.path)/repo/$(params.firmware-dir)
       securityContext:
         privileged: true
       volumeMounts:

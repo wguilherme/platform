@@ -20,7 +20,7 @@ spec:
       author:
         name: Flux Image Automation
         email: flux@wguilherme.com
-      messageTemplate: "chore: update esp32-firmware to {{range .Updated.Images}}{{.}}{{end}}"
+      messageTemplate: "chore: update esp32-firmware to {{range .Changed.Changes}}{{.NewValue}}{{end}}"
     push:
       branch: main
   update:

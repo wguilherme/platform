@@ -1,12 +1,7 @@
 ---
-# Kustomization raiz da infraestrutura.
-# A ordem importa: sources primeiro, depois camadas que dependem umas das outras.
+# Este arquivo não é usado pelo Flux diretamente.
+# O Flux aponta para infrastructure/controllers/ e infrastructure/apps/ separadamente
+# via flux/clusters/homelab/infrastructure.yaml (dependsOn garante a ordem correta).
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-resources:
-  - sources/
-  - sealed-secrets/
-  - nginx-ingress/
-  - cloudflare-tunnel/
-  - zot/
-  - tekton/
+resources: []

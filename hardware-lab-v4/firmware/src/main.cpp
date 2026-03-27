@@ -3,6 +3,9 @@
 // Firmware de verificação do pipeline Tekton CI/CD
 // Para confirmar o deploy: LED pisca + mensagem na serial
 #define FIRMWARE_VERSION "1.0.0"
+#ifndef LED_BUILTIN
+#define LED_BUILTIN 2
+#endif
 
 void setup() {
   Serial.begin(115200);

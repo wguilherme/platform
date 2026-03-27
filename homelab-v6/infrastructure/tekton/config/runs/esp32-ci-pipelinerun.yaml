@@ -17,7 +17,13 @@ spec:
     name: esp32-ci
   workspaces:
     - name: source
-      emptyDir: {}
+      volumeClaimTemplate:
+        spec:
+          accessModes: [ReadWriteOnce]
+          storageClassName: local-path
+          resources:
+            requests:
+              storage: 2Gi
     - name: pio-cache
       persistentVolumeClaim:
         claimName: pio-cache-pvc

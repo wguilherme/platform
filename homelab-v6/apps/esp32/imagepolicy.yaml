@@ -1,0 +1,14 @@
+---
+# Seleciona a tag mais recente por ordem alfabética ascendente.
+# Tags no formato YYYYMMDDHHMMSS-sha8 ordenam corretamente como timestamp.
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImagePolicy
+metadata:
+  name: esp32-firmware
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: esp32-firmware
+  policy:
+    alphabetical:
+      order: asc

@@ -1,0 +1,11 @@
+---
+# Flux monitora o registry interno em busca de novas tags do esp32-firmware.
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImageRepository
+metadata:
+  name: esp32-firmware
+  namespace: flux-system
+spec:
+  image: zot.zot.svc.cluster.local:5000/esp32-firmware
+  interval: 1m
+  insecure: true

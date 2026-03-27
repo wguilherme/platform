@@ -161,6 +161,12 @@ tekton-install: ## Instala Tekton Pipelines, Triggers e Dashboard via kubectl ap
 	$(call info,Instalando Tekton Dashboard $(TEKTON_DASHBOARD_VERSION))
 	kubectl apply -f https://github.com/tektoncd/dashboard/releases/download/$(TEKTON_DASHBOARD_VERSION)/release.yaml
 
+.PHONY: esp32-serial
+esp32-serial: ## Lê a serial do ESP32 por 5s (valida firmware deployado)
+	$(call info,Lendo serial do ESP32)
+	ssh -i ~/.ssh/personal/wguilherme.dev.github wguilherme@10.3.152.16 \
+		"stty -F /dev/ttyUSB0 115200 raw && timeout 5 dd if=/dev/ttyUSB0 bs=1 count=500 2>/dev/null | strings"
+
 .PHONY: tekton-status
 tekton-status: ## Verifica status dos pods do Tekton
 	kubectl get pods -n tekton-pipelines

@@ -1,0 +1,94 @@
+---
+# Pipeline ESP32 CI: clone → pio build → kaniko push para zot registry
+# Fluxo: git push → Tekton gera imagem OCI → Flux detecta nova tag → atualiza Job → ESP32 flashado
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: esp32-ci
+  namespace: tekton-pipelines
+spec:
+  params:
+    - name: repo-url
+      type: string
+      default: https://github.com/wguilherme/platform.git
+    - name: revision
+      type: string
+      default: main
+    - name: firmware-dir
+      description: Caminho do firmware dentro do repo
+      type: string
+      default: hardware-lab-v4/firmware
+    - name: pio-env
+      type: string
+      default: esp32-usb
+    - name: image-repo
+      description: "Registry + repositório sem tag (ex: zot.zot.svc.cluster.local:5000/esp32-firmware)"
+      type: string
+      default: zot.zot.svc.cluster.local:5000/esp32-firmware
+
+  workspaces:
+    - name: source
+      description: Workspace compartilhado entre os steps (clone, build, kaniko)
+    - name: pio-cache
+      description: Cache persistente do PlatformIO
+
+  results:
+    - name: image-tag
+      description: Tag da imagem publicada
+      value: $(tasks.pio-build.results.image-tag)
+    - name: commit
+      description: SHA do commit buildado
+      value: $(tasks.clone.results.commit)
+
+  tasks:
+    - name: clone
+      taskRef:
+        name: git-clone
+      params:
+        - name: url
+          value: $(params.repo-url)
+        - name: revision
+          value: $(params.revision)
+        - name: subdirectory
+          value: repo
+      workspaces:
+        - name: output
+          workspace: source
+
+    - name: pio-build
+      taskRef:
+        name: pio-build
+      runAfter:
+        - clone
+      params:
+        - name: firmware-dir
+          value: $(params.firmware-dir)
+        - name: pio-env
+          value: $(params.pio-env)
+        - name: commit
+          value: $(tasks.clone.results.commit)
+      workspaces:
+        - name: source
+          workspace: source
+        - name: pio-cache
+          workspace: pio-cache
+
+    - name: build-image
+      taskRef:
+        name: kaniko-build-push
+      runAfter:
+        - pio-build
+      params:
+        - name: image
+          value: $(params.image-repo):$(tasks.pio-build.results.image-tag)
+        - name: dockerfile
+          value: repo/$(params.firmware-dir)/Dockerfile
+        - name: context
+          value: repo/$(params.firmware-dir)
+        - name: extra-args
+          value:
+            - "--insecure"
+            - "--skip-tls-verify"
+      workspaces:
+        - name: source
+          workspace: source

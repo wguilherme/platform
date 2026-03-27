@@ -3,7 +3,5 @@
 # Adicione referências aqui à medida que novos apps forem criados.
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-resources: []
-# Exemplo futuro:
-# resources:
-#   - ../../base/minha-app
+resources:
+  - ../esp32

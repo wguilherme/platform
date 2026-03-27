@@ -1,0 +1,54 @@
+---
+# Task PlatformIO Build — compila o firmware e gera a tag de imagem.
+# Salva o cache do toolchain em pio-cache para acelerar runs seguintes.
+# Saída: results.image-tag no formato YYYYMMDDHHMMSS-sha8
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: pio-build
+  namespace: tekton-pipelines
+spec:
+  params:
+    - name: firmware-dir
+      description: Caminho do firmware relativo ao subdiretório do clone
+      type: string
+      default: hardware-lab-v4/firmware
+    - name: pio-env
+      description: Ambiente PlatformIO a compilar
+      type: string
+      default: esp32-usb
+    - name: subdirectory
+      description: Subdiretório no workspace onde o repo foi clonado
+      type: string
+      default: repo
+    - name: commit
+      description: Git commit SHA completo (vindo de git-clone results.commit)
+      type: string
+      default: ""
+  workspaces:
+    - name: source
+      description: Workspace com o repositório clonado
+    - name: pio-cache
+      description: Cache persistente do PlatformIO (evita re-download do toolchain)
+  results:
+    - name: image-tag
+      description: "Tag da imagem gerada: YYYYMMDDHHMMSS-sha8"
+  steps:
+    - name: build
+      image: python:3.11-slim
+      env:
+        - name: PLATFORMIO_CORE_DIR
+          value: $(workspaces.pio-cache.path)
+      script: |
+        #!/bin/bash
+        set -e
+        WORK_DIR="$(workspaces.source.path)/$(params.subdirectory)/$(params.firmware-dir)"
+        cd "$WORK_DIR"
+
+        pip install platformio --quiet
+        pio run -e $(params.pio-env)
+
+        SHORT_SHA=$(echo "$(params.commit)" | cut -c1-8)
+        TAG="$(date +%Y%m%d%H%M%S)-${SHORT_SHA}"
+        printf "%s" "$TAG" > "$(results.image-tag.path)"
+        echo "Build OK — tag: $TAG"

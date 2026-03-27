@@ -1,0 +1,21 @@
+---
+# PipelineRun manual para testar o pipeline ESP32 CI.
+# Uso: kubectl create -f esp32-ci-pipelinerun.yaml -n tekton-pipelines
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  generateName: esp32-ci-
+  namespace: tekton-pipelines
+spec:
+  timeout: 60m
+  podTemplate:
+    nodeSelector:
+      kubernetes.io/hostname: raspberry
+  pipelineRef:
+    name: esp32-ci
+  workspaces:
+    - name: source
+      emptyDir: {}
+    - name: pio-cache
+      persistentVolumeClaim:
+        claimName: pio-cache-pvc

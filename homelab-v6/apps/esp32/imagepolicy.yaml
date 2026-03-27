@@ -1,7 +1,7 @@
 ---
 # Seleciona a tag mais recente por ordem alfabética ascendente.
 # Tags no formato YYYYMMDDHHMMSS-sha8 ordenam corretamente como timestamp.
-apiVersion: image.toolkit.fluxcd.io/v1beta2
+apiVersion: image.toolkit.fluxcd.io/v1
 kind: ImagePolicy
 metadata:
   name: esp32-firmware

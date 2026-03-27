@@ -1,6 +1,6 @@
 ---
 # Flux monitora o registry interno em busca de novas tags do esp32-firmware.
-apiVersion: image.toolkit.fluxcd.io/v1beta2
+apiVersion: image.toolkit.fluxcd.io/v1
 kind: ImageRepository
 metadata:
   name: esp32-firmware

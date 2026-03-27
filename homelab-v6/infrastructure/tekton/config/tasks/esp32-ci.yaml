@@ -1,0 +1,84 @@
+---
+# Task ESP32 CI: clone → pio build → kaniko push para zot registry.
+# Todos os steps rodam no mesmo Pod — workspace source é emptyDir (sem PVC necessário).
+# Apenas pio-cache usa PVC para evitar re-download do toolchain (~400MB) a cada run.
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: esp32-ci
+  namespace: tekton-pipelines
+spec:
+  params:
+    - name: repo-url
+      type: string
+      default: https://github.com/wguilherme/platform.git
+    - name: revision
+      type: string
+      default: main
+    - name: firmware-dir
+      type: string
+      default: hardware-lab-v4/firmware
+    - name: pio-env
+      type: string
+      default: esp32-usb
+    - name: image-repo
+      type: string
+      default: zot.zot.svc.cluster.local:5000/esp32-firmware
+
+  workspaces:
+    - name: source
+      description: Diretório de trabalho compartilhado entre steps (emptyDir no TaskRun)
+    - name: pio-cache
+      description: Cache persistente do PlatformIO (PVC — evita download do toolchain)
+
+  results:
+    - name: image-tag
+      description: "Tag publicada: YYYYMMDDHHMMSS-sha8"
+
+  steps:
+    - name: clone
+      image: alpine/git:latest
+      workingDir: $(workspaces.source.path)
+      script: |
+        #!/bin/sh
+        set -e
+        rm -rf repo
+        git clone --depth=1 "$(params.repo-url)" repo
+        cd repo && git checkout "$(params.revision)"
+        SHA=$(git rev-parse --short=8 HEAD)
+        TAG=$(date +%Y%m%d%H%M%S)-$SHA
+        echo "$TAG" > $(workspaces.source.path)/.image-tag
+        printf "%s" "$TAG" > $(results.image-tag.path)
+        echo "Clonado @ $SHA — tag: $TAG"
+
+    - name: build
+      image: python:3.11-slim
+      workingDir: $(workspaces.source.path)
+      env:
+        - name: PLATFORMIO_CORE_DIR
+          value: $(workspaces.pio-cache.path)
+      script: |
+        #!/bin/sh
+        set -e
+        cd repo/$(params.firmware-dir)
+        pip install platformio --quiet
+        echo "=== Build: $(params.pio-env) ==="
+        pio run -e $(params.pio-env)
+        echo "=== Build OK ==="
+        ls -lh .pio/build/$(params.pio-env)/firmware.bin
+
+    - name: push
+      image: gcr.io/kaniko-project/executor:v1.23.0-debug
+      script: |
+        #!/busybox/sh
+        set -e
+        TAG=$(cat $(workspaces.source.path)/.image-tag)
+        DEST="$(params.image-repo):$TAG"
+        echo "=== Push: $DEST ==="
+        /kaniko/executor \
+          --dockerfile=$(workspaces.source.path)/repo/$(params.firmware-dir)/Dockerfile \
+          --context=$(workspaces.source.path)/repo/$(params.firmware-dir) \
+          --destination=$DEST \
+          --insecure \
+          --skip-tls-verify
+        echo "=== Push OK ==="

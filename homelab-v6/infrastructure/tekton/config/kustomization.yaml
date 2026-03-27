@@ -8,9 +8,8 @@ resources:
   - tasks/git-clone.yaml
   - tasks/kaniko-build-push.yaml
   - tasks/esp32-build-flash.yaml
-  - tasks/pio-build.yaml
+  - tasks/esp32-ci.yaml
   - pipelines/build-push.yaml
-  - pipelines/esp32-ci.yaml
   - triggers/github-binding.yaml
   - triggers/trigger-template.yaml
   - triggers/event-listener.yaml

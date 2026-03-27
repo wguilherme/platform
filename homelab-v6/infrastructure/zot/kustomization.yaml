@@ -6,6 +6,9 @@ resources:
   - helmrelease.yaml
 namespace: zot
 
+generatorOptions:
+  disableNameSuffixHash: true
+
 configMapGenerator:
   - name: zot-values
     namespace: zot

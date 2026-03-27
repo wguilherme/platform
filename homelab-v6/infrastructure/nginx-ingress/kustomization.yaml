@@ -6,6 +6,9 @@ resources:
   - helmrelease.yaml
 namespace: ingress-nginx
 
+generatorOptions:
+  disableNameSuffixHash: true
+
 configMapGenerator:
   - name: nginx-ingress-values
     namespace: ingress-nginx

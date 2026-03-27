@@ -6,6 +6,9 @@ resources:
   - sealed-secret.yaml
 namespace: default
 
+generatorOptions:
+  disableNameSuffixHash: true
+
 configMapGenerator:
   - name: cloudflare-tunnel-values
     namespace: default

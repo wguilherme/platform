@@ -19,9 +19,14 @@ spec:
       containers:
         - name: cloudflared
           image: cloudflare/cloudflared:2026.3.0
-          args:
+          command:
+            - cloudflared
             - tunnel
             - --no-autoupdate
+            - --loglevel
+            - info
+            - --metrics
+            - 0.0.0.0:2000
             - run
           env:
             - name: TUNNEL_TOKEN
@@ -29,6 +34,13 @@ spec:
                 secretKeyRef:
                   name: tunnel-token
                   key: token
+          livenessProbe:
+            httpGet:
+              path: /ready
+              port: 2000
+            failureThreshold: 1
+            initialDelaySeconds: 10
+            periodSeconds: 10
           resources:
             requests:
               cpu: 50m

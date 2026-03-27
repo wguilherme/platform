@@ -1,6 +1,4 @@
 ---
-# EventListener — recebe webhooks do GitHub e dispara o pipeline.
-# O Cloudflare Tunnel roteia tekton-webhook.phantombyte.uk → este Service.
 apiVersion: triggers.tekton.dev/v1beta1
 kind: EventListener
 metadata:
@@ -11,7 +9,6 @@ spec:
   triggers:
     - name: github-push
       interceptors:
-        # Valida o secret do webhook GitHub
         - ref:
             name: github
           params:
@@ -21,7 +18,6 @@ spec:
                 secretKey: secret
             - name: eventTypes
               value: ["push"]
-        # Filtra apenas pushes na branch main
         - ref:
             name: cel
           params:
@@ -30,21 +26,17 @@ spec:
       bindings:
         - ref: github-push-binding
       template:
-        ref: github-build-push-template
+        ref: esp32-ci-template
 ---
-# Ingress para o EventListener — usa nginx (padrão do cluster v6)
-# Sem TLS gerenciado pelo cert-manager: o Cloudflare Tunnel já provê TLS.
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: tekton-eventlistener
+  name: tekton-webhook
   namespace: tekton-pipelines
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   ingressClassName: nginx
   rules:
-    - host: tekton-webhook.phantombyte.uk
+    - host: tekton-webhook.wguilherme.com
       http:
         paths:
           - path: /
@@ -55,7 +47,6 @@ spec:
                 port:
                   number: 8080
 ---
-# Ingress para o Tekton Dashboard (read-only por padrão)
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -64,7 +55,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: tekton.phantombyte.uk
+    - host: tekton.wguilherme.com
       http:
         paths:
           - path: /

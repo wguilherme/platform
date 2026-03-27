@@ -6,3 +6,7 @@ resources:
   - pio-cache-pvc.yaml
   - tasks/esp32-build-flash.yaml
   - tasks/esp32-ci.yaml
+  - triggers/github-webhook-secret.yaml
+  - triggers/github-binding.yaml
+  - triggers/trigger-template.yaml
+  - triggers/event-listener.yaml

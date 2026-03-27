@@ -1,45 +1,31 @@
 ---
-# TriggerTemplate — instancia um PipelineRun a cada push.
-# Ajuste IMAGE e CONTEXT conforme o projeto que será buildado.
 apiVersion: triggers.tekton.dev/v1beta1
 kind: TriggerTemplate
 metadata:
-  name: github-build-push-template
+  name: esp32-ci-template
   namespace: tekton-pipelines
 spec:
   params:
     - name: gitrevision
-      description: SHA do commit
-    - name: gitrepositoryurl
-      description: URL do repositório
-    - name: gitbranch
-      description: Branch que disparou o push
-    - name: reponame
-      description: Nome do repositório
   resourcetemplates:
     - apiVersion: tekton.dev/v1
-      kind: PipelineRun
+      kind: TaskRun
       metadata:
-        generateName: build-push-$(tt.params.reponame)-
+        generateName: esp32-ci-
         namespace: tekton-pipelines
       spec:
-        pipelineRef:
-          name: build-push
+        timeout: 60m
+        podTemplate:
+          nodeSelector:
+            kubernetes.io/hostname: raspberry
+        taskRef:
+          name: esp32-ci
         params:
-          - name: repo-url
-            value: $(tt.params.gitrepositoryurl)
           - name: revision
             value: $(tt.params.gitrevision)
-          - name: image
-            # Convenção: registry/<nome-do-repo>:<sha-curto>
-            value: "registry.phantombyte.uk/$(tt.params.reponame):$(tt.params.gitrevision)"
-          - name: dockerfile
-            value: Dockerfile
-          - name: context
-            value: "."
         workspaces:
-          - name: shared-workspace
+          - name: source
+            emptyDir: {}
+          - name: pio-cache
             persistentVolumeClaim:
-              claimName: tekton-workspace-pvc
-        timeouts:
-          pipeline: 30m
+              claimName: pio-cache-pvc

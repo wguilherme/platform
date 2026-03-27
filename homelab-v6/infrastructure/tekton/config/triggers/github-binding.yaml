@@ -1,6 +1,4 @@
 ---
-# TriggerBinding — extrai campos do payload do webhook GitHub e os
-# mapeia para parâmetros do TriggerTemplate.
 apiVersion: triggers.tekton.dev/v1beta1
 kind: TriggerBinding
 metadata:
@@ -10,9 +8,3 @@ spec:
   params:
     - name: gitrevision
       value: $(body.head_commit.id)
-    - name: gitrepositoryurl
-      value: $(body.repository.clone_url)
-    - name: gitbranch
-      value: $(body.ref)
-    - name: reponame
-      value: $(body.repository.name)

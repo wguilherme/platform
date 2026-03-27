@@ -1,27 +1,28 @@
 #include <Arduino.h>
 
 // Firmware de verificação do pipeline Tekton CI/CD
-// Para confirmar o deploy: LED pisca + mensagem na serial
-#define FIRMWARE_VERSION "1.0.0"
-#ifndef LED_BUILTIN
-#define LED_BUILTIN 2
-#endif
+// Relé conectado ao GPIO23 (3v3 + GND)
+#define FIRMWARE_VERSION "1.1.0"
+#define RELAY_PIN 23
 
 void setup() {
   Serial.begin(115200);
   delay(1000);
-  pinMode(LED_BUILTIN, OUTPUT);
+  pinMode(RELAY_PIN, OUTPUT);
+  digitalWrite(RELAY_PIN, LOW);
 
   Serial.println("\n================================");
   Serial.println("  ESP32 WROOM - Tekton CI/CD   ");
   Serial.printf ("  Version: %s\n", FIRMWARE_VERSION);
+  Serial.println("  Relay: GPIO23               ");
   Serial.println("================================\n");
 }
 
 void loop() {
-  Serial.printf("[v%s] tick\n", FIRMWARE_VERSION);
-  digitalWrite(LED_BUILTIN, HIGH);
+  Serial.printf("[v%s] relay ON\n", FIRMWARE_VERSION);
+  digitalWrite(RELAY_PIN, HIGH);
   delay(1000);
-  digitalWrite(LED_BUILTIN, LOW);
+  Serial.printf("[v%s] relay OFF\n", FIRMWARE_VERSION);
+  digitalWrite(RELAY_PIN, LOW);
   delay(1000);
 }

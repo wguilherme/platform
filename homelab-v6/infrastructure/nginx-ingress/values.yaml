@@ -33,5 +33,8 @@ controller:
       operator: Exists
       effect: NoSchedule
 
+admissionWebhooks:
+  enabled: false    # cert auto-assinado causa erros nos Ingresses de outros charts
+
 defaultBackend:
   enabled: false    # imagem não tem suporte ARM64

@@ -1,0 +1,88 @@
+---
+# Task: clone o repo, build com PlatformIO e flash via esptool no ESP32 conectado via USB.
+# O TaskRun deve especificar podTemplate.nodeSelector: kubernetes.io/hostname: raspberry
+# e montar o device /dev/ttyUSB0 via hostPath (declarado aqui).
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: esp32-build-flash
+  namespace: tekton-pipelines
+spec:
+  params:
+    - name: repo-url
+      type: string
+      description: URL do repositório Git
+    - name: revision
+      type: string
+      default: main
+    - name: firmware-dir
+      type: string
+      default: hardware-lab-v4/firmware
+      description: Caminho relativo ao repo com o platformio.ini
+    - name: pio-env
+      type: string
+      default: esp32-usb
+      description: Ambiente PlatformIO (seção [env:X] do platformio.ini)
+    - name: port
+      type: string
+      default: /dev/ttyUSB0
+    - name: baud
+      type: string
+      default: "921600"
+
+  workspaces:
+    - name: source
+
+  volumes:
+    - name: usb
+      hostPath:
+        path: /dev/ttyUSB0
+        type: CharDevice
+
+  steps:
+    - name: clone
+      image: alpine/git:latest
+      workingDir: $(workspaces.source.path)
+      script: |
+        #!/bin/sh
+        set -e
+        git clone $(params.repo-url) .
+        git checkout $(params.revision)
+        echo "Clonado: $(git log -1 --oneline)"
+
+    - name: build
+      image: python:3.11-slim
+      workingDir: $(workspaces.source.path)/$(params.firmware-dir)
+      script: |
+        #!/bin/sh
+        set -e
+        pip install platformio --quiet
+        echo "=== Build: $(params.pio-env) ==="
+        pio run -e $(params.pio-env)
+        echo "=== Build OK ==="
+        ls -lh .pio/build/$(params.pio-env)/firmware.bin
+
+    - name: flash
+      image: python:3.11-slim
+      workingDir: $(workspaces.source.path)/$(params.firmware-dir)
+      securityContext:
+        privileged: true
+      volumeMounts:
+        - name: usb
+          mountPath: /dev/ttyUSB0
+      script: |
+        #!/bin/sh
+        set -e
+        pip install esptool --quiet
+        echo "=== Flash → $(params.port) @ $(params.baud) baud ==="
+        python -m esptool \
+          --port $(params.port) \
+          --baud $(params.baud) \
+          --chip esp32 \
+          write_flash \
+          --flash_mode dio \
+          -z \
+          0x1000  .pio/build/$(params.pio-env)/bootloader.bin \
+          0x8000  .pio/build/$(params.pio-env)/partitions.bin \
+          0x10000 .pio/build/$(params.pio-env)/firmware.bin
+        echo "=== Flash OK ==="

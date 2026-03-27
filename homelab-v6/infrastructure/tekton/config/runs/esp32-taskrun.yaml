@@ -1,0 +1,27 @@
+---
+# TaskRun manual para testar o pipeline ESP32.
+# Uso: kubectl create -f esp32-taskrun.yaml -n tekton-pipelines
+# (usa generateName → cria um run novo a cada execução)
+apiVersion: tekton.dev/v1
+kind: TaskRun
+metadata:
+  generateName: esp32-deploy-
+  namespace: tekton-pipelines
+spec:
+  podTemplate:
+    nodeSelector:
+      kubernetes.io/hostname: raspberry    # pina no nó com o USB
+  taskRef:
+    name: esp32-build-flash
+  params:
+    - name: repo-url
+      value: https://github.com/wguilherme/platform.git
+    - name: revision
+      value: main
+    - name: firmware-dir
+      value: hardware-lab-v4/firmware
+    - name: pio-env
+      value: esp32-usb
+  workspaces:
+    - name: source
+      emptyDir: {}    # workspace efêmero, sem PVC necessário

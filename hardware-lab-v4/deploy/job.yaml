@@ -20,7 +20,7 @@ spec:
         kubernetes.io/hostname: raspberry
       containers:
         - name: flash
-          image: zot.zot.svc.cluster.local:5000/esp32-firmware:20260327155645-45fc3cf4 # {"$imagepolicy": "flux-system:esp32-firmware"}
+          image: registry.wguilherme.com/esp32-firmware:20260327155645-45fc3cf4 # {"$imagepolicy": "flux-system:esp32-firmware"}
           securityContext:
             privileged: true
           env:

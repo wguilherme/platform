@@ -6,6 +6,5 @@ metadata:
   name: esp32-firmware
   namespace: flux-system
 spec:
-  image: zot.zot.svc.cluster.local:5000/esp32-firmware
+  image: registry.wguilherme.com/esp32-firmware
   interval: 1m
-  insecure: true

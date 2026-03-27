@@ -23,7 +23,7 @@ spec:
       default: esp32-usb
     - name: image-repo
       type: string
-      default: zot.zot.svc.cluster.local:5000/esp32-firmware
+      default: registry.wguilherme.com/esp32-firmware
 
   workspaces:
     - name: source
@@ -79,6 +79,5 @@ spec:
           --dockerfile=$(workspaces.source.path)/repo/$(params.firmware-dir)/Dockerfile \
           --context=$(workspaces.source.path)/repo/$(params.firmware-dir) \
           --destination=$DEST \
-          --insecure \
-          --skip-tls-verify
+          --skip-tls-verify-registry=registry.wguilherme.com
         echo "=== Push OK ==="

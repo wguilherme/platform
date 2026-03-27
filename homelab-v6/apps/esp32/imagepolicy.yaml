@@ -9,6 +9,8 @@ metadata:
 spec:
   imageRepositoryRef:
     name: esp32-firmware
+  filterTags:
+    pattern: '^\d{14}-[a-f0-9]{8}$'
   policy:
     alphabetical:
       order: asc

@@ -1,7 +1,4 @@
 ---
-# Quando Flux detectar nova tag no ImageRepository, atualiza o comentário
-# {"$imagepolicy": "flux-system:esp32-firmware"} em hardware-lab-v4/deploy/job.yaml
-# e faz commit automaticamente no main.
 apiVersion: image.toolkit.fluxcd.io/v1
 kind: ImageUpdateAutomation
 metadata:
@@ -20,7 +17,7 @@ spec:
       author:
         name: Flux Image Automation
         email: flux@wguilherme.com
-      messageTemplate: "chore: update esp32-firmware to {{range .Changed.Changes}}{{.NewValue}}{{end}}"
+      messageTemplate: "chore: update esp32-firmware image"
     push:
       branch: main
   update:

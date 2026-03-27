@@ -1,6 +1,20 @@
 ---
-# Tunnel remotamente gerenciado via Cloudflare Zero Trust dashboard.
-# Usa --token (JWT) em vez de credentials.json — método correto para tunnels criados pelo painel.
+# Tunnel autenticado via --token (remotely managed), mas com config.yaml local
+# para suportar wildcard *.wguilherme.com que o dashboard UI não aceita.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cloudflare-tunnel-config
+  namespace: default
+data:
+  config.yaml: |
+    ingress:
+      - hostname: "*.wguilherme.com"
+        service: http://ingress-nginx-controller.ingress-nginx.svc.cluster.local:80
+        originRequest:
+          noTLSVerify: true
+      - service: http_status:404
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -27,6 +41,8 @@ spec:
             - info
             - --metrics
             - 0.0.0.0:2000
+            - --config
+            - /etc/cloudflared/config.yaml
             - run
           env:
             - name: TUNNEL_TOKEN
@@ -34,6 +50,10 @@ spec:
                 secretKeyRef:
                   name: tunnel-token
                   key: token
+          volumeMounts:
+            - name: config
+              mountPath: /etc/cloudflared
+              readOnly: true
           livenessProbe:
             httpGet:
               path: /ready
@@ -48,4 +68,8 @@ spec:
             limits:
               cpu: 100m
               memory: 128Mi
+      volumes:
+        - name: config
+          configMap:
+            name: cloudflare-tunnel-config
       restartPolicy: Always

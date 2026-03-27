@@ -46,6 +46,7 @@ spec:
       script: |
         #!/bin/sh
         set -e
+        rm -rf repo
         git clone $(params.repo-url) repo
         cd repo && git checkout $(params.revision)
         echo "Clonado: $(git -C repo log -1 --oneline)"

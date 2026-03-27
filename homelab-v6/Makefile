@@ -147,9 +147,9 @@ clean-kubeconfig: ## Remove kubeconfig local gerado pelo Ansible
 	rm -f $(KUBECONFIG)
 
 # ─── Tekton ───────────────────────────────────────────────────────────────────
-TEKTON_PIPELINE_VERSION  ?= v0.65.0
-TEKTON_TRIGGERS_VERSION  ?= v0.30.0
-TEKTON_DASHBOARD_VERSION ?= v0.49.0
+TEKTON_PIPELINE_VERSION  ?= v1.10.2
+TEKTON_TRIGGERS_VERSION  ?= v0.35.0
+TEKTON_DASHBOARD_VERSION ?= v0.66.0
 
 .PHONY: tekton-install
 tekton-install: ## Instala Tekton Pipelines, Triggers e Dashboard via kubectl apply

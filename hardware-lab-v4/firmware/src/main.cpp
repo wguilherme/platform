@@ -2,7 +2,7 @@
 
 // Firmware de verificação do pipeline Tekton CI/CD
 // Relé conectado ao GPIO23 (3v3 + GND)
-#define FIRMWARE_VERSION "1.1.0"
+#define FIRMWARE_VERSION "1.2.0"
 #define RELAY_PIN 23
 
 void setup() {

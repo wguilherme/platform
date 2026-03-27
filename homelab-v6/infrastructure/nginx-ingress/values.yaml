@@ -8,7 +8,7 @@ controller:
     default: true
 
   service:
-    type: LoadBalancer    # MetalLB atribui o IP externo
+    type: NodePort    # sem MetalLB, exposto via NodePort + cloudflare tunnel
 
   config:
     compute-full-forwarded-for: "true"
@@ -34,11 +34,4 @@ controller:
       effect: NoSchedule
 
 defaultBackend:
-  enabled: true
-  resources:
-    limits:
-      cpu: 10m
-      memory: 20Mi
-    requests:
-      cpu: 10m
-      memory: 20Mi
+  enabled: false    # imagem não tem suporte ARM64

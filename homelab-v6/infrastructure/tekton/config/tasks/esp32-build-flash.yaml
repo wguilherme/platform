@@ -32,6 +32,8 @@ spec:
 
   workspaces:
     - name: source
+    - name: pio-cache
+      description: Cache persistente do PlatformIO (~/.platformio)
 
   volumes:
     - name: usb
@@ -54,6 +56,9 @@ spec:
     - name: build
       image: python:3.11-slim
       workingDir: $(workspaces.source.path)
+      env:
+        - name: PLATFORMIO_CORE_DIR
+          value: $(workspaces.pio-cache.path)
       script: |
         #!/bin/sh
         set -e
@@ -67,6 +72,9 @@ spec:
     - name: flash
       image: python:3.11-slim
       workingDir: $(workspaces.source.path)
+      env:
+        - name: PLATFORMIO_CORE_DIR
+          value: $(workspaces.pio-cache.path)
       securityContext:
         privileged: true
       volumeMounts:

@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - rbac.yaml
   - workspace-pvc.yaml
+  - pio-cache-pvc.yaml
   - tasks/git-clone.yaml
   - tasks/kaniko-build-push.yaml
   - tasks/esp32-build-flash.yaml

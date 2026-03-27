@@ -53,10 +53,11 @@ spec:
 
     - name: build
       image: python:3.11-slim
-      workingDir: $(workspaces.source.path)/repo/$(params.firmware-dir)
+      workingDir: $(workspaces.source.path)
       script: |
         #!/bin/sh
         set -e
+        cd repo/$(params.firmware-dir)
         pip install platformio --quiet
         echo "=== Build: $(params.pio-env) ==="
         pio run -e $(params.pio-env)
@@ -65,7 +66,7 @@ spec:
 
     - name: flash
       image: python:3.11-slim
-      workingDir: $(workspaces.source.path)/repo/$(params.firmware-dir)
+      workingDir: $(workspaces.source.path)
       securityContext:
         privileged: true
       volumeMounts:
@@ -74,6 +75,7 @@ spec:
       script: |
         #!/bin/sh
         set -e
+        cd repo/$(params.firmware-dir)
         pip install esptool --quiet
         echo "=== Flash → $(params.port) @ $(params.baud) baud ==="
         python -m esptool \

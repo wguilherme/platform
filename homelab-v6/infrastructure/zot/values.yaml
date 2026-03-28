@@ -23,6 +23,18 @@ persistence:
 # Armazene em Sealed Secret e referencie aqui
 authConfig: {}
 
+configFiles:
+  config.json: |-
+    {
+      "storage": { "rootDirectory": "/var/lib/registry" },
+      "http": { "address": "0.0.0.0", "port": "5000" },
+      "log": { "level": "info" },
+      "extensions": {
+        "search": { "enable": true },
+        "ui": { "enable": true }
+      }
+    }
+
 resources:
   requests:
     cpu: 100m

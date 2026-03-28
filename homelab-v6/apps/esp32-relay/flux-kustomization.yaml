@@ -8,7 +8,7 @@ metadata:
   namespace: flux-system
 spec:
   interval: 5m
-  path: ./hardware-lab-v4/deploy
+  path: ./homelab-v6/apps/esp32-relay/deploy
   prune: true
   force: true
   sourceRef:

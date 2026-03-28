@@ -6,3 +6,4 @@ resources:
   - imagepolicy.yaml
   - imageupdate.yaml
   - flux-kustomization.yaml
+  - ci/kustomization.yaml

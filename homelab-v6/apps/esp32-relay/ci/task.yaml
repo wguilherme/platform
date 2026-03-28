@@ -17,7 +17,7 @@ spec:
       default: main
     - name: firmware-dir
       type: string
-      default: hardware-lab-v4/firmware
+      default: homelab-v6/apps/esp32-relay/src
     - name: pio-env
       type: string
       default: esp32-usb

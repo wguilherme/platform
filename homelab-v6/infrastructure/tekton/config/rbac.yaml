@@ -7,16 +7,33 @@ metadata:
   namespace: tekton-pipelines
 ---
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
+kind: Role
 metadata:
-  name: tekton-triggers-sa-admin
+  name: tekton-triggers-sa-taskruns
+  namespace: tekton-pipelines
+rules:
+  - apiGroups: ["tekton.dev"]
+    resources: ["taskruns"]
+    verbs: ["create"]
+  - apiGroups: ["triggers.tekton.dev"]
+    resources: ["eventlisteners", "triggerbindings", "triggertemplates"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: tekton-triggers-sa-taskruns
+  namespace: tekton-pipelines
 subjects:
   - kind: ServiceAccount
     name: tekton-triggers-sa
     namespace: tekton-pipelines
 roleRef:
-  kind: ClusterRole
-  name: tekton-triggers-admin
+  kind: Role
+  name: tekton-triggers-sa-taskruns
   apiGroup: rbac.authorization.k8s.io
 ---
 # Permite ao triggers-controller criar o Deployment/Service do EventListener

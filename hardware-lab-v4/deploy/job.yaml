@@ -1,4 +1,3 @@
----
 # Job Kubernetes que executa o container de flash do ESP32.
 # A tag da imagem é atualizada automaticamente pelo Flux Image Automation.
 # Flux Image Policy: flux-system:esp32-firmware
@@ -20,7 +19,7 @@ spec:
         kubernetes.io/hostname: raspberry
       containers:
         - name: flash
-          image: registry.wguilherme.com/esp32-firmware:20260327155645-45fc3cf4 # {"$imagepolicy": "flux-system:esp32-firmware"}
+          image: registry.wguilherme.com/esp32-firmware:20260328222524-d94cd97b # {"$imagepolicy": "flux-system:esp32-firmware"}
           securityContext:
             privileged: true
           env:

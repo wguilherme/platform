@@ -16,7 +16,7 @@ spec:
       default: main
     - name: app-dir
       type: string
-      default: apps/go-hello
+      default: homelab-v6/apps/go-hello/src
     - name: image-repo
       type: string
       default: registry.wguilherme.com/go-hello

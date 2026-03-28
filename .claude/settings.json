@@ -2,7 +2,11 @@
   "permissions": {
     "allow": [
       "Read(//Volumes/SSD/Downloads/Fifa Street 2 para OPL ja convertido com usbutil/**)",
-      "Read(//Volumes/NO NAME/.Trashes/**)"
+      "Read(//Volumes/NO NAME/.Trashes/**)",
+      "Bash(export KUBECONFIG=/Volumes/SSD/Projects/personal/platform/homelab-v6/kubeconfig)",
+      "Bash(flux version:*)",
+      "Bash(asdf install:*)",
+      "Bash(gh auth:*)"
     ]
   }
 }

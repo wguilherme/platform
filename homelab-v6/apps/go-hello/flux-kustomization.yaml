@@ -6,7 +6,7 @@ metadata:
   namespace: flux-system
 spec:
   interval: 5m
-  path: ./apps/go-hello/deploy
+  path: ./homelab-v6/apps/go-hello/deploy
   prune: true
   sourceRef:
     kind: GitRepository

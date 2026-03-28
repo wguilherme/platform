@@ -22,4 +22,4 @@ spec:
       branch: main
   update:
     strategy: Setters
-    path: ./apps/go-hello/deploy
+    path: ./homelab-v6/apps/go-hello/deploy

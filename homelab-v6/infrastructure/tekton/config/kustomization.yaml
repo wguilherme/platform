@@ -4,11 +4,11 @@ kind: Kustomization
 resources:
   - rbac.yaml
   - pio-cache-pvc.yaml
-  - tasks/esp32-build-flash.yaml
+  - tasks/esp32-flash.yaml
   - tasks/esp32-ci.yaml
   - tasks/go-hello-ci.yaml
-  - triggers/go-hello-template.yaml
   - triggers/github-webhook-secret.yaml
   - triggers/github-binding.yaml
-  - triggers/trigger-template.yaml
+  - triggers/esp32-trigger.yaml
+  - triggers/go-hello-trigger.yaml
   - triggers/event-listener.yaml

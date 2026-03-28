@@ -2,7 +2,7 @@
 apiVersion: triggers.tekton.dev/v1beta1
 kind: TriggerTemplate
 metadata:
-  name: go-hello-ci-template
+  name: go-hello-trigger
   namespace: tekton-pipelines
 spec:
   params:

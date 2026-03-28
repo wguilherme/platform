@@ -27,6 +27,26 @@ spec:
         - ref: github-push-binding
       template:
         ref: esp32-ci-template
+    - name: go-hello-push
+      interceptors:
+        - ref:
+            name: github
+          params:
+            - name: secretRef
+              value:
+                secretName: github-webhook-secret
+                secretKey: secret
+            - name: eventTypes
+              value: ["push"]
+        - ref:
+            name: cel
+          params:
+            - name: filter
+              value: "body.ref == 'refs/heads/main'"
+      bindings:
+        - ref: github-push-binding
+      template:
+        ref: go-hello-ci-template
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress

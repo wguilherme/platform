@@ -2,8 +2,8 @@
 
 #define FIRMWARE_VERSION "1.3.0"
 #define RELAY_PIN 23
-#define RELAY_DELAY_INTERVAL 500
-#define SERIAL_BOOT_DELAY 500
+#define RELAY_DELAY_INTERVAL 1500
+#define SERIAL_BOOT_DELAY 1500
 
 void setup() {
   Serial.begin(115200);

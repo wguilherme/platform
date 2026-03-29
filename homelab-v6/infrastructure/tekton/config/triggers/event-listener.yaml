@@ -25,8 +25,8 @@ spec:
               value: >-
                 body.ref == 'refs/heads/main' &&
                 !body.head_commit.message.startsWith('chore:') &&
-                (body.head_commit.modified.exists(f, f.startsWith('homelab-v6/apps/esp32-relay/src/')) ||
-                 body.head_commit.added.exists(f, f.startsWith('homelab-v6/apps/esp32-relay/src/')))
+                ((has(body.head_commit.modified) && body.head_commit.modified.exists(f, f.startsWith('homelab-v6/apps/esp32-relay/src/'))) ||
+                 (has(body.head_commit.added) && body.head_commit.added.exists(f, f.startsWith('homelab-v6/apps/esp32-relay/src/'))))
       bindings:
         - ref: github-push-binding
       template:
@@ -49,8 +49,8 @@ spec:
               value: >-
                 body.ref == 'refs/heads/main' &&
                 !body.head_commit.message.startsWith('chore:') &&
-                (body.head_commit.modified.exists(f, f.startsWith('homelab-v6/apps/go-hello/src/')) ||
-                 body.head_commit.added.exists(f, f.startsWith('homelab-v6/apps/go-hello/src/')))
+                ((has(body.head_commit.modified) && body.head_commit.modified.exists(f, f.startsWith('homelab-v6/apps/go-hello/src/'))) ||
+                 (has(body.head_commit.added) && body.head_commit.added.exists(f, f.startsWith('homelab-v6/apps/go-hello/src/'))))
       bindings:
         - ref: github-push-binding
       template:

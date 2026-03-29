@@ -17,7 +17,7 @@ spec:
         kubernetes.io/hostname: raspberry
       containers:
         - name: go-hello
-          image: registry.wguilherme.com/go-hello:20260329144532-9f2d30ab # {"$imagepolicy": "flux-system:go-hello"}
+          image: registry.wguilherme.com/go-hello:20260329144921-66e2032d # {"$imagepolicy": "flux-system:go-hello"}
           ports:
             - containerPort: 8080
           env:

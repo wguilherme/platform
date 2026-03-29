@@ -22,16 +22,11 @@ spec:
           image: registry.wguilherme.com/esp32-firmware:20260329184135-5c45de57 # {"$imagepolicy": "flux-system:esp32-firmware"}
           securityContext:
             privileged: true
+          resources:
+            limits:
+              smarter-devices/ttyUSB0: 1
           env:
             - name: PORT
               value: /dev/ttyUSB0
             - name: BAUD
               value: "921600"
-          volumeMounts:
-            - name: usb
-              mountPath: /dev/ttyUSB0
-      volumes:
-        - name: usb
-          hostPath:
-            path: /dev/ttyUSB0
-            type: CharDevice

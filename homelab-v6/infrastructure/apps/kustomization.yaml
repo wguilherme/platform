@@ -6,3 +6,5 @@ resources:
   - ../cloudflare-tunnel/
   - ../zot/
   - ../tekton/
+  - ../nfd/
+  - ../smarter-device-manager/

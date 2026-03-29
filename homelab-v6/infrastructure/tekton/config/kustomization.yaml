@@ -7,5 +7,3 @@ resources:
   - triggers/github-webhook-secret.yaml
   - triggers/github-binding.yaml
   - triggers/event-listener.yaml
-  - ../../apps/esp32-relay/ci/kustomization.yaml
-  - ../../apps/go-hello/ci/kustomization.yaml

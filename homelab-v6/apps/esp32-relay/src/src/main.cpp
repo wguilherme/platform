@@ -2,8 +2,8 @@
 
 #define FIRMWARE_VERSION "1.3.0"
 #define RELAY_PIN 23
-#define RELAY_DELAY_INTERVAL 2000
-#define SERIAL_BOOT_DELAY 2000
+#define RELAY_DELAY_INTERVAL 2500
+#define SERIAL_BOOT_DELAY 2500
 
 void setup() {
   Serial.begin(115200);
@@ -16,6 +16,7 @@ void loop() {
   Serial.printf("[v%s] relay ON\n", FIRMWARE_VERSION);
   digitalWrite(RELAY_PIN, HIGH);
   delay(RELAY_DELAY_INTERVAL);
+
   Serial.printf("[v%s] relay OFF\n", FIRMWARE_VERSION);
   digitalWrite(RELAY_PIN, LOW);
   delay(RELAY_DELAY_INTERVAL);

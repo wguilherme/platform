@@ -9,7 +9,7 @@
 KUBECONFIG ?= $(HOME)/.kube/local/platform/config.rpi
 KUBECTL     = KUBECONFIG=$(KUBECONFIG) kubectl
 NS_FLUX     = flux-system
-NS_ESP32    = esp32
+NS_ESP32    = tekton-pipelines
 
 .PHONY: flux-image-status flux-flash-status
 

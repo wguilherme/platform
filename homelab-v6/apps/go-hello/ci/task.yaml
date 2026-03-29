@@ -28,6 +28,15 @@ spec:
     - name: image-tag
       description: "Tag publicada: YYYYMMDDHHMMSS-sha8"
 
+  stepTemplate:
+    resources:
+      requests:
+        memory: "512Mi"
+        cpu: "500m"
+      limits:
+        memory: "4Gi"
+        cpu: "2"
+
   steps:
     - name: clone
       image: alpine/git:latest

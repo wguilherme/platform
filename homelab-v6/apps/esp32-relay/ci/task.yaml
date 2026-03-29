@@ -36,7 +36,7 @@ spec:
       description: "Tag publicada: YYYYMMDDHHMMSS-sha8"
 
   stepTemplate:
-    resources:
+    computeResources:
       requests:
         memory: "512Mi"
         cpu: "500m"

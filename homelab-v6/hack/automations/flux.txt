@@ -1,0 +1,12 @@
+kubectl get kustomization -n flux-system 2>&1
+
+
+
+// flux imagempolicy/artefato
+// listagem das tags
+kubectl describe imagepolicy esp32-firmware -n flux-system   
+// foca na última e mostra horário
+kubectl get imagepolicy esp32-firmware -n flux-system -o jsonpath='{.status.conditions[0]}'
+
+
+// flux implantação do código via job

@@ -54,10 +54,6 @@ spec:
     - name: build
       image: python:3.11-slim
       workingDir: $(workspaces.source.path)
-      resources:
-        requests:
-          memory: "3Gi"
-          cpu: "1"
       env:
         - name: PLATFORMIO_CORE_DIR
           value: $(workspaces.pio-cache.path)
@@ -73,10 +69,6 @@ spec:
 
     - name: push
       image: gcr.io/kaniko-project/executor:v1.23.0-debug
-      resources:
-        requests:
-          memory: "2Gi"
-          cpu: "1"
       script: |
         #!/busybox/sh
         set -e

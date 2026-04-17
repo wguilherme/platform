@@ -1,0 +1,61 @@
+coder:
+  env:
+    - name: CODER_ACCESS_URL
+      value: "https://coder.wguilherme.com"
+    - name: CODER_WILDCARD_ACCESS_URL
+      value: "*.coder.wguilherme.com"
+    - name: CODER_PG_CONNECTION_URL
+      valueFrom:
+        secretKeyRef:
+          name: coder-db-url
+          key: url
+
+    # GitHub OAuth (login de usuários)
+    - name: CODER_OAUTH2_GITHUB_CLIENT_ID
+      valueFrom:
+        secretKeyRef:
+          name: coder-github-oauth
+          key: client-id
+    - name: CODER_OAUTH2_GITHUB_CLIENT_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: coder-github-oauth
+          key: client-secret
+    - name: CODER_OAUTH2_GITHUB_ALLOW_SIGNUPS
+      value: "true"
+
+    # Jira External Auth
+    - name: CODER_EXTERNAL_AUTH_0_ID
+      value: "jira"
+    - name: CODER_EXTERNAL_AUTH_0_TYPE
+      value: "jira-cloud"
+    - name: CODER_EXTERNAL_AUTH_0_CLIENT_ID
+      valueFrom:
+        secretKeyRef:
+          name: coder-jira-oauth
+          key: client-id
+    - name: CODER_EXTERNAL_AUTH_0_CLIENT_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: coder-jira-oauth
+          key: client-secret
+    - name: CODER_EXTERNAL_AUTH_0_SCOPES
+      value: "read:jira-work read:jira-user"
+
+  ingress:
+    enable: true
+    host: "coder.wguilherme.com"
+    wildcardHost: "*.coder.wguilherme.com"
+    ingressClassName: "nginx"
+    tls:
+      enable: true
+      secretName: coder-tls
+      wildcardSecretName: coder-tls-wildcard
+
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "250m"
+    limits:
+      memory: "2Gi"
+      cpu: "1000m"

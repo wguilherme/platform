@@ -71,3 +71,21 @@ metadata:
 spec:
   interval: 24h
   url: https://kubernetes-sigs.github.io/node-feature-discovery/charts
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: bitnami
+  namespace: flux-system
+spec:
+  interval: 24h
+  url: https://charts.bitnami.com/bitnami
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: coder-v2
+  namespace: flux-system
+spec:
+  interval: 24h
+  url: https://helm.coder.com/v2

@@ -1,0 +1,26 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: coder-tls
+  namespace: coder
+spec:
+  secretName: coder-tls
+  issuerRef:
+    name: letsencrypt-cloudflare
+    kind: ClusterIssuer
+  dnsNames:
+    - coder.wguilherme.com
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: coder-tls-wildcard
+  namespace: coder
+spec:
+  secretName: coder-tls-wildcard
+  issuerRef:
+    name: letsencrypt-cloudflare
+    kind: ClusterIssuer
+  dnsNames:
+    - "*.coder.wguilherme.com"

@@ -34,10 +34,7 @@ kind-up:
 	@echo "→ Instalando ingress-nginx no kind"
 	$(KUBECTL) apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
 	@echo "→ Aguardando ingress-nginx ficar pronto..."
-	$(KUBECTL) wait --namespace ingress-nginx \
-		--for=condition=ready pod \
-		--selector=app.kubernetes.io/component=controller \
-		--timeout=120s
+	$(KUBECTL) rollout status deployment/ingress-nginx-controller -n ingress-nginx --timeout=120s
 
 # Remove o cluster Kind
 kind-down:

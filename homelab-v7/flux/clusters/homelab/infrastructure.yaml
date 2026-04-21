@@ -1,5 +1,5 @@
 ---
-# Camada 1: HelmRepositories + sealed-secrets + cert-manager (CRDs)
+# Camada 1: HelmRepositories + sealed-secrets
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
@@ -14,24 +14,6 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-system
----
-# cert-manager ClusterIssuer (depende de CRDs do cert-manager estarem prontos)
-apiVersion: kustomize.toolkit.fluxcd.io/v1
-kind: Kustomization
-metadata:
-  name: infrastructure-cert-manager-config
-  namespace: flux-system
-spec:
-  interval: 10m
-  path: ./homelab-v7/infrastructure/cert-manager-config
-  prune: true
-  wait: true
-  timeout: 5m
-  sourceRef:
-    kind: GitRepository
-    name: flux-system
-  dependsOn:
-    - name: infrastructure-controllers
 ---
 # nginx-ingress controller
 apiVersion: kustomize.toolkit.fluxcd.io/v1
@@ -104,4 +86,3 @@ spec:
     name: flux-system
   dependsOn:
     - name: infrastructure-postgresql-coder
-    - name: infrastructure-cert-manager-config

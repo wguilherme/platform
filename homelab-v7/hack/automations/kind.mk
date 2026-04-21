@@ -6,11 +6,8 @@
 #   - CLAUDE_OAUTH_TOKEN, GITHUB_CLIENT_ID/SECRET, JIRA_CLIENT_ID/SECRET exportados
 #   - Para Flux bootstrap: GITHUB_TOKEN exportado
 #
-# Fluxo completo:
-#   make -f ... kind-up
-#   make -f ... kind-flux-bootstrap
-#   make -f ... kind-secrets
-#   make -f ... kind-status
+# Fluxo completo (tudo em um só comando):
+#   make -f homelab-v7/hack/automations/kind.mk kind
 
 CLUSTER_NAME  ?= homelab-v7
 KUBECONFIG_KIND := $(HOME)/.kube/kind-$(CLUSTER_NAME)
@@ -21,7 +18,11 @@ GITHUB_USER   ?= wguilherme
 GITHUB_REPO   ?= platform
 GITHUB_BRANCH ?= main
 
-.PHONY: kind-up kind-down kind-flux-bootstrap kind-secrets kind-status kind-coder-forward kind-clean
+.PHONY: kind kind-up kind-down kind-flux-bootstrap kind-secrets kind-status kind-coder-forward kind-clean
+
+# Fluxo completo: cluster + Flux + secrets
+kind: kind-up kind-flux-bootstrap kind-secrets
+	@echo "✓ Cluster pronto. Rode: make -f ... kind-status"
 
 KIND_CONFIG := $(dir $(lastword $(MAKEFILE_LIST)))kind-config.yaml
 

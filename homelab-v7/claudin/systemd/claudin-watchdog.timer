@@ -1,0 +1,12 @@
+[Unit]
+Description=Claudin Watchdog Timer — Executa watchdog a cada 5 minutos
+Requires=claudin-watchdog.service
+
+[Timer]
+# Executa 2 minutos após o boot, depois a cada 5 minutos
+OnBootSec=2min
+OnUnitActiveSec=5min
+Unit=claudin-watchdog.service
+
+[Install]
+WantedBy=timers.target

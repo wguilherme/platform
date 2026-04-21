@@ -1,0 +1,11 @@
+---
+- name: reboot system
+  become: true
+  reboot:
+    msg: "Reiniciando para aplicar cgroup/kernel changes"
+    reboot_timeout: 300
+
+- name: update grub
+  become: true
+  command: update-grub
+  when: ansible_os_family == "Debian"

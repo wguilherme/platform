@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "claudin-discord": {
+      "command": "bun",
+      "args": ["run", "/home/pi/project/claudin/channels/discord-mcp.ts"],
+      "env": {
+        "DISCORD_WEBHOOK_URL": "${DISCORD_WEBHOOK_URL}",
+        "HEALTHCHECK_PING_URL": "${HEALTHCHECK_PING_URL}",
+        "MACHINE_NAME": "${MACHINE_NAME}"
+      }
+    }
+  }
+}

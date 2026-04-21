@@ -1,0 +1,42 @@
+{
+  "defaultMode": "bypassPermissions",
+  "permissions": {
+    "allow": [
+      "Bash(git *)",
+      "Bash(npm *)",
+      "Bash(npx *)",
+      "Bash(make *)",
+      "Bash(docker *)",
+      "Bash(docker-compose *)",
+      "Bash(node *)",
+      "Bash(bun *)",
+      "Bash(bash claudin/*)",
+      "Bash(bash ~/project/claudin/*)",
+      "Read(**)",
+      "Edit(**)",
+      "Write(**)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:registry.npmjs.org)",
+      "WebFetch(domain:hc-ping.com)"
+    ],
+    "deny": [
+      "Bash(rm -rf /)",
+      "Bash(sudo reboot)",
+      "Bash(sudo shutdown)",
+      "Bash(pkill -9 claude)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/project/claudin/hooks/post-tool.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

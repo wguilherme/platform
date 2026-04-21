@@ -1,0 +1,90 @@
+---
+- name: Desabilitar swap
+  become: true
+  shell: |
+    swapoff -a
+    sed -i '/swap/d' /etc/fstab
+  when: k3s_disable_swap
+  changed_when: false
+
+- name: Instalar pacotes base
+  become: true
+  apt:
+    name: "{{ prepare_packages }}"
+    state: present
+    update_cache: true
+  when: ansible_os_family == "Debian"
+
+# ─── cgroups (Raspberry Pi) ───────────────────────────────────────────────────
+- name: Verificar /boot/firmware/cmdline.txt (Ubuntu ARM64 RPi)
+  stat:
+    path: /boot/firmware/cmdline.txt
+  register: firmware_cmdline
+
+- name: Verificar /boot/cmdline.txt (Raspberry Pi OS legacy)
+  stat:
+    path: /boot/cmdline.txt
+  register: legacy_cmdline
+
+- name: Habilitar cgroups no firmware cmdline (Ubuntu 22.04 ARM64)
+  become: true
+  lineinfile:
+    path: /boot/firmware/cmdline.txt
+    regexp: '^((?!.*cgroup_enable=memory).*)$'
+    line: '\1 cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory'
+    backrefs: true
+  when:
+    - k3s_enable_cgroups
+    - firmware_cmdline.stat.exists
+  notify: reboot system
+
+- name: Habilitar cgroups no legacy cmdline (Raspberry Pi OS)
+  become: true
+  lineinfile:
+    path: /boot/cmdline.txt
+    regexp: '^((?!.*cgroup_enable=memory).*)$'
+    line: '\1 cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory'
+    backrefs: true
+  when:
+    - k3s_enable_cgroups
+    - not firmware_cmdline.stat.exists
+    - legacy_cmdline.stat.exists
+  notify: reboot system
+
+# ─── Kernel modules ───────────────────────────────────────────────────────────
+- name: Carregar kernel modules
+  become: true
+  modprobe:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ kernel_modules }}"
+
+- name: Persistir kernel modules
+  become: true
+  copy:
+    content: "{{ kernel_modules | join('\n') }}\n"
+    dest: /etc/modules-load.d/k3s.conf
+    mode: '0644'
+
+# ─── Sysctl ───────────────────────────────────────────────────────────────────
+- name: Configurar sysctl
+  become: true
+  sysctl:
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
+    sysctl_set: true
+    state: present
+    reload: true
+  loop: "{{ sysctl_params }}"
+
+# ─── System limits ────────────────────────────────────────────────────────────
+- name: Configurar system limits
+  become: true
+  copy:
+    content: |
+      * soft nofile 65536
+      * hard nofile 65536
+      * soft nproc  65536
+      * hard nproc  65536
+    dest: /etc/security/limits.d/k3s.conf
+    mode: '0644'

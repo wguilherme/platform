@@ -1,0 +1,81 @@
+---
+- name: Verificar se Helm está instalado
+  command: which helm
+  register: helm_check
+  changed_when: false
+  failed_when: false
+
+- name: Instalar Helm
+  when: helm_check.rc != 0
+  block:
+    - name: Baixar script de instalação do Helm
+      get_url:
+        url: https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+        dest: /tmp/get_helm.sh
+        mode: '0755'
+    - name: Executar instalação do Helm
+      become: true
+      command: /tmp/get_helm.sh
+      args:
+        creates: /usr/local/bin/helm
+    - name: Remover script temporário
+      file:
+        path: /tmp/get_helm.sh
+        state: absent
+
+- name: Adicionar repo Cilium ao Helm
+  command: helm repo add cilium https://helm.cilium.io/
+  register: repo_add
+  changed_when: "'has been added' in repo_add.stdout"
+  failed_when: repo_add.rc != 0 and "already exists" not in repo_add.stderr
+
+- name: Atualizar cache de repos Helm
+  command: helm repo update
+  changed_when: false
+
+- name: Obter IP do control-plane para k8sServiceHost
+  set_fact:
+    cp_ip: "{{ ansible_default_ipv4.address }}"
+
+- name: Gerar values do Cilium
+  template:
+    src: cilium-values.yaml.j2
+    dest: /tmp/cilium-values.yaml
+    mode: '0644'
+
+- name: Instalar Cilium via Helm
+  shell: |
+    export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+    helm upgrade --install {{ cilium_helm_release }} cilium/cilium \
+      --version {{ cilium_version }} \
+      --namespace {{ cilium_namespace }} \
+      --values /tmp/cilium-values.yaml \
+      --wait \
+      --timeout 300s
+  register: cilium_deploy
+  changed_when: "'has been upgraded' in cilium_deploy.stdout or 'has been installed' in cilium_deploy.stdout"
+
+- name: Aguardar Cilium DaemonSet pronto
+  shell: >
+    KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+    kubectl rollout status daemonset/cilium
+    -n {{ cilium_namespace }}
+    --timeout=300s
+  changed_when: false
+
+- name: Verificar status do Cilium
+  shell: |
+    KUBECONFIG=/etc/rancher/k3s/k3s.yaml kubectl -n {{ cilium_namespace }} exec ds/cilium -- \
+      cilium-dbg status | grep KubeProxyReplacement
+  register: cilium_status
+  changed_when: false
+  failed_when: false
+
+- name: Exibir status do Cilium
+  debug:
+    msg: "{{ cilium_status.stdout_lines }}"
+
+- name: Remover values temporário
+  file:
+    path: /tmp/cilium-values.yaml
+    state: absent

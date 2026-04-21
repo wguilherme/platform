@@ -1,0 +1,18 @@
+# Segredos — nunca commitar
+.env
+*.env.local
+
+# Runtime / health state
+health/.last_heartbeat
+health/.watchdog_alert_sent
+health/activity.log
+health/heartbeat.log
+
+# Dependências do MCP server
+channels/node_modules/
+channels/bun.lockb
+
+# Systemd local overrides
+systemd/*.override.conf
+
+node_modules/

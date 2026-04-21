@@ -1,0 +1,72 @@
+---
+# kube-prometheus-stack — otimizado para ARM64 / RPi
+
+grafana:
+  enabled: true
+  adminPassword: changeme    # substitua por Sealed Secret em produção
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-cloudflare
+    hosts:
+      - grafana.phantombyte.uk
+    tls:
+      - secretName: grafana-tls
+        hosts:
+          - grafana.phantombyte.uk
+  # Dashboards recomendados (importar manualmente ou via sidecar)
+  # 1860  → Node Exporter Full
+  # 15282 → K3s cluster
+  # 14314 → Nginx Ingress Controller
+  # 16611 → Cilium
+  persistence:
+    enabled: true
+    storageClassName: local-path
+    size: 5Gi
+
+prometheus:
+  prometheusSpec:
+    retention: 15d
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: local-path
+          resources:
+            requests:
+              storage: 20Gi
+    resources:
+      requests:
+        cpu: 200m
+        memory: 512Mi
+      limits:
+        cpu: 500m
+        memory: 1Gi
+
+alertmanager:
+  alertmanagerSpec:
+    storage:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: local-path
+          resources:
+            requests:
+              storage: 2Gi
+
+# node-exporter e kube-state-metrics vêm habilitados por padrão
+nodeExporter:
+  enabled: true
+kubeStateMetrics:
+  enabled: true
+
+# ─── K3s + Cilium: desabilitar componentes que não existem nesta stack ────────
+# K3s não expõe controller-manager, scheduler e etcd nos endpoints padrão.
+# Cilium substitui kube-proxy, então o scrape dele também não existe.
+kubeControllerManager:
+  enabled: false
+kubeScheduler:
+  enabled: false
+kubeEtcd:
+  enabled: false
+kubeProxy:
+  enabled: false

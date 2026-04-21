@@ -1,0 +1,16 @@
+---
+k3s_version: "v1.33.4+k3s1"
+k3s_wait_for_ready: true
+k3s_wait_timeout: 300
+k3s_kubeconfig_path: /etc/rancher/k3s/k3s.yaml
+k3s_fetch_kubeconfig: true
+k3s_local_kubeconfig_path: "{{ playbook_dir }}/kubeconfig"
+
+k3s_server_install_options:
+  - "--disable=servicelb"
+  - "--disable=traefik"
+  - "--write-kubeconfig-mode=644"
+  - "--tls-san={{ ansible_host }}"
+  - "--node-ip={{ ansible_default_ipv4.address }}"
+  # Flannel é o CNI padrão do K3S — simples e funciona no RPi sem configuração extra
+  # sem --cluster-init: single-node não precisa de HA etcd

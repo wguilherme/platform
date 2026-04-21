@@ -1,0 +1,13 @@
+[Unit]
+Description=Claudin Watchdog — Monitora se o agente está vivo
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=pi
+EnvironmentFile=/home/pi/project/claudin/.env
+Environment="HOME=/home/pi"
+ExecStart=/bin/bash /home/pi/project/claudin/health/watchdog.sh
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=claudin-watchdog

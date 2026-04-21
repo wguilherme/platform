@@ -1,0 +1,40 @@
+---
+controller:
+  replicaCount: 1
+
+  ingressClassResource:
+    name: nginx
+    enabled: true
+    default: true
+
+  service:
+    type: NodePort    # sem MetalLB, exposto via NodePort + cloudflare tunnel
+
+  config:
+    compute-full-forwarded-for: "true"
+    use-forwarded-headers: "true"
+    proxy-body-size: "50m"
+
+  metrics:
+    enabled: true
+    port: 10254
+
+  # ARM64 (Raspberry Pi)
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 300m
+      memory: 256Mi
+
+  tolerations:
+    - key: node.kubernetes.io/not-ready
+      operator: Exists
+      effect: NoSchedule
+
+admissionWebhooks:
+  enabled: false    # cert auto-assinado causa erros nos Ingresses de outros charts
+
+defaultBackend:
+  enabled: false    # imagem não tem suporte ARM64

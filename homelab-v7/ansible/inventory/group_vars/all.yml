@@ -1,0 +1,6 @@
+---
+domain: phantombyte.uk
+cloudflare_tunnel_id: "839f777c-f3cf-4a1b-80cc-bc01b0ca842a"
+cloudflare_tunnel_name: "homelab-v6"
+timezone: America/Sao_Paulo
+k3s_version: "v1.33.4+k3s1"

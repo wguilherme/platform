@@ -1,0 +1,25 @@
+---
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImageUpdateAutomation
+metadata:
+  name: esp32-firmware
+  namespace: flux-system
+spec:
+  interval: 5m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  git:
+    checkout:
+      ref:
+        branch: main
+    commit:
+      author:
+        name: Flux Image Automation
+        email: flux@wguilherme.com
+      messageTemplate: "chore: update esp32-firmware image"
+    push:
+      branch: main
+  update:
+    strategy: Setters
+    path: ./homelab-v6/apps/esp32-relay/deploy

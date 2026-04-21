@@ -1,0 +1,37 @@
+[Unit]
+Description=Claudin — Agente Autônomo (Agent SDK Loop)
+Documentation=https://github.com/anthropics/claude-code
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=pi
+Group=pi
+WorkingDirectory=/home/pi/project
+
+# Carrega variáveis de ambiente do .env
+EnvironmentFile=/home/pi/project/claudin/.env
+
+# PATH inclui bun e node
+Environment="PATH=/home/pi/.bun/bin:/home/pi/.nvm/versions/node/v22/bin:/usr/local/bin:/usr/bin:/bin"
+Environment="HOME=/home/pi"
+Environment="NODE_ENV=production"
+
+# Inicia o loop via Agent SDK (headless, sem Claude Code CLI)
+# Requer ANTHROPIC_API_KEY no .env
+ExecStart=/home/pi/.bun/bin/bun run /home/pi/project/claudin/src/main.ts
+
+# Reinicia automaticamente se cair (exceto encerramento manual)
+Restart=on-failure
+RestartSec=30
+StartLimitIntervalSec=300
+StartLimitBurst=5
+
+# Logs via journald
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=claudin-agent
+
+[Install]
+WantedBy=multi-user.target

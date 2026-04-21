@@ -1,9 +1,9 @@
 coder:
   env:
     - name: CODER_ACCESS_URL
-      value: "https://coder.wguilherme.com"
+      value: "http://localhost:8080"
     - name: CODER_WILDCARD_ACCESS_URL
-      value: "*.coder.wguilherme.com"
+      value: ""
 
     - name: CODER_PG_CONNECTION_URL
       valueFrom:
@@ -61,8 +61,8 @@ coder:
 
   ingress:
     enable: true
-    host: "coder.wguilherme.com"
-    wildcardHost: "*.coder.wguilherme.com"
+    host: "localhost"
+    wildcardHost: ""
     ingressClassName: "nginx"
     tls:
       enable: false

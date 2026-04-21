@@ -1,5 +1,5 @@
 ---
-# 1ª camada: instala HelmRepositories + sealed-secrets controller
+# Camada 1: HelmRepositories + sealed-secrets + cert-manager (CRDs)
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
@@ -10,20 +10,74 @@ spec:
   path: ./homelab-v7/infrastructure/controllers
   prune: true
   wait: true
-  timeout: 5m
+  timeout: 8m
   sourceRef:
     kind: GitRepository
     name: flux-system
 ---
-# 2ª camada: aplica apps de infra após controllers (CRDs) estarem prontos
+# cert-manager ClusterIssuer (depende de CRDs do cert-manager estarem prontos)
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: infrastructure
+  name: infrastructure-cert-manager-config
   namespace: flux-system
 spec:
   interval: 10m
-  path: ./homelab-v7/infrastructure/apps
+  path: ./homelab-v7/infrastructure/cert-manager-config
+  prune: true
+  wait: true
+  timeout: 5m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  dependsOn:
+    - name: infrastructure-controllers
+---
+# nginx-ingress controller
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: infrastructure-nginx-ingress
+  namespace: flux-system
+spec:
+  interval: 10m
+  path: ./homelab-v7/infrastructure/nginx-ingress
+  prune: true
+  wait: true
+  timeout: 5m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  dependsOn:
+    - name: infrastructure-controllers
+---
+# Cloudflare Tunnel
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: infrastructure-cloudflare-tunnel
+  namespace: flux-system
+spec:
+  interval: 10m
+  path: ./homelab-v7/infrastructure/cloudflare-tunnel
+  prune: true
+  wait: true
+  timeout: 5m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  dependsOn:
+    - name: infrastructure-controllers
+---
+# PostgreSQL (banco do Coder)
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: infrastructure-postgresql-coder
+  namespace: flux-system
+spec:
+  interval: 10m
+  path: ./homelab-v7/infrastructure/postgresql-coder
   prune: true
   wait: true
   timeout: 10m
@@ -32,3 +86,22 @@ spec:
     name: flux-system
   dependsOn:
     - name: infrastructure-controllers
+---
+# Coder server (depende de postgres + cert-manager config)
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: infrastructure-coder
+  namespace: flux-system
+spec:
+  interval: 10m
+  path: ./homelab-v7/infrastructure/coder
+  prune: true
+  wait: true
+  timeout: 10m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  dependsOn:
+    - name: infrastructure-postgresql-coder
+    - name: infrastructure-cert-manager-config

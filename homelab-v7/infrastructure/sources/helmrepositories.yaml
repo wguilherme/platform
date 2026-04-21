@@ -1,14 +1,4 @@
 ---
-# HelmRepositories usados pela infraestrutura atual.
-apiVersion: source.toolkit.fluxcd.io/v1
-kind: HelmRepository
-metadata:
-  name: metallb
-  namespace: flux-system
-spec:
-  interval: 24h
-  url: https://metallb.github.io/metallb
----
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
@@ -45,41 +35,15 @@ spec:
   interval: 24h
   url: https://bitnami-labs.github.io/sealed-secrets
 ---
-apiVersion: source.toolkit.fluxcd.io/v1
-kind: HelmRepository
-metadata:
-  name: project-zot
-  namespace: flux-system
-spec:
-  interval: 24h
-  url: https://zotregistry.dev/helm-charts
----
-apiVersion: source.toolkit.fluxcd.io/v1
-kind: HelmRepository
-metadata:
-  name: prometheus-community
-  namespace: flux-system
-spec:
-  interval: 24h
-  url: https://prometheus-community.github.io/helm-charts
----
-apiVersion: source.toolkit.fluxcd.io/v1
-kind: HelmRepository
-metadata:
-  name: kubernetes-sigs-nfd
-  namespace: flux-system
-spec:
-  interval: 24h
-  url: https://kubernetes-sigs.github.io/node-feature-discovery/charts
----
-apiVersion: source.toolkit.fluxcd.io/v1
+apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: HelmRepository
 metadata:
   name: bitnami
   namespace: flux-system
 spec:
+  type: oci
   interval: 24h
-  url: https://charts.bitnami.com/bitnami
+  url: oci://registry-1.docker.io/bitnamicharts
 ---
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository

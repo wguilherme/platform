@@ -57,38 +57,39 @@ kind-flux-bootstrap:
 
 # Cria os secrets necessários em plain text (sem kubeseal — apenas para kind/local)
 kind-secrets:
-	@echo "→ Criando namespaces"
-	$(KUBECTL) create namespace coder --dry-run=client -o yaml | $(KUBECTL) apply -f -
-	$(KUBECTL) create namespace postgresql-coder --dry-run=client -o yaml | $(KUBECTL) apply -f -
-	@echo "→ Criando secret do banco PostgreSQL"
+	@set -a && . $(ENV_FILE) && set +a && \
+	echo "→ Criando namespaces" && \
+	$(KUBECTL) create namespace coder --dry-run=client -o yaml | $(KUBECTL) apply -f - && \
+	$(KUBECTL) create namespace postgresql-coder --dry-run=client -o yaml | $(KUBECTL) apply -f - && \
+	echo "→ Criando secret do banco PostgreSQL" && \
 	$(KUBECTL) create secret generic postgresql-coder-credentials \
 		--namespace postgresql-coder \
-		--from-literal=postgres-password="$(DB_PASSWORD)" \
-		--from-literal=password="$(DB_PASSWORD)" \
-		--dry-run=client -o yaml | $(KUBECTL) apply -f -
-	@echo "→ Criando secret da connection string do Coder"
+		--from-literal=postgres-password="$$DB_PASSWORD" \
+		--from-literal=password="$$DB_PASSWORD" \
+		--dry-run=client -o yaml | $(KUBECTL) apply -f - && \
+	echo "→ Criando secret da connection string do Coder" && \
 	$(KUBECTL) create secret generic coder-db-url \
 		--namespace coder \
-		--from-literal=url="postgres://coder:$(DB_PASSWORD)@postgresql-coder-postgresql.postgresql-coder.svc.cluster.local:5432/coder?sslmode=disable" \
-		--dry-run=client -o yaml | $(KUBECTL) apply -f -
-	@echo "→ Criando secret do Claude OAuth"
+		--from-literal=url="postgres://coder:$$DB_PASSWORD@postgresql-coder-postgresql.postgresql-coder.svc.cluster.local:5432/coder?sslmode=disable" \
+		--dry-run=client -o yaml | $(KUBECTL) apply -f - && \
+	echo "→ Criando secret do Claude OAuth" && \
 	$(KUBECTL) create secret generic claude-oauth \
 		--namespace coder \
-		--from-literal=token="$(CLAUDE_OAUTH_TOKEN)" \
-		--dry-run=client -o yaml | $(KUBECTL) apply -f -
-	@echo "→ Criando secret GitHub OAuth"
+		--from-literal=token="$$CLAUDE_OAUTH_TOKEN" \
+		--dry-run=client -o yaml | $(KUBECTL) apply -f - && \
+	echo "→ Criando secret GitHub OAuth" && \
 	$(KUBECTL) create secret generic coder-github-oauth \
 		--namespace coder \
-		--from-literal=client-id="$(GITHUB_CLIENT_ID)" \
-		--from-literal=client-secret="$(GITHUB_CLIENT_SECRET)" \
-		--dry-run=client -o yaml | $(KUBECTL) apply -f -
-	@echo "→ Criando secret Jira OAuth"
+		--from-literal=client-id="$$GITHUB_CLIENT_ID" \
+		--from-literal=client-secret="$$GITHUB_CLIENT_SECRET" \
+		--dry-run=client -o yaml | $(KUBECTL) apply -f - && \
+	echo "→ Criando secret Jira OAuth" && \
 	$(KUBECTL) create secret generic coder-jira-oauth \
 		--namespace coder \
-		--from-literal=client-id="$(JIRA_CLIENT_ID)" \
-		--from-literal=client-secret="$(JIRA_CLIENT_SECRET)" \
-		--dry-run=client -o yaml | $(KUBECTL) apply -f -
-	@echo "✓ Secrets criados"
+		--from-literal=client-id="$$JIRA_CLIENT_ID" \
+		--from-literal=client-secret="$$JIRA_CLIENT_SECRET" \
+		--dry-run=client -o yaml | $(KUBECTL) apply -f - && \
+	echo "✓ Secrets criados"
 
 # Status geral do ambiente kind
 kind-status:

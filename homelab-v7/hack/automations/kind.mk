@@ -42,10 +42,12 @@ kind-down:
 	kind delete cluster --name $(CLUSTER_NAME)
 	rm -f $(KUBECONFIG_KIND)
 
+ENV_FILE := $(shell git rev-parse --show-toplevel)/homelab-v7/.env
+
 # Bootstrap do Flux CD apontando para homelab-v7/
 kind-flux-bootstrap:
 	@echo "→ Bootstrap Flux CD no kind"
-	$(FLUX) bootstrap github \
+	@set -a && . $(ENV_FILE) && set +a && KUBECONFIG=$(KUBECONFIG_KIND) flux bootstrap github \
 		--owner=$(GITHUB_USER) \
 		--repository=$(GITHUB_REPO) \
 		--branch=$(GITHUB_BRANCH) \

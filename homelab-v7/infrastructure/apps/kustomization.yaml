@@ -5,9 +5,5 @@ resources:
   - ../cert-manager-config/
   - ../nginx-ingress/
   - ../cloudflare-tunnel/
-  - ../zot/
-  - ../tekton/
-  - ../nfd/
-  - ../smarter-device-manager/
   - ../postgresql-coder/
   - ../coder/

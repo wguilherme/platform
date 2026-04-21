@@ -1,6 +1,0 @@
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: smarter-device-manager
-  namespace: smarter-device-manager

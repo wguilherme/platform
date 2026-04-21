@@ -1,9 +1,0 @@
----
-apiVersion: image.toolkit.fluxcd.io/v1
-kind: ImageRepository
-metadata:
-  name: go-hello
-  namespace: flux-system
-spec:
-  image: registry.wguilherme.com/go-hello
-  interval: 1m

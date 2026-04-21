@@ -1,7 +1,4 @@
 ---
-# Ponto de entrada das aplicações do homelab.
-# Adicione referências aqui à medida que novos apps forem criados.
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-resources:
-  - ../go-hello
+resources: []

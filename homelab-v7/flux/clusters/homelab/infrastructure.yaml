@@ -61,7 +61,7 @@ spec:
   interval: 10m
   path: ./homelab-v7/infrastructure/cloudflare-tunnel
   prune: true
-  wait: true
+  wait: false
   timeout: 5m
   sourceRef:
     kind: GitRepository

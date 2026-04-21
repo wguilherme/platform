@@ -26,7 +26,6 @@ spec:
     primary:
       persistence:
         enabled: true
-        storageClass: local-path
         size: 5Gi
       resources:
         requests:

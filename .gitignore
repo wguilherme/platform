@@ -13,5 +13,4 @@ htpasswd
 
 *.DS_Store
 homeassistantkubeconfig
-.tool-versions
 .claude

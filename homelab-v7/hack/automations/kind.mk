@@ -71,7 +71,7 @@ kind-secrets:
 	echo "→ Criando secret da connection string do Coder" && \
 	$(KUBECTL) create secret generic coder-db-url \
 		--namespace coder \
-		--from-literal=url="postgres://coder:$$DB_PASSWORD@postgresql-coder-postgresql.postgresql-coder.svc.cluster.local:5432/coder?sslmode=disable" \
+		--from-literal=url="postgres://coder:$$DB_PASSWORD@postgresql-coder.postgresql-coder.svc.cluster.local:5432/coder?sslmode=disable" \
 		--dry-run=client -o yaml | $(KUBECTL) apply -f - && \
 	echo "→ Criando secret do Claude OAuth" && \
 	$(KUBECTL) create secret generic claude-oauth \

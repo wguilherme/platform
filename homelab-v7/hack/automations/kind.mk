@@ -23,29 +23,12 @@ GITHUB_BRANCH ?= main
 
 .PHONY: kind-up kind-down kind-flux-bootstrap kind-secrets kind-status kind-coder-forward kind-clean
 
+KIND_CONFIG := $(dir $(lastword $(MAKEFILE_LIST)))kind-config.yaml
+
 # Cria o cluster Kind com ingress-nginx habilitado
 kind-up:
 	@echo "→ Criando cluster kind: $(CLUSTER_NAME)"
-	kind create cluster --name $(CLUSTER_NAME) \
-		--config - <<'EOF'
-kind: Cluster
-apiVersion: kind.x-k8s.io/v1alpha4
-nodes:
-  - role: control-plane
-    kubeadmConfigPatches:
-      - |
-        kind: InitConfiguration
-        nodeRegistration:
-          kubeletExtraArgs:
-            node-labels: "ingress-ready=true"
-    extraPortMappings:
-      - containerPort: 80
-        hostPort: 80
-        protocol: TCP
-      - containerPort: 443
-        hostPort: 443
-        protocol: TCP
-EOF
+	kind create cluster --name $(CLUSTER_NAME) --config $(KIND_CONFIG)
 	kind get kubeconfig --name $(CLUSTER_NAME) > $(KUBECONFIG_KIND)
 	@echo "→ KUBECONFIG: $(KUBECONFIG_KIND)"
 	@echo "→ Instalando ingress-nginx no kind"

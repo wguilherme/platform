@@ -12,20 +12,11 @@ terraform {
 }
 
 data "coder_workspace" "me" {}
-
-data "coder_parameter" "ai_prompt" {
-  name         = "AI Prompt"
-  display_name = "Prompt / Issue Jira"
-  type         = "string"
-  form_type    = "textarea"
-  description  = "Descreva a task ou informe o ID da issue Jira (ex: PROJ-42)"
-  mutable      = false
-  default      = ""
-}
+data "coder_task" "me" {}
 
 resource "coder_agent" "main" {
   os   = "linux"
-  arch = "arm64"
+  arch = "amd64"
   env = {
     GIT_AUTHOR_NAME  = data.coder_workspace.me.owner
     GIT_AUTHOR_EMAIL = "${data.coder_workspace.me.owner}@users.noreply.github.com"
@@ -38,9 +29,11 @@ module "claude-code" {
   agent_id                = coder_agent.main.id
   workdir                 = "/home/coder/project"
   claude_code_oauth_token = var.claude_oauth_token
+  ai_prompt               = data.coder_task.me.prompt
 }
 
 resource "coder_ai_task" "task" {
+  count  = data.coder_task.me.enabled ? data.coder_workspace.me.start_count : 0
   app_id = module.claude-code.task_app_id
 }
 
@@ -48,15 +41,13 @@ resource "kubernetes_pod" "workspace" {
   metadata {
     name      = "coder-${data.coder_workspace.me.owner}-${data.coder_workspace.me.name}"
     namespace = "coder"
-    labels = {
-      "app.kubernetes.io/name" = "coder-workspace"
-    }
+    labels    = { "app.kubernetes.io/name" = "coder-workspace" }
   }
   spec {
     restart_policy = "Never"
     container {
       name  = "dev"
-      image = "ghcr.io/coder/envbuilder:latest"
+      image = "codercom/enterprise-base:ubuntu"
       env {
         name  = "CODER_AGENT_TOKEN"
         value = coder_agent.main.token
@@ -72,7 +63,7 @@ resource "kubernetes_pod" "workspace" {
       }
       resources {
         requests = { memory = "512Mi", cpu = "250m" }
-        limits   = { memory = "2Gi",   cpu = "1000m" }
+        limits   = { memory = "2Gi", cpu = "1000m" }
       }
       volume_mount {
         name       = "home"
@@ -95,7 +86,7 @@ resource "kubernetes_persistent_volume_claim" "home" {
   }
   spec {
     access_modes       = ["ReadWriteOnce"]
-    storage_class_name = "local-path"
+    storage_class_name = "standard"
     resources {
       requests = { storage = "5Gi" }
     }

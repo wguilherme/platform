@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jira-webhook-receiver
+  namespace: coder
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jira-webhook-receiver
+  template:
+    metadata:
+      labels:
+        app: jira-webhook-receiver
+    spec:
+      containers:
+        - name: receiver
+          image: ghcr.io/wguilherme/jira-webhook-receiver:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: CODER_URL
+              value: "http://coder.coder.svc.cluster.local"
+            - name: CODER_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: jira-webhook-coder-token
+                  key: token
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 3
+            periodSeconds: 10
+          resources:
+            requests:
+              memory: "32Mi"
+              cpu: "10m"
+            limits:
+              memory: "64Mi"
+              cpu: "100m"

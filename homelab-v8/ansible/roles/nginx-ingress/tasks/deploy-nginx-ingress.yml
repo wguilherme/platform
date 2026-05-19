@@ -1,0 +1,31 @@
+---
+- name: Create nginx-ingress namespace
+  command: kubectl create namespace {{ nginx_ingress_namespace }}
+  register: create_namespace
+  failed_when: create_namespace.rc != 0 and "already exists" not in create_namespace.stderr
+  changed_when: create_namespace.rc == 0
+
+- name: Generate Helm values
+  template:
+    src: helm-values.yaml.j2
+    dest: /tmp/nginx-ingress-values.yaml
+    mode: '0644'
+
+- name: Deploy Nginx Ingress Controller using Helm
+  shell: |
+    export KUBECONFIG={{ ansible_env.HOME }}/.kube/config
+    helm upgrade --install {{ nginx_ingress_helm_release_name }} \
+      {{ nginx_ingress_helm_repo_name }}/{{ nginx_ingress_helm_chart }} \
+      --version {{ nginx_ingress_version }} \
+      --namespace {{ nginx_ingress_namespace }} \
+      --create-namespace \
+      --values /tmp/nginx-ingress-values.yaml \
+      --wait \
+      --timeout {{ nginx_ingress_wait_timeout }}s
+  register: helm_deploy
+  changed_when: "'has been upgraded' in helm_deploy.stdout or 'has been installed' in helm_deploy.stdout"
+
+- name: Clean up temporary values file
+  file:
+    path: /tmp/nginx-ingress-values.yaml
+    state: absent

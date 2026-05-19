@@ -1,0 +1,10 @@
+---
+- name: Install Helm
+  include_tasks: install-helm.yml
+
+- name: Deploy Nginx Ingress Controller
+  include_tasks: deploy-nginx-ingress.yml
+
+- name: Verify deployment
+  include_tasks: verify.yml
+  when: nginx_ingress_wait_for_ready

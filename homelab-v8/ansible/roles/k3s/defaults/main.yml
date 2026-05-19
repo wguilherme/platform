@@ -1,0 +1,24 @@
+---
+# K3s version
+k3s_version: "v1.28.5+k3s1"
+
+# K3s installation options
+k3s_install_options:
+  - "--disable=traefik"
+  - "--write-kubeconfig-mode=644"
+
+# Single node configuration
+k3s_single_node: true
+
+# Wait for cluster to be ready
+k3s_wait_for_ready: true
+k3s_wait_timeout: 300
+
+# Kubeconfig
+k3s_kubeconfig_path: "/etc/rancher/k3s/k3s.yaml"
+k3s_fetch_kubeconfig: true
+k3s_local_kubeconfig_path: "{{ playbook_dir }}/kubeconfig"
+
+# System requirements
+k3s_disable_swap: true
+k3s_enable_cgroups: true

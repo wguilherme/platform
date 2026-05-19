@@ -1,0 +1,50 @@
+controller:
+  replicaCount: {{ nginx_ingress_controller_replicas }}
+  
+  service:
+    type: {{ nginx_ingress_service_type }}
+{% if nginx_ingress_service_type == "NodePort" %}
+    nodePorts:
+      http: {{ nginx_ingress_service_nodePorts.http }}
+      https: {{ nginx_ingress_service_nodePorts.https }}
+{% endif %}
+
+  resources:
+{{ nginx_ingress_controller_resources | to_nice_yaml | indent(4, true) }}
+
+  config:
+{{ nginx_ingress_controller_config | to_nice_yaml | indent(4, true) }}
+
+  metrics:
+    enabled: {{ nginx_ingress_metrics_enabled | lower }}
+    port: {{ nginx_ingress_metrics_port }}
+
+  # Raspberry Pi compatibility
+  admissionWebhooks:
+    patch:
+      tolerations:
+        - key: node.kubernetes.io/not-ready
+          operator: Exists
+          effect: NoSchedule
+        - key: node.kubernetes.io/unreachable
+          operator: Exists
+          effect: NoSchedule
+
+  tolerations:
+    - key: node.kubernetes.io/not-ready
+      operator: Exists
+      effect: NoSchedule
+    - key: node.kubernetes.io/unreachable
+      operator: Exists
+      effect: NoSchedule
+
+defaultBackend:
+  enabled: {{ nginx_ingress_default_backend_enabled | lower }}
+  replicaCount: 1
+  resources:
+    limits:
+      cpu: 10m
+      memory: 20Mi
+    requests:
+      cpu: 10m
+      memory: 20Mi

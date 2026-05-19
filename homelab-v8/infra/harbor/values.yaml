@@ -1,0 +1,14 @@
+expose:
+  type: ingress
+  ingress:
+    hosts:
+      core: harbor.phantombyte.uk
+      notary: notary.harbor.phantombyte.uk
+    controller: default
+    annotations:
+      kubernetes.io/ingress.class: "nginx"
+      # com cert-manager:
+      # cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    tls:
+      enabled: true
+      secretName: "harbor-tls"

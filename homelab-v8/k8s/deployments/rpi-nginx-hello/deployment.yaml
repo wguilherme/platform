@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rpi-nginx-hello
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rpi-nginx-hello
+  template:
+    metadata:
+      labels:
+        app: rpi-nginx-hello
+    spec:
+      containers:
+        - name: rpi-nginx-hello
+          image: registry.phantombyte.uk/rpi-nginx-hello:latest
+          ports:
+            - containerPort: 8080

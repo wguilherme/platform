@@ -1,0 +1,11 @@
+# Manifesto de instalação rápida do ArgoCD
+# Fonte: https://argo-cd.readthedocs.io/en/stable/getting_started/
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: argocd
+---
+# Instalação oficial do ArgoCD
+# Execute: kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+# Ou copie o conteúdo do link acima neste arquivo para instalação offline.

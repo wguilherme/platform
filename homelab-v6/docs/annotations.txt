@@ -1,0 +1,10 @@
+// pegar PATH do componente pra injetar no ENV do ESPTOOL
+kubectl get node raspberry -o jsonpath='{.status.allocatable}' | jq 'to_entries[] | select(.key | startswith("smarter-devices/")) | "/dev/" + (.key | split("/")[1])'
+
+// outros comandos úteis pra ver o que o NFD detectou
+kubectl get node raspberry --show-labels | grep usb
+kubectl get node raspberry -o jsonpath='{.status.allocatable}' | jq
+
+
+// ver no tekton-pipeline pod a config de limit/request e env
+kubectl describe pod -n tekton-pipelines -l job-name=esp32-flash | grep -A5 "Limits"

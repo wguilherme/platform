@@ -43,22 +43,6 @@ coder:
           name: coder-github-oauth
           key: client-secret
 
-    # Jira External Auth — leitura de tasks nos workspaces
-    - name: CODER_EXTERNAL_AUTH_1_ID
-      value: "jira"
-    - name: CODER_EXTERNAL_AUTH_1_TYPE
-      value: "jira-cloud"
-    - name: CODER_EXTERNAL_AUTH_1_CLIENT_ID
-      valueFrom:
-        secretKeyRef:
-          name: coder-jira-oauth
-          key: client-id
-    - name: CODER_EXTERNAL_AUTH_1_CLIENT_SECRET
-      valueFrom:
-        secretKeyRef:
-          name: coder-jira-oauth
-          key: client-secret
-
   ingress:
     enable: true
     host: "localhost"

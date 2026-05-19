@@ -1,0 +1,5 @@
+KUBECONFIG=~/.kube/kind-homelab-v7
+
+make kind-down && make kind-up
+make flux-bootstrap
+make kind-secrets

@@ -6,7 +6,8 @@
       "Bash(export KUBECONFIG=/Volumes/SSD/Projects/personal/platform/homelab-v6/kubeconfig)",
       "Bash(flux version:*)",
       "Bash(asdf install:*)",
-      "Bash(gh auth:*)"
+      "Bash(gh auth:*)",
+      "WebFetch(domain:coder.com)"
     ]
   }
 }

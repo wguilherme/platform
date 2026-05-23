@@ -8,7 +8,10 @@
       "Bash(asdf install:*)",
       "Bash(gh auth:*)",
       "WebFetch(domain:coder.com)",
-      "Bash(cp /Volumes/SSD/Projects/brainy/platform-agent/backend/.env /Volumes/SSD/Projects/brainy/platform-agent/backend/.env.prd)"
+      "Bash(cp /Volumes/SSD/Projects/brainy/platform-agent/backend/.env /Volumes/SSD/Projects/brainy/platform-agent/backend/.env.prd)",
+      "Bash(KUBECONFIG=/Users/withneyguilherme/.kube/local/platform/config.kind flux reconcile kustomization infrastructure --with-source)",
+      "Bash(KUBECONFIG=/Users/withneyguilherme/.kube/local/platform/config.kind kubectl rollout restart deployment/cloudflare-tunnel-cloudflare-tunnel-remote -n cloudflare)",
+      "Bash(KUBECONFIG=/Users/withneyguilherme/.kube/local/platform/config.kind kubectl logs -n cloudflare cloudflare-tunnel-cloudflare-tunnel-remote-c69d49855-267dw --tail=10)"
     ],
     "additionalDirectories": [
       "/Volumes/SSD/Projects/brainy/platform-agent-hub/user_3D7vcnUyKTbIxND8M3wE9DYQIFA/b32ba03745e3/k8s",

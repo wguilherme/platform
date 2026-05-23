@@ -1,8 +1,8 @@
 apiVersion: image.toolkit.fluxcd.io/v1beta2
 kind: ImageRepository
 metadata:
-  name: go-hello
+  name: python-hello
   namespace: flux-system
 spec:
-  image: registry.brainylabs.com.br/go-hello
+  image: registry.brainylabs.com.br/python-hello
   interval: 1m

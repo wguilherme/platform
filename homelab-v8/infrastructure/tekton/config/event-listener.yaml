@@ -35,6 +35,62 @@ spec:
         - ref: go-hello-binding
       template:
         ref: go-hello-trigger
+    - name: bun-hello
+      interceptors:
+        - ref:
+            name: github
+            kind: ClusterInterceptor
+          params:
+            - name: secretRef
+              value:
+                secretName: github-webhook-secret
+                secretKey: token
+            - name: eventTypes
+              value: [push]
+        - ref:
+            name: cel
+            kind: ClusterInterceptor
+          params:
+            - name: filter
+              value: >
+                body.ref == 'refs/heads/main' &&
+                body.commits.exists(c, c.modified.exists(f, f.startsWith('homelab-v8/apps/bun-hello/src/')))
+            - name: overlays
+              value:
+                - key: truncated_sha
+                  expression: "body.after.truncate(8)"
+      bindings:
+        - ref: bun-hello-binding
+      template:
+        ref: bun-hello-trigger
+    - name: python-hello
+      interceptors:
+        - ref:
+            name: github
+            kind: ClusterInterceptor
+          params:
+            - name: secretRef
+              value:
+                secretName: github-webhook-secret
+                secretKey: token
+            - name: eventTypes
+              value: [push]
+        - ref:
+            name: cel
+            kind: ClusterInterceptor
+          params:
+            - name: filter
+              value: >
+                body.ref == 'refs/heads/main' &&
+                body.commits.exists(c, c.modified.exists(f, f.startsWith('homelab-v8/apps/python-hello/src/')))
+            - name: overlays
+              value:
+                - key: truncated_sha
+                  expression: "body.after.truncate(8)"
+      bindings:
+        - ref: python-hello-binding
+      template:
+        ref: python-hello-trigger
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -44,7 +100,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: tekton-webhook.wguilherme.com
+    - host: tekton-webhook.brainylabs.com.br
       http:
         paths:
           - path: /
@@ -63,7 +119,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: tekton.wguilherme.com
+    - host: tekton.brainylabs.com.br
       http:
         paths:
           - path: /

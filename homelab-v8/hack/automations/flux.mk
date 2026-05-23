@@ -11,6 +11,8 @@ flux-bootstrap:
 		--branch=$(GITHUB_BRANCH) \
 		--path=homelab-v8/flux/clusters/homelab \
 		--personal \
+		--token-auth \
+		--timeout=10m \
 		--components-extra=image-reflector-controller,image-automation-controller
 
 flux-reconcile:

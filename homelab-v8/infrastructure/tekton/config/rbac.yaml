@@ -15,7 +15,7 @@ rules:
     resources: ["taskruns", "pipelineruns"]
     verbs: ["create", "get", "list", "watch"]
   - apiGroups: ["triggers.tekton.dev"]
-    resources: ["triggertemplates", "triggerbindings", "clustertriggerbindings", "clusterinterceptors", "eventlisteners", "triggers"]
+    resources: ["triggertemplates", "triggerbindings", "clustertriggerbindings", "clusterinterceptors", "interceptors", "eventlisteners", "triggers"]
     verbs: ["get", "list", "watch"]
   - apiGroups: [""]
     resources: ["secrets", "configmaps", "serviceaccounts"]

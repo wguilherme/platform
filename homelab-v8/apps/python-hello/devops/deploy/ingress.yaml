@@ -1,18 +1,18 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: nginx-hello
+  name: python-hello
   namespace: default
 spec:
   ingressClassName: nginx
   rules:
-    - host: hello.wguilherme.com
+    - host: python.brainylabs.com.br
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: nginx-hello
+                name: python-hello
                 port:
                   number: 80

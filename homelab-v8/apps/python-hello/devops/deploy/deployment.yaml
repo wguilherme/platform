@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: go-hello
+  name: python-hello
   namespace: default
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: go-hello
+      app: python-hello
   template:
     metadata:
       labels:
-        app: go-hello
+        app: python-hello
     spec:
       containers:
-        - name: go-hello
-          image: registry.brainylabs.com.br/go-hello:latest # {"$imagepolicy": "flux-system:go-hello"}
+        - name: python-hello
+          image: registry.brainylabs.com.br/python-hello:latest # {"$imagepolicy": "flux-system:python-hello"}
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080

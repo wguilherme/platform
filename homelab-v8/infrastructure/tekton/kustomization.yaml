@@ -4,5 +4,6 @@ resources:
   - install/
   - config/pipeline.yaml
   - config/rbac.yaml
-  - config/workspace-pvc.yaml
   - config/event-listener.yaml
+patches:
+  - path: config/namespace.yaml

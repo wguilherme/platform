@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1
 kind: Task
 metadata:
-  name: go-hello-ci
+  name: bun-hello-ci
   namespace: tekton-pipelines
 spec:
   params:
@@ -13,10 +13,10 @@ spec:
       default: main
     - name: app-dir
       type: string
-      default: homelab-v8/apps/go-hello/src
+      default: homelab-v8/apps/bun-hello/src
     - name: image-repo
       type: string
-      default: registry.brainylabs.com.br/go-hello
+      default: registry.brainylabs.com.br/bun-hello
   workspaces:
     - name: source
   results:

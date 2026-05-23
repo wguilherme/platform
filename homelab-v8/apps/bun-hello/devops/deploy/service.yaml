@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: nginx-hello
+  name: bun-hello
   namespace: default
 spec:
   selector:
-    app: nginx-hello
+    app: bun-hello
   ports:
     - port: 80
-      targetPort: 80
+      targetPort: 8080

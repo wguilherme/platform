@@ -7,7 +7,13 @@
       "Bash(flux version:*)",
       "Bash(asdf install:*)",
       "Bash(gh auth:*)",
-      "WebFetch(domain:coder.com)"
+      "WebFetch(domain:coder.com)",
+      "Bash(cp /Volumes/SSD/Projects/brainy/platform-agent/backend/.env /Volumes/SSD/Projects/brainy/platform-agent/backend/.env.prd)"
+    ],
+    "additionalDirectories": [
+      "/Volumes/SSD/Projects/brainy/platform-agent-hub/user_3D7vcnUyKTbIxND8M3wE9DYQIFA/b32ba03745e3/k8s",
+      "/Volumes/SSD/Projects/brainy/platform-agent/backend/internal/gitstore",
+      "/Volumes/SSD/Projects/brainy/platform-agent/backend"
     ]
   }
 }

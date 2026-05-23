@@ -1,8 +1,8 @@
 apiVersion: image.toolkit.fluxcd.io/v1beta2
 kind: ImageRepository
 metadata:
-  name: go-hello
+  name: bun-hello
   namespace: flux-system
 spec:
-  image: registry.brainylabs.com.br/go-hello
+  image: registry.brainylabs.com.br/bun-hello
   interval: 1m

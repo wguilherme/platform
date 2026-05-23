@@ -1,13 +1,19 @@
-CLUSTER_NAME      ?= homelab-v8
-KUBECONFIG_KIND   := $(HOME)/.kube/kind-$(CLUSTER_NAME)
-KIND_CONFIG       := $(AUTOMATIONS_DIR)kind-config.yaml
-KUBECTL           = KUBECONFIG=$(KUBECONFIG_KIND) kubectl
-FLUX              = KUBECONFIG=$(KUBECONFIG_KIND) flux
+CLUSTER_NAME    ?= homelab-v8
+KUBECONFIG_KIND ?= $(HOME)/.kube/local/brainylabs/config.infra
+KIND_CONFIG     := $(AUTOMATIONS_DIR)kind-config.yaml
+KUBECTL         = KUBECONFIG=$(KUBECONFIG_KIND) kubectl
+FLUX            = KUBECONFIG=$(KUBECONFIG_KIND) flux
 
-.PHONY: kind-up kind-down kind-restart kind-status
+.PHONY: kind-up kind-down kind-restart kind-status kind-kubeconfig kind-secrets kind-wait-controllers kind-wait
+
+# ── Cluster ───────────────────────────────────────────────────────────────────
 
 kind-up:
 	kind create cluster --name $(CLUSTER_NAME) --config $(KIND_CONFIG)
+	$(MAKE) kind-kubeconfig
+
+kind-kubeconfig:
+	mkdir -p $(dir $(KUBECONFIG_KIND))
 	kind get kubeconfig --name $(CLUSTER_NAME) > $(KUBECONFIG_KIND)
 	@echo "KUBECONFIG=$(KUBECONFIG_KIND)"
 
@@ -20,3 +26,34 @@ kind-restart: kind-down kind-up
 kind-status:
 	$(KUBECTL) get nodes -o wide
 	$(KUBECTL) get pods -A --field-selector=status.phase!=Running 2>/dev/null || true
+
+# ── Secrets (plain — sem kubeseal, apenas Kind local) ─────────────────────────
+
+kind-secrets:
+	$(KUBECTL) create namespace cloudflare --dry-run=client -o yaml | $(KUBECTL) apply -f -
+	$(KUBECTL) create namespace tekton-pipelines --dry-run=client -o yaml | $(KUBECTL) apply -f -
+	$(KUBECTL) create secret generic github-webhook-secret \
+		--namespace tekton-pipelines \
+		--from-literal=token=local-dev \
+		--dry-run=client -o yaml | $(KUBECTL) apply -f -
+	$(KUBECTL) create secret generic github-token \
+		--namespace tekton-pipelines \
+		--from-literal=token=$$(grep '^GITHUB_TOKEN=' .env | cut -d= -f2-) \
+		--dry-run=client -o yaml | $(KUBECTL) apply -f -
+	$(KUBECTL) create secret generic tunnel-token \
+		--namespace cloudflare \
+		--from-literal=token=$$(grep '^TUNNEL_TOKEN=' .env | cut -d= -f2-) \
+		--dry-run=client -o yaml | $(KUBECTL) apply -f -
+
+# ── Espera ────────────────────────────────────────────────────────────────────
+
+kind-wait-controllers:
+	@echo "→ Aguardando infrastructure-controllers..."
+	until $(FLUX) get kustomization infrastructure-controllers 2>/dev/null | grep -q "True"; do sleep 5; done
+	@echo "✓ infrastructure-controllers pronto"
+
+kind-wait:
+	@echo "→ Aguardando infrastructure e apps..."
+	until $(FLUX) get kustomization infrastructure 2>/dev/null | grep -q "True"; do sleep 5; done
+	until $(FLUX) get kustomization apps 2>/dev/null | grep -q "True"; do sleep 5; done
+	@echo "✓ infraestrutura completa"

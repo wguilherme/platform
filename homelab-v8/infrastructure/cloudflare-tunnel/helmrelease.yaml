@@ -13,13 +13,31 @@ spec:
   interval: 30m
   chart:
     spec:
-      chart: cloudflare-tunnel
+      chart: cloudflare-tunnel-remote
       version: "0.x"
       sourceRef:
         kind: HelmRepository
         name: cloudflare
         namespace: flux-system
       interval: 12h
+  values:
+    cloudflare:
+      ingress:
+        - hostname: "*.brainylabs.com.br"
+          service: http://ingress-nginx-controller.ingress-nginx.svc.cluster.local:80
+          originRequest:
+            noTLSVerify: true
+        - service: http_status:404
+    replicaCount: 1
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 100m
+        memory: 128Mi
   valuesFrom:
-    - kind: ConfigMap
-      name: cloudflare-tunnel-values
+    - kind: Secret
+      name: tunnel-token
+      valuesKey: token
+      targetPath: cloudflare.tunnel_token

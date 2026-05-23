@@ -1,7 +1,7 @@
 apiVersion: image.toolkit.fluxcd.io/v1beta2
 kind: ImageUpdateAutomation
 metadata:
-  name: go-hello
+  name: bun-hello
   namespace: flux-system
 spec:
   interval: 5m
@@ -16,9 +16,9 @@ spec:
       author:
         name: flux-image-automation
         email: flux@brainylabs.com.br
-      messageTemplate: "chore: update go-hello image to {{range .Changed.Changes}}{{.}}{{end}}"
+      messageTemplate: "chore: update bun-hello image to {{range .Changed.Changes}}{{.}}{{end}}"
     push:
       branch: main
   update:
     strategy: Setters
-    path: ./homelab-v8/apps/go-hello/devops/deploy
+    path: ./homelab-v8/apps/bun-hello/devops/deploy

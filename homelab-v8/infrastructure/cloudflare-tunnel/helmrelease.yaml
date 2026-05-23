@@ -21,13 +21,6 @@ spec:
         namespace: flux-system
       interval: 12h
   values:
-    cloudflare:
-      ingress:
-        - hostname: "*.wguilherme.com"
-          service: http://ingress-nginx-controller.ingress-nginx.svc.cluster.local:80
-          originRequest:
-            noTLSVerify: true
-        - service: http_status:404
     replicaCount: 1
     resources:
       requests:

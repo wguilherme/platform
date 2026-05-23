@@ -9,7 +9,9 @@ FLUX            = KUBECONFIG=$(KUBECONFIG_KIND) flux
 # ── Cluster ───────────────────────────────────────────────────────────────────
 
 kind-up:
-	kind create cluster --name $(CLUSTER_NAME) --config $(KIND_CONFIG)
+	kind get clusters | grep -q '^$(CLUSTER_NAME)$$' \
+		&& echo "Cluster $(CLUSTER_NAME) já existe, pulando criação." \
+		|| kind create cluster --name $(CLUSTER_NAME) --config $(KIND_CONFIG)
 	$(MAKE) kind-kubeconfig
 
 kind-kubeconfig:
@@ -53,7 +55,7 @@ kind-wait-controllers:
 	@echo "✓ infrastructure-controllers pronto"
 
 kind-wait:
-	@echo "→ Aguardando infrastructure e apps..."
+	@echo "→ Aguardando infrastructure..."
 	until $(FLUX) get kustomization infrastructure 2>/dev/null | grep -q "True"; do sleep 5; done
-	until $(FLUX) get kustomization apps 2>/dev/null | grep -q "True"; do sleep 5; done
-	@echo "✓ infraestrutura completa"
+	@echo "✓ infrastructure pronto"
+	@echo "ℹ apps ficam prontos após o primeiro CI build (make ci-status)"

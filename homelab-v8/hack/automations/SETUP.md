@@ -7,7 +7,13 @@ cp homelab-v8/.env.example homelab-v8/.env
 # preencher GITHUB_TOKEN e TUNNEL_TOKEN
 ```
 
-## Ordem de execução
+## Comando único
+
+```sh
+make setup   # roda todas as etapas abaixo em ordem, para se qualquer uma falhar
+```
+
+## Ordem de execução (passo a passo)
 
 ```sh
 make kind-up               # 1. sobe cluster Kind + exporta kubeconfig para KUBECONFIG_KIND  (necessário env: KUBECONFIG_KIND)

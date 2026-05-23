@@ -1,5 +1,7 @@
 import os
 import json
+import socket
+import sys
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 
@@ -17,7 +19,8 @@ class Handler(BaseHTTPRequestHandler):
         body = json.dumps({
             "message": "Hello from Python!",
             "version": os.getenv("APP_VERSION", "dev"),
-            "runtime": f"Python {__import__('sys').version.split()[0]}",
+            "runtime": f"Python {sys.version.split()[0]}",
+            "hostname": socket.gethostname(),
         }).encode()
 
         self.send_response(200)

@@ -1,9 +1,11 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
+	"runtime"
 )
 
 func main() {
@@ -13,7 +15,12 @@ func main() {
 	}
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello World! v%s\n", version)
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]string{
+			"message": "Hello from Go!",
+			"version": version,
+			"runtime": runtime.Version(),
+		})
 	})
 
 	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {

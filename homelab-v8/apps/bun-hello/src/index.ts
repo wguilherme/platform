@@ -10,6 +10,7 @@ const server = Bun.serve({
         message: "Hello from Bun!",
         version: process.env.APP_VERSION ?? "dev",
         runtime: `Bun ${Bun.version}`,
+        timestamp: new Date().toISOString(),
       }),
       { headers: { "Content-Type": "application/json" } }
     );

@@ -32,11 +32,18 @@ A URL `http://ingress-nginx-controller.ingress-nginx.svc.cluster.local:80` é re
 
 ## Webhook GitHub (manual, uma vez)
 
-Após o cluster estar Ready:
-- URL: `https://tekton-webhook.wguilherme.com`
-- Content-Type: `application/json`
-- Secret: valor de `github-webhook-secret` no namespace `tekton-pipelines`
-- Evento: `push`
+Pré-requisito: Cloudflare Tunnel ativo e DNS `*.wguilherme.com` apontando para o tunnel correto.
+
+GitHub → repositório → Settings → Webhooks → Add webhook:
+
+| Campo        | Valor                                          |
+| ------------ | ---------------------------------------------- |
+| Payload URL  | `https://tekton-webhook.wguilherme.com`        |
+| Content type | `application/json`                             |
+| Secret       | `local-dev` (valor padrão do `kind-secrets`)   |
+| Events       | Just the `push` event                          |
+
+Após salvar, qualquer push em `main` que altere arquivos em `homelab-v8/apps/*/src/` dispara o CI automaticamente.
 
 ## Raspberry Pi (produção física)
 

@@ -23,11 +23,11 @@ Cloudflare Tunnel expõe serviços externamente sem IP público.
 
 ## Domínio
 
-`*.brainylabs.com.br` — gerenciado no Cloudflare.  
+`*.wguilherme.com` — gerenciado no Cloudflare.  
 Subdomínios relevantes:
-- `hello.brainylabs.com.br` → nginx-hello (teste)
-- `api.brainylabs.com.br` → platform-agent-backend
-- `registry.brainylabs.com.br` → Zot OCI registry (prod)
+- `hello.wguilherme.com` → nginx-hello (teste)
+- `api.wguilherme.com` → platform-agent-backend
+- `registry.wguilherme.com` → Zot OCI registry (prod)
 
 ---
 
@@ -120,7 +120,7 @@ Tekton EventListener (namespace: tekton-pipelines)
 Task: clone → kaniko build → push Zot
     │  tag: YYYYMMDDHHMMSS-<sha8>  (ex: 20260519-abc12345)
     ▼
-Zot registry (registry.brainylabs.com.br)
+Zot registry (registry.wguilherme.com)
     │
     ▼
 Flux ImageRepository (scan a cada 1m)
@@ -191,8 +191,8 @@ apps/<app-name>/devops/
 - Fonte: `github.com/brainyboxdev/platform-agent` (monorepo)
 - Dockerfile em: `backend/Dockerfile`
 - `app-dir` param do Tekton: `backend`
-- Registry: `registry.brainylabs.com.br/platform-agent-backend`
-- Ingress: `api.brainylabs.com.br`
+- Registry: `registry.wguilherme.com/platform-agent-backend`
+- Ingress: `api.wguilherme.com`
 
 ---
 
@@ -271,7 +271,7 @@ GITHUB_BRANCH=main
 - Chart: `cloudflare/cloudflare-tunnel-remote` v0.1.2
 - Autenticação: `TUNNEL_TOKEN` (remote-managed — roteamento configurado no dashboard CF)
 - Roteamento: CF Dashboard → Zero Trust → Tunnels → Public Hostnames
-- `*.brainylabs.com.br` → `http://ingress-nginx-controller.ingress-nginx.svc.cluster.local:80`
+- `*.wguilherme.com` → `http://ingress-nginx-controller.ingress-nginx.svc.cluster.local:80`
 - DNS: CNAME `tunnelID.cfargotunnel.com` (criado manualmente ou via dashboard)
 
 ---
@@ -285,7 +285,7 @@ GITHUB_BRANCH=main
 - Tag de imagem: `YYYYMMDDHHMMSS-<sha8>` — alphabetical sort = newest
 - `imagePullPolicy: Never` em Kind, `IfNotPresent` em K3s
 - StorageClass `standard` em Kind, `local-path` em K3s
-- Flux image automation faz commit com author `flux-image-automation <flux@brainylabs.com.br>`
+- Flux image automation faz commit com author `flux-image-automation <flux@wguilherme.com>`
 - Cada app tem `flux-kustomization.yaml` próprio — não depende só do `apps/homelab/kustomization.yaml`
 - Monorepos externos: CI fica no repo externo em `devops/<app-name>/ci/`, ops fica no homelab-v8
 

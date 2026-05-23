@@ -4,5 +4,5 @@ metadata:
   name: go-hello
   namespace: flux-system
 spec:
-  image: registry.brainylabs.com.br/go-hello
+  image: registry.wguilherme.com/go-hello
   interval: 1m

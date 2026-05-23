@@ -4,5 +4,5 @@ metadata:
   name: python-hello
   namespace: flux-system
 spec:
-  image: registry.brainylabs.com.br/python-hello
+  image: registry.wguilherme.com/python-hello
   interval: 1m

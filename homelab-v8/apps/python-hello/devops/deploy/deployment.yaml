@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: python-hello
-          image: registry.brainylabs.com.br/python-hello:latest # {"$imagepolicy": "flux-system:python-hello"}
+          image: registry.wguilherme.com/python-hello:latest # {"$imagepolicy": "flux-system:python-hello"}
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080

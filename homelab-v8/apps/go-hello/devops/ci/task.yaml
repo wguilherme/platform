@@ -16,7 +16,7 @@ spec:
       default: homelab-v8/apps/go-hello/src
     - name: image-repo
       type: string
-      default: registry.brainylabs.com.br/go-hello
+      default: registry.wguilherme.com/go-hello
   workspaces:
     - name: source
   results:
@@ -64,5 +64,5 @@ spec:
           --dockerfile=$(workspaces.source.path)/repo/$(params.app-dir)/Dockerfile \
           --context=$(workspaces.source.path)/repo/$(params.app-dir) \
           --destination=$DEST \
-          --skip-tls-verify-registry=registry.brainylabs.com.br
+          --skip-tls-verify-registry=registry.wguilherme.com
         echo "=== Done ==="

@@ -6,7 +6,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: python.brainylabs.com.br
+    - host: python.wguilherme.com
       http:
         paths:
           - path: /

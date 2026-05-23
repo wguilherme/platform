@@ -100,7 +100,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: tekton-webhook.brainylabs.com.br
+    - host: tekton-webhook.wguilherme.com
       http:
         paths:
           - path: /
@@ -119,7 +119,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: tekton.brainylabs.com.br
+    - host: tekton.wguilherme.com
       http:
         paths:
           - path: /

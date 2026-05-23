@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: bun-hello
-          image: registry.brainylabs.com.br/bun-hello:latest # {"$imagepolicy": "flux-system:bun-hello"}
+          image: registry.wguilherme.com/bun-hello:latest # {"$imagepolicy": "flux-system:bun-hello"}
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080

@@ -15,7 +15,7 @@ spec:
     commit:
       author:
         name: flux-image-automation
-        email: flux@brainylabs.com.br
+        email: flux@wguilherme.com
       messageTemplate: "chore: update go-hello image to {{range .Changed.Changes}}{{.}}{{end}}"
     push:
       branch: main

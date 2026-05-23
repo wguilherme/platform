@@ -4,5 +4,5 @@ metadata:
   name: bun-hello
   namespace: flux-system
 spec:
-  image: registry.brainylabs.com.br/bun-hello
+  image: registry.wguilherme.com/bun-hello
   interval: 1m

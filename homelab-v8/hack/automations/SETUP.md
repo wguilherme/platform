@@ -10,7 +10,7 @@ cp homelab-v8/.env.example homelab-v8/.env
 ## Ordem de execução
 
 ```sh
-make kind-up               # 1. sobe cluster Kind
+make kind-up               # 1. sobe cluster Kind + exporta kubeconfig para KUBECONFIG_KIND  (necessário env: KUBECONFIG_KIND)
 make kind-secrets          # 2. cria secrets no cluster  (necessário env: GITHUB_TOKEN, TUNNEL_TOKEN)
 make flux-bootstrap        # 3. instala Flux + dispara reconciliação de toda infra via GitOps  (necessário env: GITHUB_TOKEN, GITHUB_USER, GITHUB_REPO)
 make kind-wait-controllers # 4. aguarda nginx-ingress + infrastructure-controllers ficarem Ready
@@ -20,10 +20,14 @@ make flux-status           # 6. confirma tudo True
 
 > Flux sobe automaticamente: nginx-ingress · zot · tekton · cloudflare-tunnel
 
+## Cloudflare Tunnel — URL do serviço
+
+A URL `http://ingress-nginx-controller.ingress-nginx.svc.cluster.local:80` é resolvida via CoreDNS porque o pod do tunnel roda **dentro do cluster**. Só funciona assim — se o tunnel rodasse fora (binário no host), precisaria do IP do node.
+
 ## Webhook GitHub (manual, uma vez)
 
 Após o cluster estar Ready:
-- URL: `https://tekton-webhook.brainylabs.com.br`
+- URL: `https://tekton-webhook.wguilherme.com`
 - Content-Type: `application/json`
 - Secret: valor de `github-webhook-secret` no namespace `tekton-pipelines`
 - Evento: `push`

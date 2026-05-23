@@ -23,7 +23,7 @@ spec:
   values:
     cloudflare:
       ingress:
-        - hostname: "*.brainylabs.com.br"
+        - hostname: "*.wguilherme.com"
           service: http://ingress-nginx-controller.ingress-nginx.svc.cluster.local:80
           originRequest:
             noTLSVerify: true

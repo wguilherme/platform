@@ -6,7 +6,7 @@ ingress:
   annotations:
     nginx.ingress.kubernetes.io/proxy-body-size: "0"
   hosts:
-    - host: registry.brainylabs.com.br
+    - host: registry.wguilherme.com
       paths:
         - path: /
           pathType: Prefix

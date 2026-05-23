@@ -1,11 +1,12 @@
 ---
 # K3s version
-k3s_version: "v1.28.5+k3s1"
+k3s_version: "v1.36.1+k3s1"
 
 # K3s installation options
 k3s_install_options:
   - "--disable=traefik"
   - "--write-kubeconfig-mode=644"
+  - "--prefer-bundled-bin"      # usa iptables bundled do K3s, evita conflito com nftables do RPi OS Bookworm
 
 # Single node configuration
 k3s_single_node: true

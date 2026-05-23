@@ -1,8 +1,8 @@
-CLUSTER_NAME    ?= homelab-v8
-KUBECONFIG_KIND ?= $(HOME)/.kube/local/brainylabs/config.infra
-KIND_CONFIG     := $(AUTOMATIONS_DIR)kind-config.yaml
-KUBECTL         = KUBECONFIG=$(KUBECONFIG_KIND) kubectl
-FLUX            = KUBECONFIG=$(KUBECONFIG_KIND) flux
+CLUSTER_NAME        ?= homelab-v8
+KUBECONFIG_PLATFORM ?= $(HOME)/.kube/local/platform/config.platform
+KIND_CONFIG         := $(AUTOMATIONS_DIR)kind-config.yaml
+KUBECTL              = KUBECONFIG=$(KUBECONFIG_PLATFORM) kubectl
+FLUX                 = KUBECONFIG=$(KUBECONFIG_PLATFORM) flux
 
 .PHONY: kind-up kind-down kind-restart kind-status kind-kubeconfig kind-secrets kind-wait-controllers kind-wait
 
@@ -55,7 +55,10 @@ kind-wait-controllers:
 	@echo "✓ infrastructure-controllers pronto"
 
 kind-wait:
-	@echo "→ Aguardando infrastructure..."
-	until $(FLUX) get kustomization infrastructure 2>/dev/null | grep -q "True"; do sleep 5; done
+	@echo "→ Aguardando infrastructure (pode levar até 10m — Tekton + health checks)..."
+	until $(FLUX) get kustomization infrastructure 2>/dev/null | grep -q "True"; do \
+		$(FLUX) get kustomization infrastructure 2>/dev/null | grep -v "^NAME" || true; \
+		sleep 10; \
+	done
 	@echo "✓ infrastructure pronto"
 	@echo "ℹ apps ficam prontos após o primeiro CI build (make ci-status)"

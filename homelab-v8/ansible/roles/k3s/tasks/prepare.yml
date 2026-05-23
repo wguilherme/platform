@@ -97,7 +97,27 @@
       - ca-certificates
       - gnupg
       - lsb-release
+      - iptables          # garante iptables-legacy disponível
     state: present
+
+- name: Set iptables to legacy mode (RPi OS Bookworm usa nftables por padrão)
+  become: true
+  shell: |
+    update-alternatives --set iptables /usr/sbin/iptables-legacy
+    update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
+  when: ansible_architecture == "aarch64" or ansible_architecture == "armv7l"
+  changed_when: false
+  failed_when: false
+
+- name: Set GPU memory split to 16MB (libera RAM pro K3s — RPi 4B+)
+  become: true
+  lineinfile:
+    path: /boot/firmware/config.txt
+    regexp: '^gpu_mem='
+    line: 'gpu_mem=16'
+    create: false
+  when: ansible_architecture == "aarch64" or ansible_architecture == "armv7l"
+  failed_when: false
 
 - name: Set system limits
   become: true

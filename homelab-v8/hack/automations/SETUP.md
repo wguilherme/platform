@@ -16,7 +16,7 @@ make setup   # roda todas as etapas abaixo em ordem, para se qualquer uma falhar
 ## Ordem de execução (passo a passo)
 
 ```sh
-make kind-up               # 1. sobe cluster Kind + exporta kubeconfig para KUBECONFIG_KIND  (necessário env: KUBECONFIG_KIND)
+make kind-up               # 1. sobe cluster Kind + exporta kubeconfig para KUBECONFIG_PLATFORM  (necessário env: KUBECONFIG_PLATFORM)
 make kind-secrets          # 2. cria secrets no cluster  (necessário env: GITHUB_TOKEN, TUNNEL_TOKEN)
 make flux-bootstrap        # 3. instala Flux + dispara reconciliação de toda infra via GitOps  (necessário env: GITHUB_TOKEN, GITHUB_USER, GITHUB_REPO)
 make kind-wait-controllers # 4. aguarda nginx-ingress + infrastructure-controllers ficarem Ready
@@ -49,7 +49,7 @@ Após salvar, qualquer push em `main` que altere arquivos em `homelab-v8/apps/*/
 
 Substitui `make kind-up`. Restante idêntico.
 
-**Pré-requisito:** ajustar `KUBECONFIG_KIND` no `.env` para o kubeconfig gerado pelo Ansible.
+**Pré-requisito:** ajustar `KUBECONFIG_PLATFORM` no `.env` para o kubeconfig gerado pelo Ansible.
 
 ```sh
 # [RPi físico]

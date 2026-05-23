@@ -47,24 +47,51 @@ Após salvar, qualquer push em `main` que altere arquivos em `homelab-v8/apps/*/
 
 ## Raspberry Pi (produção física)
 
-Substitui `make kind-up`. Restante idêntico.
+### Pré-requisitos
 
-**Pré-requisito:** ajustar `KUBECONFIG_PLATFORM` no `.env` para o kubeconfig gerado pelo Ansible.
+- Ubuntu Server 24.04 LTS 64-bit gravado no SD card (via RPi Imager)
+- SSH habilitado no Imager com chave pública `~/.ssh/id_rsa.pub`, usuário `ubuntu`, hostname `rpi`
+- `.env` preenchido (GITHUB_TOKEN, TUNNEL_TOKEN)
+
+### Passo a passo
 
 ```sh
-# [RPi físico]
-ansible-playbook ansible/site.yml   # instala K3s + nginx-ingress, salva kubeconfig local
+make rpi-discover      # 0. descobre IP do RPi na rede via mDNS (rpi.local)
+                       #    → atualize RPI_HOST=<ip> no .env
+make rpi-check         # 1. valida ping + SSH + hostname + arch
+make rpi-setup         # 2. roda tudo abaixo em sequência
+```
 
-# [máquina local — mesmas automações]
-make kind-secrets          # (necessário env: GITHUB_TOKEN, TUNNEL_TOKEN)
-make flux-bootstrap        # (necessário env: GITHUB_TOKEN, GITHUB_USER, GITHUB_REPO)
+### Comando único (após discovery)
+
+```sh
+make rpi-setup   # ansible → kubeconfig → secrets → flux → wait
+```
+
+### Passo a passo detalhado
+
+```sh
+make ansible-setup     # 1. provisiona K3s + nginx-ingress no RPi via Ansible  (necessário env: RPI_HOST)
+make kubeconfig-rpi    # 2. copia kubeconfig do RPi para KUBECONFIG_PLATFORM  (necessário env: KUBECONFIG_PLATFORM)
+make kind-secrets      # 3. cria secrets no cluster RPi  (necessário env: GITHUB_TOKEN, TUNNEL_TOKEN)
+make flux-bootstrap    # 4. instala Flux + dispara reconciliação  (necessário env: GITHUB_TOKEN, GITHUB_USER, GITHUB_REPO)
 make kind-wait-controllers
 make kind-wait
 make flux-status
 ```
 
-## Teardown
+> Kubeconfig salvo em `ansible/kubeconfig` e copiado para `KUBECONFIG_PLATFORM`.
+> Todos os targets `make kind-*` funcionam no RPi desde que `KUBECONFIG_PLATFORM` aponte para o kubeconfig correto.
+
+### Teardown
 
 ```sh
-make teardown
+make rpi-teardown   # instruções para desinstalar K3s no RPi
+```
+
+## Teardown Kind/k3d
+
+```sh
+make teardown    # kind
+make k3d-teardown
 ```

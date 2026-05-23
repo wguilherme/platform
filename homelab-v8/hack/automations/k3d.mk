@@ -1,7 +1,7 @@
 K3S_VERSION      ?= v1.36.1-k3s1
 K3D_CLUSTER_NAME ?= homelab-k3d
 
-.PHONY: k3d-up k3d-down k3d-restart k3d-kubeconfig k3d-status k3d-secrets k3d-bootstrap k3d-wait-controllers k3d-wait k3d-setup k3d-teardown
+.PHONY: k3d-up k3d-down k3d-restart kubeconfig-k3d k3d-status k3d-secrets k3d-bootstrap k3d-wait-controllers k3d-wait k3d-setup k3d-teardown
 
 # ── Cluster ───────────────────────────────────────────────────────────────────
 
@@ -11,9 +11,9 @@ k3d-up:
 		|| k3d cluster create $(K3D_CLUSTER_NAME) \
 			--image rancher/k3s:$(K3S_VERSION) \
 			--k3s-arg "--disable=traefik@server:0"
-	$(MAKE) k3d-kubeconfig
+	$(MAKE) kubeconfig-k3d
 
-k3d-kubeconfig:
+kubeconfig-k3d:
 	mkdir -p $(dir $(KUBECONFIG_PLATFORM))
 	k3d kubeconfig get $(K3D_CLUSTER_NAME) > $(KUBECONFIG_PLATFORM)
 	@echo "KUBECONFIG=$(KUBECONFIG_PLATFORM)"

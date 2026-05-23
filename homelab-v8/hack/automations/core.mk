@@ -10,6 +10,7 @@ include $(AUTOMATIONS_DIR)cloudflare.mk
 include $(AUTOMATIONS_DIR)tekton.mk
 include $(AUTOMATIONS_DIR)test.mk
 include $(AUTOMATIONS_DIR)apps.mk
+include $(AUTOMATIONS_DIR)ansible.mk
 
 .PHONY: setup teardown
 

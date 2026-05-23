@@ -4,7 +4,7 @@ KIND_CONFIG         := $(AUTOMATIONS_DIR)kind-config.yaml
 KUBECTL              = KUBECONFIG=$(KUBECONFIG_PLATFORM) kubectl
 FLUX                 = KUBECONFIG=$(KUBECONFIG_PLATFORM) flux
 
-.PHONY: kind-up kind-down kind-restart kind-status kind-kubeconfig kind-secrets kind-wait-controllers kind-wait
+.PHONY: kind-up kind-down kind-restart kind-status kubeconfig-kind kind-secrets kind-wait-controllers kind-wait
 
 # ── Cluster ───────────────────────────────────────────────────────────────────
 
@@ -12,16 +12,16 @@ kind-up:
 	kind get clusters | grep -q '^$(CLUSTER_NAME)$$' \
 		&& echo "Cluster $(CLUSTER_NAME) já existe, pulando criação." \
 		|| kind create cluster --name $(CLUSTER_NAME) --config $(KIND_CONFIG)
-	$(MAKE) kind-kubeconfig
+	$(MAKE) kubeconfig-kind
 
-kind-kubeconfig:
-	mkdir -p $(dir $(KUBECONFIG_KIND))
-	kind get kubeconfig --name $(CLUSTER_NAME) > $(KUBECONFIG_KIND)
-	@echo "KUBECONFIG=$(KUBECONFIG_KIND)"
+kubeconfig-kind:
+	mkdir -p $(dir $(KUBECONFIG_PLATFORM))
+	kind get kubeconfig --name $(CLUSTER_NAME) > $(KUBECONFIG_PLATFORM)
+	@echo "KUBECONFIG=$(KUBECONFIG_PLATFORM)"
 
 kind-down:
 	kind delete cluster --name $(CLUSTER_NAME)
-	rm -f $(KUBECONFIG_KIND)
+	rm -f $(KUBECONFIG_PLATFORM)
 
 kind-restart: kind-down kind-up
 

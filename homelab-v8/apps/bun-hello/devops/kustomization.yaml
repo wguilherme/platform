@@ -7,3 +7,4 @@ resources:
   - flux-kustomization.yaml
   - ci/task.yaml
   - ci/trigger.yaml
+  - ci/bootstrap.yaml

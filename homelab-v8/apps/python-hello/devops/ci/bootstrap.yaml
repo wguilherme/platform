@@ -1,0 +1,11 @@
+apiVersion: tekton.dev/v1
+kind: TaskRun
+metadata:
+  name: python-hello-bootstrap
+  namespace: tekton-pipelines
+spec:
+  taskRef:
+    name: python-hello-ci
+  workspaces:
+    - name: source
+      emptyDir: {}

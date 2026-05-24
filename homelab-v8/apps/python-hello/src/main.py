@@ -17,7 +17,7 @@ class Handler(BaseHTTPRequestHandler):
             return
 
         body = json.dumps({
-            "message": "Hello from Python!",
+            "message": "Hello from Python! 🐍",
             "version": os.getenv("APP_VERSION", "dev"),
             "runtime": f"Python {sys.version.split()[0]}",
             "hostname": socket.gethostname(),

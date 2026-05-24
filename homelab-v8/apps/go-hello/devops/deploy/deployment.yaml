@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: go-hello
-          image: registry.wguilherme.com/go-hello:20260523230455-14cf13c2 # {"$imagepolicy": "flux-system:go-hello"}
+          image: registry.wguilherme.com/go-hello:20260524005449-b5e88155 # {"$imagepolicy": "flux-system:go-hello"}
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080

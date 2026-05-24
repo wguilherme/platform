@@ -32,7 +32,8 @@ spec:
                 - key: truncated_sha
                   expression: "body.after.truncate(8)"
       bindings:
-        - ref: go-hello-binding
+        - kind: TriggerBinding
+          ref: go-hello-binding
       template:
         ref: go-hello-trigger
     - name: bun-hello
@@ -60,7 +61,8 @@ spec:
                 - key: truncated_sha
                   expression: "body.after.truncate(8)"
       bindings:
-        - ref: bun-hello-binding
+        - kind: TriggerBinding
+          ref: bun-hello-binding
       template:
         ref: bun-hello-trigger
     - name: python-hello
@@ -88,7 +90,8 @@ spec:
                 - key: truncated_sha
                   expression: "body.after.truncate(8)"
       bindings:
-        - ref: python-hello-binding
+        - kind: TriggerBinding
+          ref: python-hello-binding
       template:
         ref: python-hello-trigger
 ---

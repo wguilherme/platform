@@ -3,7 +3,7 @@ RPI_HOSTNAME   ?= rpi.local
 RPI_HOST       ?= rpi.local
 RPI_USER       ?= ubuntu
 
-.PHONY: rpi-discover rpi-ping rpi-check rpi-trust rpi-resources ansible-setup kubeconfig-rpi rpi-setup rpi-teardown
+.PHONY: rpi-discover rpi-ping rpi-check rpi-trust rpi-resources ansible-setup kubeconfig-rpi rpi-setup rpi-teardown rpi-reset
 
 # ── Connectivity check ────────────────────────────────────────────────────────
 
@@ -65,5 +65,10 @@ rpi-setup: ansible-setup kubeconfig-rpi kind-secrets flux-bootstrap kind-wait-co
 	@echo "✓ RPi setup completo."
 
 rpi-teardown:
-	@echo "RPi teardown: desinstale K3s via Ansible ou manualmente no host."
-	@echo "  ssh pi@<ip> 'sudo /usr/local/bin/k3s-uninstall.sh'"
+	ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $(RPI_USER)@$(RPI_HOST) \
+		'echo $(RPI_PASSWORD) | sudo -S /usr/local/bin/k3s-uninstall.sh'
+	rm -f $(KUBECONFIG_PLATFORM)
+	@echo "✓ K3s removido do RPi"
+
+rpi-reset: rpi-teardown rpi-setup
+	@echo "✓ RPi reset completo"

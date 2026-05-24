@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: dotnet-hello
-          image: registry.wguilherme.com/dotnet-hello:placeholder # {"$imagepolicy": "flux-system:dotnet-hello"}
+          image: registry.wguilherme.com/dotnet-hello:20260524054451-9c95f4bb # {"$imagepolicy": "flux-system:dotnet-hello"}
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080

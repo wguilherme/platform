@@ -1,0 +1,68 @@
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: dotnet-hello-ci
+  namespace: tekton-pipelines
+spec:
+  params:
+    - name: repo-url
+      type: string
+      default: https://github.com/wguilherme/platform.git
+    - name: revision
+      type: string
+      default: main
+    - name: app-dir
+      type: string
+      default: homelab-v8/apps/dotnet-hello/src
+    - name: image-repo
+      type: string
+      default: registry.wguilherme.com/dotnet-hello
+  workspaces:
+    - name: source
+  results:
+    - name: image-tag
+      description: "Tag publicada: YYYYMMDDHHMMSS-sha8"
+  stepTemplate:
+    computeResources:
+      requests:
+        memory: "512Mi"
+        cpu: "200m"
+      limits:
+        memory: "2Gi"
+        cpu: "1"
+  steps:
+    - name: clone
+      image: alpine/git:latest
+      workingDir: $(workspaces.source.path)
+      env:
+        - name: GITHUB_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: github-token
+              key: token
+      script: |
+        #!/bin/sh
+        set -e
+        rm -rf repo
+        REPO_URL=$(echo "$(params.repo-url)" | sed 's|https://|https://'"$GITHUB_TOKEN"'@|')
+        git clone --depth=1 "$REPO_URL" repo
+        cd repo && git checkout "$(params.revision)"
+        SHA=$(git rev-parse --short=8 HEAD)
+        TAG=$(date +%Y%m%d%H%M%S)-$SHA
+        echo "$TAG" > $(workspaces.source.path)/.image-tag
+        printf "%s" "$TAG" > $(results.image-tag.path)
+        echo "Cloned @ $SHA — tag: $TAG"
+    - name: build-push
+      image: gcr.io/kaniko-project/executor:v1.23.0-debug
+      script: |
+        #!/busybox/sh
+        set -e
+        TAG=$(cat $(workspaces.source.path)/.image-tag)
+        DEST="$(params.image-repo):$TAG"
+        echo "=== Build & Push: $DEST ==="
+        /kaniko/executor \
+          --dockerfile=$(workspaces.source.path)/repo/$(params.app-dir)/Dockerfile \
+          --context=$(workspaces.source.path)/repo/$(params.app-dir) \
+          --destination=$DEST \
+          --skip-tls-verify-registry=registry.wguilherme.com
+        echo "=== Done ==="

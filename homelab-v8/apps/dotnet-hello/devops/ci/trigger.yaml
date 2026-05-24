@@ -1,0 +1,35 @@
+---
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerBinding
+metadata:
+  name: dotnet-hello-binding
+  namespace: tekton-pipelines
+spec:
+  params:
+    - name: gitrevision
+      value: $(body.after)
+---
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerTemplate
+metadata:
+  name: dotnet-hello-trigger
+  namespace: tekton-pipelines
+spec:
+  params:
+    - name: gitrevision
+  resourcetemplates:
+    - apiVersion: tekton.dev/v1
+      kind: TaskRun
+      metadata:
+        generateName: dotnet-hello-ci-
+        namespace: tekton-pipelines
+      spec:
+        timeout: 30m
+        taskRef:
+          name: dotnet-hello-ci
+        params:
+          - name: revision
+            value: $(tt.params.gitrevision)
+        workspaces:
+          - name: source
+            emptyDir: {}

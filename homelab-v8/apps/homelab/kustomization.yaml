@@ -4,3 +4,4 @@ resources:
   - ../go-hello/devops/
   - ../bun-hello/devops/
   - ../python-hello/devops/
+  - ../dotnet-hello/devops/

@@ -1,0 +1,8 @@
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImageRepository
+metadata:
+  name: dotnet-hello
+  namespace: flux-system
+spec:
+  image: registry.wguilherme.com/dotnet-hello
+  interval: 1m

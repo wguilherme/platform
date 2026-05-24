@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dotnet-hello
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dotnet-hello
+  template:
+    metadata:
+      labels:
+        app: dotnet-hello
+    spec:
+      containers:
+        - name: dotnet-hello
+          image: registry.wguilherme.com/dotnet-hello:placeholder # {"$imagepolicy": "flux-system:dotnet-hello"}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: APP_VERSION
+              value: "latest"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 3
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi

@@ -12,7 +12,7 @@ tekton-build-push:
 # ── TaskRun manual (dispara CI sem webhook GitHub) ────────────────────────────
 
 tekton-run:
-	@for app in go-hello bun-hello python-hello; do \
+	@for app in go-hello bun-hello python-hello dotnet-hello; do \
 		printf 'apiVersion: tekton.dev/v1\nkind: TaskRun\nmetadata:\n  generateName: %s-ci-manual-\n  namespace: tekton-pipelines\nspec:\n  taskRef:\n    name: %s-ci\n  params:\n  - name: image-repo\n    value: registry.wguilherme.com/%s\n  workspaces:\n  - name: source\n    emptyDir: {}\n' $$app $$app $$app \
 			| $(KUBECTL) create -f -; \
 	done

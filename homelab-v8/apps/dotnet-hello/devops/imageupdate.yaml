@@ -1,0 +1,24 @@
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImageUpdateAutomation
+metadata:
+  name: dotnet-hello
+  namespace: flux-system
+spec:
+  interval: 5m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  git:
+    checkout:
+      ref:
+        branch: main
+    commit:
+      author:
+        name: flux-image-automation
+        email: flux@wguilherme.com
+      messageTemplate: "chore: update dotnet-hello image to {{range .Changed.Changes}}{{.}}{{end}}"
+    push:
+      branch: main
+  update:
+    strategy: Setters
+    path: ./homelab-v8/apps/dotnet-hello/devops/deploy

@@ -1,0 +1,13 @@
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImagePolicy
+metadata:
+  name: dotnet-hello
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: dotnet-hello
+  policy:
+    alphabetical:
+      order: asc
+  filterTags:
+    pattern: '^\d{14}-[a-f0-9]{8}$'

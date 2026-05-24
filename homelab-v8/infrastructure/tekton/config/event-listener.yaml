@@ -94,6 +94,35 @@ spec:
           ref: python-hello-binding
       template:
         ref: python-hello-trigger
+    - name: dotnet-hello
+      interceptors:
+        - ref:
+            name: github
+            kind: ClusterInterceptor
+          params:
+            - name: secretRef
+              value:
+                secretName: github-webhook-secret
+                secretKey: token
+            - name: eventTypes
+              value: [push]
+        - ref:
+            name: cel
+            kind: ClusterInterceptor
+          params:
+            - name: filter
+              value: >
+                body.ref == 'refs/heads/main' &&
+                body.commits.exists(c, c.modified.exists(f, f.startsWith('homelab-v8/apps/dotnet-hello/src/')))
+            - name: overlays
+              value:
+                - key: truncated_sha
+                  expression: "body.after.truncate(8)"
+      bindings:
+        - kind: TriggerBinding
+          ref: dotnet-hello-binding
+      template:
+        ref: dotnet-hello-trigger
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress

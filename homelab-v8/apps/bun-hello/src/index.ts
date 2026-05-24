@@ -7,7 +7,7 @@ const server = Bun.serve({
     }
     return new Response(
       JSON.stringify({
-        message: "Hello from Bun! 🐰",
+        message: "Hello from Bun! v2",
         version: process.env.APP_VERSION ?? "dev",
         runtime: `Bun ${Bun.version}`,
         timestamp: new Date().toISOString(),

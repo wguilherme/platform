@@ -3,7 +3,7 @@ RPI_HOSTNAME   ?= rpi.local
 RPI_HOST       ?= rpi.local
 RPI_USER       ?= ubuntu
 
-.PHONY: rpi-discover rpi-ping rpi-check ansible-setup kubeconfig-rpi rpi-setup rpi-teardown
+.PHONY: rpi-discover rpi-ping rpi-check rpi-trust rpi-resources ansible-setup kubeconfig-rpi rpi-setup rpi-teardown
 
 # ── Connectivity check ────────────────────────────────────────────────────────
 
@@ -23,6 +23,23 @@ rpi-ping:
 	@ping -c 1 -W 2 $(RPI_HOST) > /dev/null 2>&1 \
 		&& echo "✓ $(RPI_HOST) reachable" \
 		|| echo "✗ $(RPI_HOST) unreachable"
+
+rpi-trust:
+	ssh-keygen -R $(RPI_HOST) 2>/dev/null || true
+	ssh-keyscan -H $(RPI_HOST) >> ~/.ssh/known_hosts 2>/dev/null
+	@echo "✓ Host key atualizado para $(RPI_HOST)"
+
+rpi-resources:
+	@ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+		-i ~/.ssh/id_rsa $(RPI_USER)@$(RPI_HOST) \
+		'printf "CPU:     %s cores / %s%% used\nMemory:  %s total / %s used\nStorage: %s total / %s used\nTemp:    %s\n" \
+			"$$(nproc)" \
+			"$$(top -bn1 | grep "Cpu(s)" | awk "{print \$$2}")" \
+			"$$(free -h | awk "/Mem:/{print \$$2}")" \
+			"$$(free -h | awk "/Mem:/{print \$$3}")" \
+			"$$(df -h / | awk "NR==2{print \$$2}")" \
+			"$$(df -h / | awk "NR==2{print \$$3}")" \
+			"$$(cat /sys/class/thermal/thermal_zone0/temp | awk "{printf \"%.1f°C\", \$$1/1000}")"'
 
 rpi-check: rpi-ping
 	ssh -o ConnectTimeout=5 -o StrictHostKeyChecking=no \

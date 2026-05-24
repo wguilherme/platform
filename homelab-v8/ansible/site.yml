@@ -1,5 +1,5 @@
 ---
-- name: Deploy K3s single-node cluster with Nginx Ingress Controller
+- name: Deploy K3s single-node cluster
   hosts: k3s_cluster
   gather_facts: true
   any_errors_fatal: true
@@ -16,9 +16,6 @@
   roles:
     - role: k3s
       tags: k3s
-    - role: nginx-ingress
-      tags: nginx
-
   post_tasks:
     - name: Wait for cluster to stabilize
       pause:
@@ -29,10 +26,8 @@
       shell: |
         echo "=== K3s Cluster Status ==="
         kubectl get nodes -o wide
-        echo -e "\n=== Nginx Ingress Controller ==="
-        kubectl get pods -n ingress-nginx
-        echo -e "\n=== Services ==="
-        kubectl get svc -n ingress-nginx
+        echo -e "\n=== Pods ==="
+        kubectl get pods -A
       register: cluster_info
       changed_when: false
       tags: info

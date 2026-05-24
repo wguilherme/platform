@@ -5,7 +5,7 @@ GITHUB_BRANCH ?= main
 .PHONY: flux-bootstrap flux-reconcile flux-status
 
 flux-bootstrap:
-	KUBECONFIG=$(KUBECONFIG_KIND) flux bootstrap github \
+	$(FLUX) bootstrap github \
 		--owner=$(GITHUB_USER) \
 		--repository=$(GITHUB_REPO) \
 		--branch=$(GITHUB_BRANCH) \

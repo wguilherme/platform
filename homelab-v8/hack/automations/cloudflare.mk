@@ -26,7 +26,7 @@ cloudflare-secret:
 # ── Helm install ──────────────────────────────────────────────────────────────
 
 cloudflare-install:
-	KUBECONFIG=$(KUBECONFIG_KIND) helm upgrade --install $(CLOUDFLARE_RELEASE) $(CLOUDFLARE_CHART) \
+	KUBECONFIG=$(KUBECONFIG_PLATFORM) helm upgrade --install $(CLOUDFLARE_RELEASE) $(CLOUDFLARE_CHART) \
 		--namespace $(CLOUDFLARE_NS) \
 		--set cloudflare.tunnel_token="$(TUNNEL_TOKEN)" \
 		--wait
@@ -44,5 +44,5 @@ cloudflare-logs:
 # ── Teardown ──────────────────────────────────────────────────────────────────
 
 cloudflare-uninstall:
-	KUBECONFIG=$(KUBECONFIG_KIND) helm uninstall $(CLOUDFLARE_RELEASE) --namespace $(CLOUDFLARE_NS) 2>/dev/null || true
+	KUBECONFIG=$(KUBECONFIG_PLATFORM) helm uninstall $(CLOUDFLARE_RELEASE) --namespace $(CLOUDFLARE_NS) 2>/dev/null || true
 	$(KUBECTL) delete namespace $(CLOUDFLARE_NS) --ignore-not-found

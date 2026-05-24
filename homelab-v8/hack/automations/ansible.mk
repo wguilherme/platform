@@ -46,9 +46,18 @@ rpi-check: rpi-ping
 		-i ~/.ssh/id_rsa $(RPI_USER)@$(RPI_HOST) \
 		'echo "✓ SSH ok — hostname: $$(hostname) — arch: $$(uname -m)"'
 
+# ── Env validation ───────────────────────────────────────────────────────────
+
+_rpi-check-env:
+	@test -n "$(RPI_HOST)"     || (echo "✗ RPI_HOST não definido em .env";     exit 1)
+	@test "$(RPI_HOST)" != "rpi.local" || (echo "✗ RPI_HOST ainda é o valor padrão — rode: make rpi-discover"; exit 1)
+	@test -n "$(RPI_USER)"     || (echo "✗ RPI_USER não definido em .env";     exit 1)
+	@test -n "$(RPI_PASSWORD)" || (echo "✗ RPI_PASSWORD não definido em .env"; exit 1)
+	@echo "✓ RPI_HOST=$(RPI_HOST)  RPI_USER=$(RPI_USER)  RPI_PASSWORD=***"
+
 # ── Provisioning ──────────────────────────────────────────────────────────────
 
-ansible-setup:
+ansible-setup: _rpi-check-env
 	cd $(ANSIBLE_DIR) && ansible-playbook -i inventory/hosts.yml site.yml
 
 # ── Kubeconfig ────────────────────────────────────────────────────────────────
@@ -60,11 +69,11 @@ kubeconfig-rpi:
 
 # ── Setup/Teardown completo ───────────────────────────────────────────────────
 
-rpi-setup: ansible-setup kubeconfig-rpi kind-secrets flux-bootstrap kind-wait-controllers kind-wait flux-status
+rpi-setup: _rpi-check-env ansible-setup kubeconfig-rpi kind-secrets flux-bootstrap kind-wait-controllers kind-wait flux-status
 	@echo ""
 	@echo "✓ RPi setup completo."
 
-rpi-teardown:
+rpi-teardown: _rpi-check-env
 	ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $(RPI_USER)@$(RPI_HOST) \
 		'echo $(RPI_PASSWORD) | sudo -S /usr/local/bin/k3s-uninstall.sh'
 	rm -f $(KUBECONFIG_PLATFORM)

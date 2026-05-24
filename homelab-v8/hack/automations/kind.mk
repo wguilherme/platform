@@ -32,6 +32,8 @@ kind-status:
 # ── Secrets (plain — sem kubeseal, apenas Kind local) ─────────────────────────
 
 kind-secrets:
+	@test -n "$(GITHUB_TOKEN)" || (echo "✗ GITHUB_TOKEN não definido em .env"; exit 1)
+	@test -n "$(TUNNEL_TOKEN)" || (echo "✗ TUNNEL_TOKEN não definido em .env"; exit 1)
 	$(KUBECTL) create namespace cloudflare --dry-run=client -o yaml | $(KUBECTL) apply -f -
 	$(KUBECTL) create namespace tekton-pipelines --dry-run=client -o yaml | $(KUBECTL) apply -f -
 	$(KUBECTL) create secret generic github-webhook-secret \
@@ -40,11 +42,11 @@ kind-secrets:
 		--dry-run=client -o yaml | $(KUBECTL) apply -f -
 	$(KUBECTL) create secret generic github-token \
 		--namespace tekton-pipelines \
-		--from-literal=token=$$(grep '^GITHUB_TOKEN=' .env | cut -d= -f2-) \
+		--from-literal=token="$(GITHUB_TOKEN)" \
 		--dry-run=client -o yaml | $(KUBECTL) apply -f -
 	$(KUBECTL) create secret generic tunnel-token \
 		--namespace cloudflare \
-		--from-literal=token=$$(grep '^TUNNEL_TOKEN=' .env | cut -d= -f2-) \
+		--from-literal=token="$(TUNNEL_TOKEN)" \
 		--dry-run=client -o yaml | $(KUBECTL) apply -f -
 
 # ── Espera ────────────────────────────────────────────────────────────────────

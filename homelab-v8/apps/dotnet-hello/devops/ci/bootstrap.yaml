@@ -1,0 +1,11 @@
+apiVersion: tekton.dev/v1
+kind: TaskRun
+metadata:
+  name: dotnet-hello-bootstrap
+  namespace: tekton-pipelines
+spec:
+  taskRef:
+    name: dotnet-hello-ci
+  workspaces:
+    - name: source
+      emptyDir: {}
